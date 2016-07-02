@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Transactions;
+using Common.Logging;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
 
@@ -11,6 +12,11 @@ namespace JungleBus
     /// </summary>
     internal class TransactionalBus : IBus, IEnlistmentNotification
     {
+        /// <summary>
+        /// Instance of the logger
+        /// </summary>
+        private static readonly ILog Log = LogManager.GetLogger(typeof(IBus));
+
         /// <summary>
         /// Topic this bus publishes to
         /// </summary>
@@ -126,6 +132,7 @@ namespace JungleBus
         /// <param name="enlistment">An System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
         void IEnlistmentNotification.Commit(Enlistment enlistment)
         {
+            Log.Trace("Committing transaction");
             foreach (var message in _transactionalPublishMessages)
             {
                 InternalPublish(message.Key, message.Value);
@@ -139,6 +146,7 @@ namespace JungleBus
             _transactionalPublishMessages.Clear();
             _transactionalSendMessages.Clear();
             enlistment.Done();
+            Log.Trace("Committed transaction");
         }
 
         /// <summary>
@@ -164,6 +172,7 @@ namespace JungleBus
         /// <param name="enlistment">A System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
         void IEnlistmentNotification.Rollback(Enlistment enlistment)
         {
+            Log.Trace("Transaction rolled back");
             _transactionalPublishMessages.Clear();
             _transactionalSendMessages.Clear();
         }
@@ -175,8 +184,10 @@ namespace JungleBus
         /// <param name="type">Type of the message</param>
         private void InternalPublish(object message, Type type)
         {
+            Log.TraceFormat("Publishing message of type {0}", type);
             string messageString = _messageSerializer.Serialize(message);
             _messagePublisher.Publish(messageString, type);
+            Log.TraceFormat("Published message of type {0}", type);
         }
 
         /// <summary>
@@ -186,8 +197,10 @@ namespace JungleBus
         /// <param name="type">Type of the message</param>
         private void InternalSend(object message, Type type)
         {
+            Log.TraceFormat("Sending message of type {0}", type);
             string messageString = _messageSerializer.Serialize(message);
             _messagePublisher.Send(messageString, type, _localMessageQueue);
+            Log.TraceFormat("Sending message of type {0}", type);
         }
     }
 }

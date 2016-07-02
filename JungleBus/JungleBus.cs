@@ -64,7 +64,7 @@ namespace JungleBus
                 _messagePumpTasks = new List<Task>();
                 for (int x = 0; x < configuration.Receive.NumberOfPollingInstances; ++x)
                 {
-                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, messageProcessor, CreateSendBus());
+                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, messageProcessor, CreateSendBus(), x + 1);
                     _messagePumps.Add(pump);
                     _messagePumpTasks.Add(new Task(() => pump.Run()));
                 }
@@ -105,6 +105,7 @@ namespace JungleBus
         /// </summary>
         public void StopReceiving()
         {
+            Log.Info("Stopping the bus");
             _messagePumps.ForEach(x => x.Stop());
             Task.WaitAll(_messagePumpTasks.ToArray());
             _messagePumps.ForEach(x => x.Dispose());
