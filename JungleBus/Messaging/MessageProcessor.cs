@@ -89,6 +89,7 @@ namespace JungleBus.Messaging
                     if (results.Result.All(x => x))
                     {
                         transactionScope.Complete();
+                        return true;
                     }
                 }
             }
@@ -97,7 +98,7 @@ namespace JungleBus.Messaging
                 Log.WarnFormat("Could not find a handler for {0}", message.MessageTypeName);
             }
 
-            return true;
+            return false;
         }
     }
 }
