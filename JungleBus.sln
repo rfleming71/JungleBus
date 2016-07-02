@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTestApp", "ConsoleTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "Messages\Messages.csproj", "{2A5AE9A5-3A8E-4C28-95EB-BCD6B71C2BF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus.Tests", "JungleBus.Tests\JungleBus.Tests.csproj", "{C3C8081B-64EE-453D-8543-A69CE022D66A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2A5AE9A5-3A8E-4C28-95EB-BCD6B71C2BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A5AE9A5-3A8E-4C28-95EB-BCD6B71C2BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A5AE9A5-3A8E-4C28-95EB-BCD6B71C2BF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3C8081B-64EE-453D-8543-A69CE022D66A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3C8081B-64EE-453D-8543-A69CE022D66A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3C8081B-64EE-453D-8543-A69CE022D66A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3C8081B-64EE-453D-8543-A69CE022D66A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

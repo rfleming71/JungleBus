@@ -59,6 +59,7 @@ namespace JungleBus
         {
             if (Transaction.Current != null)
             {
+                Transaction.Current.EnlistVolatile(this, EnlistmentOptions.None);
                 _transactionalPublishMessages.Add(new KeyValuePair<object, Type>(message, typeof(T)));
             }
             else
@@ -92,6 +93,7 @@ namespace JungleBus
         {
             if (Transaction.Current != null)
             {
+                Transaction.Current.EnlistVolatile(this, EnlistmentOptions.None);
                 _transactionalSendMessages.Add(new KeyValuePair<object, Type>(message, typeof(T)));
             }
             else
@@ -127,8 +129,14 @@ namespace JungleBus
             {
                 InternalPublish(message.Key, message.Value);
             }
+            
+            foreach (var message in _transactionalSendMessages)
+            {
+                InternalSend(message.Key, message.Value);
+            }
 
             _transactionalPublishMessages.Clear();
+            _transactionalSendMessages.Clear();
             enlistment.Done();
         }
 
@@ -156,6 +164,7 @@ namespace JungleBus
         void IEnlistmentNotification.Rollback(Enlistment enlistment)
         {
             _transactionalPublishMessages.Clear();
+            _transactionalSendMessages.Clear();
         }
 
         /// <summary>
