@@ -24,8 +24,8 @@ namespace JungleBus
         /// <summary>
         /// Send a message to the bus's input queue
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="message"></param>
+        /// <typeparam name="T">Message type</typeparam>
+        /// <param name="message">Message to send</param>
         void PublishLocal<T>(T message);
 
         /// <summary>

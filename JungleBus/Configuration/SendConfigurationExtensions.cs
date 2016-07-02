@@ -52,7 +52,6 @@ namespace JungleBus.Configuration
         /// Configures the bus to allow local message sending only
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
-        /// <param name="region"></param>
         /// <returns>Modified configuration</returns>
         public static IBusConfiguration PublishingLocalEventsOnly(this IBusConfiguration configuration)
         {

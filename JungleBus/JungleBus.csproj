@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aws\AwsMessagePublisher.cs" />
+    <Compile Include="Aws\Sns\ISnsClient.cs" />
     <Compile Include="Aws\Sqs\SqsQueue.cs" />
     <Compile Include="Configuration\SendConfigurationExtensions.cs" />
     <Compile Include="Configuration\ReceiveConfigurationExtensions.cs" />

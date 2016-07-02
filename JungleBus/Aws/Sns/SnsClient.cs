@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
-using JungleBus.Messaging;
 
 namespace JungleBus.Aws.Sns
-{ 
+{
     /// <summary>
     /// Client for talking to SNS
     /// </summary>
-    public sealed class SnsClient : IDisposable
+    public sealed class SnsClient : IDisposable, ISnsClient
     {
         /// <summary>
         /// Cached list of topic ARNs
@@ -122,11 +121,6 @@ namespace JungleBus.Aws.Sns
         {
             CreateTopicResponse response = await _sns.CreateTopicAsync(topicName);
             return response.TopicArn;
-        }
-
-        public void Send(string messageString, Type type, IMessageQueue _localMessageQueue)
-        {
-            throw new NotImplementedException();
         }
     }
 }

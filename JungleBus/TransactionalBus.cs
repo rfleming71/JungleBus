@@ -41,6 +41,7 @@ namespace JungleBus
         /// </summary>
         /// <param name="messagePublisher">How to publish messages</param>
         /// <param name="messageSerializer">How to serialize the outbound messages</param>
+        /// <param name="messageQueue">Local message queue</param>
         public TransactionalBus(IMessagePublisher messagePublisher, IMessageSerializer messageSerializer, IMessageQueue messageQueue)
         {
             _transactionalPublishMessages = new List<KeyValuePair<object, Type>>();
@@ -87,8 +88,8 @@ namespace JungleBus
         /// <summary>
         /// Send a message to the bus's input queue
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="message"></param>
+        /// <typeparam name="T">Message type</typeparam>
+        /// <param name="message">Message to send</param>
         public void PublishLocal<T>(T message)
         {
             if (Transaction.Current != null)
@@ -178,6 +179,11 @@ namespace JungleBus
             _messagePublisher.Publish(messageString, type);
         }
 
+        /// <summary>
+        /// Performs the actual sending of a message to the bus
+        /// </summary>
+        /// <param name="message">Message to send</param>
+        /// <param name="type">Type of the message</param>
         private void InternalSend(object message, Type type)
         {
             string messageString = _messageSerializer.Serialize(message);
