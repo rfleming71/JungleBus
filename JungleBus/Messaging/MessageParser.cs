@@ -31,30 +31,33 @@ namespace JungleBus.Messaging
         /// <returns>Parsed message</returns>
         public TransportMessage ParseMessage(Message message)
         {
-            TransportMessage parsedMessage = new TransportMessage();
-            var snsMessage = _messageSerializer.Deserialize(message.Body, typeof(SnsMessage)) as SnsMessage;
-            parsedMessage.Body = snsMessage.Message;
-            parsedMessage.ReceiptHandle = message.ReceiptHandle;
+            TransportMessage parsedMessage = new TransportMessage()
+            {
+                ReceiptHandle = message.ReceiptHandle
+            };
 
-            parsedMessage.MessageTypeName = snsMessage.MessageAttributes["messageType"].Value;
-            parsedMessage.MessageType = Type.GetType(parsedMessage.MessageTypeName, false, true);
-            if (parsedMessage.MessageType == null)
+            try
             {
-                parsedMessage.MessageParsingSucceeded = false;
-                parsedMessage.Exception = new JungleBusException("Unable to find message type " + parsedMessage.MessageTypeName);
-            }
-            else
-            {
-                try
+                SnsMessage snsMessage = _messageSerializer.Deserialize(message.Body, typeof(SnsMessage)) as SnsMessage;
+                parsedMessage.Body = snsMessage.Message;
+
+                parsedMessage.MessageTypeName = snsMessage.MessageAttributes["messageType"].Value;
+                parsedMessage.MessageType = Type.GetType(parsedMessage.MessageTypeName, false, true);
+                if (parsedMessage.MessageType == null)
+                {
+                    parsedMessage.MessageParsingSucceeded = false;
+                    parsedMessage.Exception = new JungleBusException("Unable to find message type " + parsedMessage.MessageTypeName);
+                }
+                else
                 {
                     parsedMessage.Message = _messageSerializer.Deserialize(parsedMessage.Body, parsedMessage.MessageType);
                     parsedMessage.MessageParsingSucceeded = true;
                 }
-                catch (Exception ex)
-                {
-                    parsedMessage.MessageParsingSucceeded = false;
-                    parsedMessage.Exception = new JungleBusException("Failed to parse message", ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                parsedMessage.MessageParsingSucceeded = false;
+                parsedMessage.Exception = new JungleBusException("Failed to parse message", ex);
             }
 
             return parsedMessage;
