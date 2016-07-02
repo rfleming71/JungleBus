@@ -97,6 +97,7 @@
     <Compile Include="Configuration\GeneralConfigurationExtensionsTests.cs" />
     <Compile Include="Messaging\MessageParserTests.cs" />
     <Compile Include="Messaging\MessageProcessorTests.cs" />
+    <Compile Include="Messaging\MessagePumpTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\JsonNetSerializerTests.cs" />
     <Compile Include="TestMessage.cs" />
