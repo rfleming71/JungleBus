@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Amazon.SQS.Model;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

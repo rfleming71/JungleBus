@@ -1,6 +1,7 @@
 ﻿using JungleBus;
 using Common.Logging;
 using Messages;
+using JungleBus.Interfaces;
 
 namespace ConsoleTestApp.Handlers
 {

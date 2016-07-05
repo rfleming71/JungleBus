@@ -1,6 +1,7 @@
 ﻿using System;
 using Amazon.SQS.Model;
 using JungleBus.Exceptions;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.Serialization;
 
 namespace JungleBus.Messaging

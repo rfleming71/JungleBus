@@ -1,6 +1,7 @@
 ﻿using System;
 using JungleBus.Configuration;
 using JungleBus.Exceptions;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.IoC;
 using JungleBus.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

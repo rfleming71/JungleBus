@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.Logging;
+using JungleBus.Interfaces;
+using JungleBus.Interfaces.IoC;
 using JungleBus.IoC;
 using JungleBus.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,4 +1,4 @@
-﻿namespace JungleBus
+﻿namespace JungleBus.Interfaces
 {
     /// <summary>
     /// Bus that can be started to receive messages from the input queue

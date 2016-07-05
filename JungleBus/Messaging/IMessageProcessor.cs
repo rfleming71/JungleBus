@@ -1,4 +1,6 @@
-﻿namespace JungleBus.Messaging
+﻿using JungleBus.Interfaces;
+
+namespace JungleBus.Messaging
 {
     /// <summary>
     /// Processes inbound messages and call the event handlers

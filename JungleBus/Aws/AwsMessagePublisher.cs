@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Amazon;
 using JungleBus.Aws.Sns;
 using JungleBus.Exceptions;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
 

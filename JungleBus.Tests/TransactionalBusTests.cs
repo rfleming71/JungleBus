@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Transactions;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

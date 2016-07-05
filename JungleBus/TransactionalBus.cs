@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Transactions;
 using Common.Logging;
+using JungleBus.Interfaces;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
-using JungleBus.Serialization;
 
 namespace JungleBus
 {

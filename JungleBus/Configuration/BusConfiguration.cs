@@ -1,4 +1,5 @@
-﻿using JungleBus.IoC;
+﻿using JungleBus.Interfaces.IoC;
+using JungleBus.IoC;
 
 namespace JungleBus.Configuration
 {

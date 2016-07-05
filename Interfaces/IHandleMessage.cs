@@ -1,4 +1,4 @@
-﻿namespace JungleBus
+﻿namespace JungleBus.Interfaces
 {
     /// <summary>
     /// Interface to mark a class as an event handler for event type T

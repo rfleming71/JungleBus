@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JungleBus
+namespace JungleBus.Interfaces
 {
     /// <summary>
     /// A bus that can publish messages

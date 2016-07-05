@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading;
-using JungleBus;
+﻿using System.Threading;
 using Common.Logging;
+using JungleBus.Interfaces;
 using Messages;
 
 namespace ConsoleTestApp.Handlers

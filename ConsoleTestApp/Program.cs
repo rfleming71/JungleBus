@@ -2,6 +2,7 @@
 using Amazon;
 using JungleBus;
 using JungleBus.Configuration;
+using JungleBus.Interfaces;
 using Messages;
 
 namespace ConsoleTestApp

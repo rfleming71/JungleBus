@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JungleBus.Interfaces;
 using JungleBus.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

@@ -5,6 +5,7 @@ using System.Reflection;
 using Amazon;
 using JungleBus.Aws.Sqs;
 using JungleBus.Exceptions;
+using JungleBus.Interfaces;
 using JungleBus.Messaging;
 
 namespace JungleBus.Configuration

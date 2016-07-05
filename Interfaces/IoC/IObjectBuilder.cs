@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JungleBus.IoC
+namespace JungleBus.Interfaces.IoC
 {
     /// <summary>
     /// Build objects for the bus

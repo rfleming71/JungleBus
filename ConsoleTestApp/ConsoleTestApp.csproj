@@ -79,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{09cf3161-d0c9-4390-b66b-b6bf5ad17514}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JungleBus\JungleBus.csproj">
       <Project>{22d96be2-fd5e-4cec-a39c-cc9871fe2123}</Project>
       <Name>JungleBus</Name>

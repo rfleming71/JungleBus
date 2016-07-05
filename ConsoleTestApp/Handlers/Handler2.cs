@@ -1,6 +1,6 @@
 ﻿using System.Threading;
-using JungleBus;
 using Common.Logging;
+using JungleBus.Interfaces;
 using Messages;
 
 namespace ConsoleTestApp.Handlers

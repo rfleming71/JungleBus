@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.Logging;
 using JungleBus.Configuration;
+using JungleBus.Interfaces;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
 

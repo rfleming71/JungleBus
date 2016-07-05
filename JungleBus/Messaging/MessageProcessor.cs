@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Common.Logging;
-using JungleBus.IoC;
+using JungleBus.Interfaces;
+using JungleBus.Interfaces.IoC;
 
 namespace JungleBus.Messaging
 {

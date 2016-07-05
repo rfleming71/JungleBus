@@ -1,4 +1,5 @@
 ﻿using System;
+using JungleBus.Interfaces.IoC;
 using StructureMap;
 
 namespace JungleBus.IoC

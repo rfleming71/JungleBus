@@ -1,5 +1,7 @@
 ﻿using System;
 using JungleBus.Exceptions;
+using JungleBus.Interfaces;
+using JungleBus.Interfaces.Serialization;
 using JungleBus.IoC;
 using JungleBus.Messaging;
 using JungleBus.Serialization;

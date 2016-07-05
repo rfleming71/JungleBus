@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using JungleBus.Interfaces.Serialization;
 using Newtonsoft.Json;
 
 namespace JungleBus.Serialization

@@ -99,22 +99,23 @@
     <Compile Include="Configuration\GeneralConfigurationExtensions.cs" />
     <Compile Include="Configuration\ReceiveConfiguration.cs" />
     <Compile Include="Configuration\SendConfiguration.cs" />
-    <Compile Include="IBus.cs" />
-    <Compile Include="IHandleMessage.cs" />
     <Compile Include="JungleBus.cs" />
     <Compile Include="IoC\StructureMapObjectBuilder.cs" />
-    <Compile Include="IoC\IObjectBuilder.cs" />
-    <Compile Include="IRunJungleBus.cs" />
     <Compile Include="Messaging\IMessageParser.cs" />
     <Compile Include="Messaging\MessageParser.cs" />
     <Compile Include="Messaging\TransportMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\IMessageSerializer.cs" />
     <Compile Include="Serialization\JsonNetSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+      <Project>{09cf3161-d0c9-4390-b66b-b6bf5ad17514}</Project>
+      <Name>Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

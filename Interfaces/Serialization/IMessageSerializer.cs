@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JungleBus.Serialization
+namespace JungleBus.Interfaces.Serialization
 {
     /// <summary>
     /// Serializes and deserializes message for transport over the bus
