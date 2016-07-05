@@ -65,7 +65,7 @@ namespace JungleBus.Aws.Sns
         /// </summary>
         /// <param name="message">Serialized Message</param>
         /// <param name="type">Payload type</param>
-        public async void Publish(string message, Type type)
+        public void Publish(string message, Type type)
         {
             string topicName = GetTopicName(type);
             if (!_topicArns.ContainsKey(topicName))
@@ -85,14 +85,14 @@ namespace JungleBus.Aws.Sns
             request.MessageAttributes["messageType"] = new MessageAttributeValue() { StringValue = type.AssemblyQualifiedName, DataType = "String" };
             request.MessageAttributes["fromSns"] = new MessageAttributeValue() { StringValue = "True", DataType = "String" };
 
-            await _sns.PublishAsync(request);
+            _sns.Publish(request);
         }
 
         /// <summary>
         /// Setups the bus for publishing the given message types
         /// </summary>
         /// <param name="messageTypes">Message types</param>
-        public async void SetupMessagesForPublishing(IEnumerable<Type> messageTypes)
+        public void SetupMessagesForPublishing(IEnumerable<Type> messageTypes)
         {
             foreach (Type messageType in messageTypes)
             {
@@ -102,7 +102,7 @@ namespace JungleBus.Aws.Sns
                     Topic topic = _sns.FindTopic(topicName);
                     if (topic == null)
                     {
-                        _topicArns[topicName] = await CreateTopic(topicName);
+                        _topicArns[topicName] = CreateTopic(topicName);
                     }
                     else
                     {
@@ -117,9 +117,9 @@ namespace JungleBus.Aws.Sns
         /// </summary>
         /// <param name="topicName">Topic name</param>
         /// <returns>Created topic ARN</returns>
-        private async Task<string> CreateTopic(string topicName)
+        private string CreateTopic(string topicName)
         {
-            CreateTopicResponse response = await _sns.CreateTopicAsync(topicName);
+            CreateTopicResponse response = _sns.CreateTopic(topicName);
             return response.TopicArn;
         }
     }
