@@ -120,14 +120,14 @@ namespace JungleBus.Aws.Sqs
         /// Subscribe the queue to the given message types
         /// </summary>
         /// <param name="messageTypes">Message to subscribe to</param>
-        public async void Subscribe(IEnumerable<Type> messageTypes)
+        public void Subscribe(IEnumerable<Type> messageTypes)
         {
             foreach (Type messageType in messageTypes)
             {
                 var topic = _simpleNotificationService.Value.FindTopic(SnsClient.GetTopicName(messageType));
                 if (topic != null)
                 {
-                    await _simpleNotificationService.Value.SubscribeAsync(topic.TopicArn, "sqs", _queueArn);
+                    _simpleNotificationService.Value.SubscribeQueue(topic.TopicArn, _simpleQueueService, _queueUrl);
                 }
             }
         }
