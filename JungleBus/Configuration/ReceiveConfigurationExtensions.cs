@@ -44,7 +44,8 @@ namespace JungleBus.Configuration
                 configuration.Receive = new ReceiveConfiguration();
             }
 
-            configuration.Receive.InputQueue = new SqsQueue(region, sqsName, new MessageParser(null));
+            configuration.Receive.MessageRetryCount = 5;
+            configuration.Receive.InputQueue = new SqsQueue(region, sqsName, configuration.Receive.MessageRetryCount, new MessageParser(null));
             return configuration as IConfigureEventReceiving;
         }
 

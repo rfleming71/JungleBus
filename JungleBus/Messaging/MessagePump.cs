@@ -33,6 +33,11 @@ namespace JungleBus.Messaging
         private readonly IBus _bus;
 
         /// <summary>
+        /// Number of times to retry a message
+        /// </summary>
+        private readonly int _messageRetryCount;
+
+        /// <summary>
         /// Token used to control when to stop the pump
         /// </summary>
         private CancellationTokenSource _cancellationToken;
@@ -41,12 +46,14 @@ namespace JungleBus.Messaging
         /// Initializes a new instance of the <see cref="MessagePump" /> class.
         /// </summary>
         /// <param name="queue">Queue to read messages from</param>
+        /// <param name="messageRetryCount">Number of times to retry a message</param>
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
         /// <param name="bus">Instance of the bus to pass to the event handlers</param>
         /// <param name="id">Id of the message pump</param>
-        public MessagePump(IMessageQueue queue, IMessageProcessor messageProcessor, IBus bus, int id)
+        public MessagePump(IMessageQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IBus bus, int id)
         {
             _queue = queue;
+            _messageRetryCount = messageRetryCount;
             _messageProcessor = messageProcessor;
             _cancellationToken = new CancellationTokenSource();
             _bus = bus;
@@ -90,6 +97,10 @@ namespace JungleBus.Messaging
                         {
                             Log.InfoFormat("[{0}] Removing message from the queue", Id);
                             _queue.RemoveMessage(message);
+                        }
+                        else if (message.RetryCount + 1 == _messageRetryCount)
+                        {
+
                         }
                     }
                 }

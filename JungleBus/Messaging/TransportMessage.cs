@@ -42,5 +42,10 @@ namespace JungleBus.Messaging
         /// Gets or sets the message handle
         /// </summary>
         public string ReceiptHandle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of times this message has already been processed
+        /// </summary>
+        public int RetryCount { get; set; }
     }
 }

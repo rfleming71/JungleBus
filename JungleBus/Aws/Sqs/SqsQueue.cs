@@ -45,7 +45,7 @@ namespace JungleBus.Aws.Sqs
         /// <param name="endpoint">Region the queue is in</param>
         /// <param name="queueName">Name of the queue</param>
         /// <param name="messageParser">Message parser</param>
-        public SqsQueue(RegionEndpoint endpoint, string queueName, IMessageParser messageParser)
+        public SqsQueue(RegionEndpoint endpoint, string queueName, int retryCount, IMessageParser messageParser)
         {
             _simpleQueueService = new AmazonSQSClient(endpoint);
             _simpleNotificationService = new Lazy<IAmazonSimpleNotificationService>(() => new AmazonSimpleNotificationServiceClient(endpoint));
@@ -58,7 +58,7 @@ namespace JungleBus.Aws.Sqs
                 createResponse = _simpleQueueService.CreateQueue(queueName + "_Dead_Letter");
                 string deadLetterQueue = createResponse.QueueUrl;
                 var deadLetterAttributes = _simpleQueueService.GetAttributes(deadLetterQueue);
-                string redrivePolicy = string.Format(CultureInfo.InvariantCulture, "{{\"maxReceiveCount\":\"{0}\", \"deadLetterTargetArn\":\"{1}\"}}", 5, deadLetterAttributes["QueueArn"]);
+                string redrivePolicy = string.Format(CultureInfo.InvariantCulture, "{{\"maxReceiveCount\":\"{0}\", \"deadLetterTargetArn\":\"{1}\"}}", retryCount, deadLetterAttributes["QueueArn"]);
                 _simpleQueueService.SetQueueAttributes(_queueUrl, new Dictionary<string, string>() { { "RedrivePolicy", redrivePolicy } });
             }
 
@@ -91,6 +91,7 @@ namespace JungleBus.Aws.Sqs
             ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest();
             receiveMessageRequest.WaitTimeSeconds = WaitTimeSeconds;
             receiveMessageRequest.MaxNumberOfMessages = MaxNumberOfMessages;
+            receiveMessageRequest.AttributeNames = new List<string>() { "ApproximateReceiveCount" };
             receiveMessageRequest.QueueUrl = _queueUrl;
 
             ReceiveMessageResponse receiveMessageResponse = await _simpleQueueService.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);

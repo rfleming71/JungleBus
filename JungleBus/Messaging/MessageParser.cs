@@ -39,6 +39,11 @@ namespace JungleBus.Messaging
 
             try
             {
+                if (message.Attributes != null && message.Attributes.ContainsKey("ApproximateReceiveCount"))
+                {
+                    parsedMessage.RetryCount = int.Parse(message.Attributes["ApproximateReceiveCount"]);
+                }
+
                 SnsMessage snsMessage = _messageSerializer.Deserialize(message.Body, typeof(SnsMessage)) as SnsMessage;
                 parsedMessage.Body = snsMessage.Message;
 

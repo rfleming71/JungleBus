@@ -15,6 +15,11 @@ namespace JungleBus.Configuration
         public IMessageQueue InputQueue { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of times to attempt to process a message
+        /// </summary>
+        public int MessageRetryCount { get; set; }
+
+        /// <summary>
         /// Gets or sets the number of polling instances to run
         /// </summary>
         public int NumberOfPollingInstances { get; set; }
