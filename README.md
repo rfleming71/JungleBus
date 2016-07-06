@@ -1,5 +1,5 @@
 # JungleBus
-Simple service bus built on top of Amazon Web Services
+Transactional service bus built on top of Amazon Web Services.
 
 # Creating the Bus
 Creates a service bus that can send and recieve messages
