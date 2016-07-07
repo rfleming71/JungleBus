@@ -15,13 +15,23 @@ namespace JungleBus.Configuration
         public IMessageQueue InputQueue { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of times to attempt to process a message
+        /// </summary>
+        public int MessageRetryCount { get; set; }
+
+        /// <summary>
         /// Gets or sets the number of polling instances to run
         /// </summary>
         public int NumberOfPollingInstances { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of assemblies to scan for message handlers
+        /// Gets or sets the collection of message handlers organized by message type
         /// </summary>
         internal Dictionary<Type, HashSet<Type>> Handlers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of message fault handlers organized by message type
+        /// </summary>
+        internal Dictionary<Type, HashSet<Type>> FaultHandlers { get; set; }
     }
 }

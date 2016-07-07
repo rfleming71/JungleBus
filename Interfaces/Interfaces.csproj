@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IBus.cs" />
+    <Compile Include="IHandleMessageFaults.cs" />
     <Compile Include="IHandleMessage.cs" />
     <Compile Include="IoC\IObjectBuilder.cs" />
     <Compile Include="IRunJungleBus.cs" />

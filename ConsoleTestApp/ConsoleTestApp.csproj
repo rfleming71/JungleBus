@@ -68,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FaultHandlers\FaultHandler1.cs" />
+    <Compile Include="FaultHandlers\FaultHandler3.cs" />
+    <Compile Include="FaultHandlers\FaultHandler2.cs" />
     <Compile Include="Handlers\Handler2.cs" />
     <Compile Include="Handlers\Handler3.cs" />
     <Compile Include="Handlers\Handler1.cs" />

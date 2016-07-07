@@ -33,6 +33,11 @@ namespace JungleBus.Messaging
         private readonly IBus _bus;
 
         /// <summary>
+        /// Number of times to retry a message
+        /// </summary>
+        private readonly int _messageRetryCount;
+
+        /// <summary>
         /// Token used to control when to stop the pump
         /// </summary>
         private CancellationTokenSource _cancellationToken;
@@ -41,12 +46,14 @@ namespace JungleBus.Messaging
         /// Initializes a new instance of the <see cref="MessagePump" /> class.
         /// </summary>
         /// <param name="queue">Queue to read messages from</param>
+        /// <param name="messageRetryCount">Number of times to retry a message</param>
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
         /// <param name="bus">Instance of the bus to pass to the event handlers</param>
         /// <param name="id">Id of the message pump</param>
-        public MessagePump(IMessageQueue queue, IMessageProcessor messageProcessor, IBus bus, int id)
+        public MessagePump(IMessageQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IBus bus, int id)
         {
             _queue = queue;
+            _messageRetryCount = messageRetryCount;
             _messageProcessor = messageProcessor;
             _cancellationToken = new CancellationTokenSource();
             _bus = bus;
@@ -73,23 +80,28 @@ namespace JungleBus.Messaging
                     foreach (TransportMessage message in recievedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
-                        bool messageErrored = false;
+                        MessageProcessingResult result;
                         if (message.MessageParsingSucceeded)
                         {
                             Log.TraceFormat("[{0}] Processing message", Id);
-                            messageErrored = !_messageProcessor.ProcessMessage(message, _bus);
-                            Log.TraceFormat("[{0}] Processed message - Error: {1}", Id, messageErrored);
+                            result = _messageProcessor.ProcessMessage(message, _bus);
+                            Log.TraceFormat("[{0}] Processed message - Error: {1}", Id, !result.WasSuccessful);
                         }
                         else
                         {
                             Log.ErrorFormat("[{1}] Failed to parse message of type {0}", message.Exception, message.MessageTypeName, Id);
-                            messageErrored = true;
+                            result = new MessageProcessingResult() { WasSuccessful = false, Exception = new Exception("Message parse failure") };
                         }
 
-                        if (!messageErrored)
+                        if (result.WasSuccessful)
                         {
                             Log.InfoFormat("[{0}] Removing message from the queue", Id);
                             _queue.RemoveMessage(message);
+                        }
+                        else if (message.RetryCount + 1 == _messageRetryCount)
+                        {
+                            Log.InfoFormat("[{0}] Message faulted ", Id);
+                            _messageProcessor.ProcessFaultedMessage(message, _bus, result.Exception);
                         }
                     }
                 }
