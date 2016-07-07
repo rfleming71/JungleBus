@@ -30,14 +30,21 @@ namespace JungleBus.Messaging
         private readonly IObjectBuilder _objectBuilder;
 
         /// <summary>
+        /// Collection of message fault handlers organized by message type
+        /// </summary>
+        private readonly Dictionary<Type, HashSet<Type>> _faultHandlers;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MessageProcessor" /> class.
         /// </summary>
         /// <param name="objectBuilder">Use to construct the message handlers</param>
         /// <param name="handlers">Collection of message handlers organized by message type</param>
-        public MessageProcessor(IObjectBuilder objectBuilder, Dictionary<Type, HashSet<Type>> handlers)
+        /// <param name="handlers">Collection of message fault handlers organized by message type</param>
+        public MessageProcessor(IObjectBuilder objectBuilder, Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers)
         {
             _objectBuilder = objectBuilder;
             _handlerTypes = handlers;
+            _faultHandlers = faultHandlers;
         }
 
         /// <summary>
@@ -100,6 +107,52 @@ namespace JungleBus.Messaging
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Processes inbound message that have faulted more than the retry limit
+        /// </summary>
+        /// <param name="message">Message to process</param>
+        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
+        public void ProcessFaultedMessage(TransportMessage message, IBus busInstance)
+        {
+            ProcessFaultedMessageHandlers(message, busInstance);
+            if (message.MessageParsingSucceeded)
+            {
+                ProcessFaultedMessageHandlers(message.Message, busInstance);
+            }
+        }
+
+        private void ProcessFaultedMessageHandlers(object message, IBus busInstance)
+        {
+            Type messageType = message.GetType();
+            if (_faultHandlers.ContainsKey(messageType))
+            {
+                Log.TraceFormat("Processing {0} fault handlers for message type {1}", _faultHandlers[messageType].Count, messageType.FullName);
+                var handlerMethod = typeof(IHandleMessageFaults<>).MakeGenericType(messageType).GetMethod("Handle");
+                foreach (Type handlerType in _faultHandlers[messageType])
+                {
+                    using (IObjectBuilder childBuilder = _objectBuilder.GetNestedBuilder())
+                    {
+                        if (busInstance != null)
+                        {
+                            childBuilder.RegisterInstance<IBus>(busInstance);
+                        }
+
+                        childBuilder.RegisterInstance(LogManager.GetLogger(handlerType));
+                        Log.TraceFormat("Running handler {0}", handlerType.Name);
+                        try
+                        {
+                            var handler = childBuilder.GetValue(handlerType);
+                            handlerMethod.Invoke(handler, new object[] { message });
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.ErrorFormat("Error in handling message fault {0} with {1}", ex, messageType.Name, handlerType.Name);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -100,7 +100,8 @@ namespace JungleBus.Messaging
                         }
                         else if (message.RetryCount + 1 == _messageRetryCount)
                         {
-
+                            Log.InfoFormat("[{0}] Message faulted ", Id);
+                            _messageProcessor.ProcessFaultedMessage(message, _bus);
                         }
                     }
                 }

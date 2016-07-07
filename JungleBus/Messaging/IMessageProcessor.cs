@@ -14,5 +14,12 @@ namespace JungleBus.Messaging
         /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
         /// <returns>True is all event handles succeeded</returns>
         bool ProcessMessage(TransportMessage message, IBus busInstance);
+
+        /// <summary>
+        /// Processes inbound message that have faulted more than the retry limit
+        /// </summary>
+        /// <param name="message">Message to process</param>
+        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
+        void ProcessFaultedMessage(TransportMessage message, IBus busInstance);
     }
 }

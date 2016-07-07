@@ -61,12 +61,12 @@ namespace JungleBus
             if (configuration.Receive != null)
             {
                 _localQueue = configuration.Receive.InputQueue;
-                MessageProcessor messageProcessor = new MessageProcessor(configuration.ObjectBuilder, configuration.Receive.Handlers);
+                MessageProcessor messageProcessor = new MessageProcessor(configuration.ObjectBuilder, configuration.Receive.Handlers, configuration.Receive.FaultHandlers);
                 _messagePumps = new List<MessagePump>();
                 _messagePumpTasks = new List<Task>();
                 for (int x = 0; x < configuration.Receive.NumberOfPollingInstances; ++x)
                 {
-                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, messageProcessor, CreateSendBus(), x + 1);
+                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, configuration.Receive.MessageRetryCount, messageProcessor, CreateSendBus(), x + 1);
                     _messagePumps.Add(pump);
                     _messagePumpTasks.Add(new Task(() => pump.Run()));
                 }

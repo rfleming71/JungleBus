@@ -25,8 +25,13 @@ namespace JungleBus.Configuration
         public int NumberOfPollingInstances { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of assemblies to scan for message handlers
+        /// Gets or sets the collection of message handlers organized by message type
         /// </summary>
         internal Dictionary<Type, HashSet<Type>> Handlers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of message fault handlers organized by message type
+        /// </summary>
+        internal Dictionary<Type, HashSet<Type>> FaultHandlers { get; set; }
     }
 }
