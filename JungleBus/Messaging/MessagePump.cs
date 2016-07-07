@@ -80,20 +80,20 @@ namespace JungleBus.Messaging
                     foreach (TransportMessage message in recievedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
-                        bool messageErrored = false;
+                        MessageProcessingResult result;
                         if (message.MessageParsingSucceeded)
                         {
                             Log.TraceFormat("[{0}] Processing message", Id);
-                            messageErrored = !_messageProcessor.ProcessMessage(message, _bus);
-                            Log.TraceFormat("[{0}] Processed message - Error: {1}", Id, messageErrored);
+                            result = _messageProcessor.ProcessMessage(message, _bus);
+                            Log.TraceFormat("[{0}] Processed message - Error: {1}", Id, !result.WasSuccessful);
                         }
                         else
                         {
                             Log.ErrorFormat("[{1}] Failed to parse message of type {0}", message.Exception, message.MessageTypeName, Id);
-                            messageErrored = true;
+                            result = new MessageProcessingResult() { WasSuccessful = false, Exception = new Exception("Message parse failure") };
                         }
 
-                        if (!messageErrored)
+                        if (result.WasSuccessful)
                         {
                             Log.InfoFormat("[{0}] Removing message from the queue", Id);
                             _queue.RemoveMessage(message);
@@ -101,7 +101,7 @@ namespace JungleBus.Messaging
                         else if (message.RetryCount + 1 == _messageRetryCount)
                         {
                             Log.InfoFormat("[{0}] Message faulted ", Id);
-                            _messageProcessor.ProcessFaultedMessage(message, _bus);
+                            _messageProcessor.ProcessFaultedMessage(message, _bus, result.Exception);
                         }
                     }
                 }

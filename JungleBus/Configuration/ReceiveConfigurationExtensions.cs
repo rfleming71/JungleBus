@@ -6,6 +6,7 @@ using Amazon;
 using JungleBus.Aws.Sqs;
 using JungleBus.Exceptions;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.IoC;
 using JungleBus.Messaging;
 
 namespace JungleBus.Configuration
@@ -117,7 +118,10 @@ namespace JungleBus.Configuration
         /// <returns>Modified configuration</returns>
         public static IConfigureEventReceiving UsingEventHandlersFromEntryAssembly(this IConfigureEventReceiving configuration)
         {
-            return configuration.UsingEventHandlers(Assembly.GetEntryAssembly().ExportedTypes);
+            IEnumerable<Type> types = Assembly.GetEntryAssembly().ExportedTypes;
+            return configuration
+                .UsingEventHandlers(types)
+                .UsingEventFaultHandlers(types);
         }
 
         /// <summary>
@@ -143,28 +147,60 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("Receive", "Input queue needs to be configured before setting event handlers");
             }
 
-            configuration.Receive.Handlers = new Dictionary<Type, HashSet<Type>>();
-            var handlerTypes = configuration.Receive.Handlers;
-            var s_handlerTypes = eventHandlers.Where(x => x.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessage<>)));
-            foreach (var handlerType in s_handlerTypes)
+            configuration.Receive.Handlers = ScanForTypes(eventHandlers, typeof(IHandleMessage<>), configuration.ObjectBuilder);
+            configuration.Receive.InputQueue.Subscribe(configuration.Receive.Handlers.Keys);
+            configuration.Receive.FaultHandlers = new Dictionary<Type, HashSet<Type>>();
+            return configuration;
+        }
+
+        /// <summary>
+        /// Load the event handlers from the given types
+        /// </summary>
+        /// <param name="configuration">Configuration to modify</param>
+        /// <param name="eventFaultHandlers">Event fault handlers to register</param>
+        /// <returns>Modified configuration</returns>
+        public static IConfigureEventReceiving UsingEventFaultHandlers(this IConfigureEventReceiving configuration, IEnumerable<Type> eventFaultHandlers)
+        {
+            if (configuration == null)
             {
-                foreach (var handlerTypeType in handlerType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHandleMessage<>)))
-                {
-                    Type messageType = handlerTypeType.GenericTypeArguments[0];
-                    if (!handlerTypes.ContainsKey(messageType))
-                    {
-                        handlerTypes[messageType] = new HashSet<Type>();
-                    }
-
-                    handlerTypes[messageType].Add(handlerType);
-                }
-
-                configuration.ObjectBuilder.RegisterType(handlerType, handlerType);
+                throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
-            configuration.Receive.InputQueue.Subscribe(handlerTypes.Keys);
+            if (configuration.ObjectBuilder == null)
+            {
+                throw new JungleBusConfigurationException("ObjectBuilder", "Object builder must be set");
+            }
 
+            if (configuration.Receive == null)
+            {
+                throw new JungleBusConfigurationException("Receive", "Input queue needs to be configured before setting event handlers");
+            }
+
+            configuration.Receive.FaultHandlers = ScanForTypes(eventFaultHandlers, typeof(IHandleMessageFaults<>), configuration.ObjectBuilder);
             return configuration;
+        }
+
+        private static Dictionary<Type, HashSet<Type>> ScanForTypes(IEnumerable<Type> typesToScan, Type handlerTypeToFind, IObjectBuilder objectBuilder)
+        {
+            Dictionary<Type, HashSet<Type>> results = new Dictionary<Type, HashSet<Type>>();
+            var handlerTypes = typesToScan.Where(x => x.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerTypeToFind));
+            foreach (var handlerType in handlerTypes)
+            {
+                foreach (var handlerTypeType in handlerType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerTypeToFind))
+                {
+                    Type messageType = handlerTypeType.GenericTypeArguments[0];
+                    if (!results.ContainsKey(messageType))
+                    {
+                        results[messageType] = new HashSet<Type>();
+                    }
+
+                    results[messageType].Add(handlerType);
+                }
+
+                objectBuilder.RegisterType(handlerType, handlerType);
+            }
+
+            return results;
         }
     }
 }

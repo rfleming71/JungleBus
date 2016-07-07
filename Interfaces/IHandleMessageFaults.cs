@@ -1,4 +1,6 @@
-﻿namespace JungleBus.Interfaces
+﻿using System;
+
+namespace JungleBus.Interfaces
 {
     /// <summary>
     /// Interface to mark a class as an event fault handler for event type T
@@ -10,6 +12,6 @@
         /// Handle the message fault of type T
         /// </summary>
         /// <param name="message">Message to handle</param>
-        void Handle(T message);
+        void Handle(T message, Exception ex);
     }
 }
