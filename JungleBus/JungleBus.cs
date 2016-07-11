@@ -66,7 +66,7 @@ namespace JungleBus
                 _messagePumpTasks = new List<Task>();
                 for (int x = 0; x < configuration.Receive.NumberOfPollingInstances; ++x)
                 {
-                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, configuration.Receive.MessageRetryCount, messageProcessor, CreateSendBus(), x + 1);
+                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, configuration.Receive.MessageRetryCount, messageProcessor, configuration.MessageLogger, CreateSendBus(), x + 1);
                     _messagePumps.Add(pump);
                     _messagePumpTasks.Add(new Task(() => pump.Run()));
                 }

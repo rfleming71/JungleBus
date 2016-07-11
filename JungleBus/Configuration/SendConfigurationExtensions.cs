@@ -42,7 +42,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.Send = new SendConfiguration();
-            configuration.Send.MessagePublisher = new AwsMessagePublisher(region);
+            configuration.Send.MessagePublisher = new AwsMessagePublisher(region, configuration.MessageLogger);
             configuration.Send.MessagePublisher.SetupMessagesForPublishing(messageTypes);
 
             return configuration as IConfigureEventPublishing;
@@ -66,7 +66,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.Send = new SendConfiguration();
-            configuration.Send.MessagePublisher = new AwsMessagePublisher();
+            configuration.Send.MessagePublisher = new AwsMessagePublisher(configuration.MessageLogger);
             return configuration as IConfigureEventPublishing;
         }
     }
