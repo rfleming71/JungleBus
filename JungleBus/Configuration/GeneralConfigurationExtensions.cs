@@ -19,7 +19,7 @@ namespace JungleBus.Configuration
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
         /// <returns>Modified configuration</returns>
-        public static IBusConfiguration WithStructureMapObjectBuilder(this IConfigureObjectBuilder configuration)
+        public static IConfigureMessageSerializer WithStructureMapObjectBuilder(this IConfigureObjectBuilder configuration)
         {
             if (configuration == null)
             {
@@ -27,7 +27,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.ObjectBuilder = new StructureMapObjectBuilder();
-            return configuration as IBusConfiguration;
+            return configuration as IConfigureMessageSerializer;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace JungleBus.Configuration
         /// <param name="configuration">Configuration to modify</param>
         /// <param name="container">Structure Map container to use</param>
         /// <returns>Modified configuration</returns>
-        public static IBusConfiguration WithStructureMapObjectBuilder(this IConfigureObjectBuilder configuration, IContainer container)
+        public static IConfigureMessageSerializer WithStructureMapObjectBuilder(this IConfigureObjectBuilder configuration, IContainer container)
         {
             if (configuration == null)
             {
@@ -44,7 +44,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.ObjectBuilder = new StructureMapObjectBuilder(container);
-            return configuration as IBusConfiguration;
+            return configuration as IConfigureMessageSerializer;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace JungleBus.Configuration
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
         /// <returns>Modified configuration</returns>
-        public static IBusConfiguration UsingJsonSerialization(this IBusConfiguration configuration)
+        public static IBusConfiguration UsingJsonSerialization(this IConfigureMessageSerializer configuration)
         {
             if (configuration == null)
             {
@@ -65,7 +65,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.ObjectBuilder.RegisterInstance<IMessageSerializer>(new JsonNetSerializer());
-            return configuration;
+            return configuration as IBusConfiguration;
         }
 
         /// <summary>

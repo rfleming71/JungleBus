@@ -52,7 +52,7 @@ namespace JungleBus.Tests.Configuration
             Container newContainer = new Container();
             BusConfiguration configuration = new BusConfiguration();
             configuration.ObjectBuilder = new StructureMapObjectBuilder(newContainer);
-            (configuration as IBusConfiguration).UsingJsonSerialization();
+            (configuration as IConfigureMessageSerializer).UsingJsonSerialization();
             Assert.IsNotNull(configuration.ObjectBuilder);
             IMessageSerializer serializer = newContainer.TryGetInstance<IMessageSerializer>();
             Assert.IsNotNull(serializer);
@@ -62,7 +62,7 @@ namespace JungleBus.Tests.Configuration
         [ExpectedException(typeof(JungleBusConfigurationException))]
         public void GeneralConfigurationExtensionsTests_UsingJsonSerialization_NullConfiguration()
         {
-            (null as IBusConfiguration).UsingJsonSerialization();
+            (null as IConfigureMessageSerializer).UsingJsonSerialization();
         }
 
         [TestMethod]
@@ -70,7 +70,7 @@ namespace JungleBus.Tests.Configuration
         public void GeneralConfigurationExtensionsTests_UsingJsonSerialization_NoObjectBuilder()
         {
             BusConfiguration configuration = new BusConfiguration();
-            (configuration as IBusConfiguration).UsingJsonSerialization();
+            (configuration as IConfigureMessageSerializer).UsingJsonSerialization();
         }
     }
 }

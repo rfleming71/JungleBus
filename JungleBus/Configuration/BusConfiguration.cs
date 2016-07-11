@@ -6,7 +6,7 @@ namespace JungleBus.Configuration
     /// <summary>
     /// Bus configuration settings
     /// </summary>
-    internal class BusConfiguration : IConfigureObjectBuilder, IConfigureEventPublishing, IConfigureEventReceiving
+    internal class BusConfiguration : IConfigureObjectBuilder, IConfigureEventPublishing, IConfigureEventReceiving, IConfigureMessageSerializer
     {
         /// <summary>
         /// Gets or sets the service locator for message handlers 

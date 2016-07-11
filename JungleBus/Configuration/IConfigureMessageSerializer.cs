@@ -5,11 +5,11 @@ namespace JungleBus.Configuration
     /// <summary>
     /// Interface for configuring the object builder
     /// </summary>
-    public interface IConfigureObjectBuilder
+    public interface IConfigureMessageSerializer
     {
         /// <summary>
         /// Gets or sets the service locator for message handlers 
         /// </summary>
-        IObjectBuilder ObjectBuilder { get; set; }
+        IObjectBuilder ObjectBuilder { get; }
     }
 }
