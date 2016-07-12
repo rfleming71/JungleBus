@@ -46,6 +46,7 @@ namespace ConsoleTestApp
             return BusBuilder.Create()
                 .WithStructureMapObjectBuilder()
                 .UsingJsonSerialization()
+                .EnableMessageLogging()
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
                 .SetSqsPollWaitTime(14)
                 .UsingEventHandlersFromEntryAssembly()
@@ -59,6 +60,7 @@ namespace ConsoleTestApp
             return BusBuilder.Create()
                 .WithStructureMapObjectBuilder()
                 .UsingJsonSerialization()
+                .EnableMessageLogging()
                 .PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
                 .CreateSendOnlyBusFactory()();
         }
@@ -68,6 +70,7 @@ namespace ConsoleTestApp
             return BusBuilder.Create()
                 .WithStructureMapObjectBuilder()
                 .UsingJsonSerialization()
+                .EnableMessageLogging()
                 .PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
                 .SetSqsPollWaitTime(14)
