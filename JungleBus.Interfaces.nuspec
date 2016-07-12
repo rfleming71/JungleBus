@@ -5,8 +5,9 @@
     <version>0.1.4</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
+    <licenseUrl>https://raw.githubusercontent.com/rfleming71/JungleBus/master/LICENCE</licenseUrl>
     <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Simple service bus built on top of Amazon Web Services</description>
     <releaseNotes>Initial build. Warning still in testing.</releaseNotes>
     <copyright>Copyright 2016</copyright>
