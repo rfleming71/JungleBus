@@ -69,6 +69,22 @@ namespace JungleBus.Configuration
         }
 
         /// <summary>
+        /// Configure the the bus to use log inbound and outbound messages
+        /// </summary>
+        /// <param name="configuration">Configuration to modify</param>
+        /// <returns>Modified configuration</returns>
+        public static IBusConfiguration EnableMessageLogging(this IBusConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
+            }
+
+            configuration.MessageLogger = new MessageLogger();
+            return configuration;
+        }
+
+        /// <summary>
         /// Construct the bus
         /// </summary>
         /// <param name="configuration">Configuration to build from</param>

@@ -1,5 +1,5 @@
 ﻿using JungleBus.Interfaces.IoC;
-using JungleBus.IoC;
+using JungleBus.Messaging;
 
 namespace JungleBus.Configuration
 {
@@ -22,5 +22,10 @@ namespace JungleBus.Configuration
         /// Gets or sets the outbound message settings
         /// </summary>
         SendConfiguration Send { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message logger
+        /// </summary>
+        IMessageLogger MessageLogger { get; set; }
     }
 }

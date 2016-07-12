@@ -85,8 +85,11 @@
     <Compile Include="Configuration\IConfigureObjectBuilder.cs" />
     <Compile Include="Exceptions\JungleBusConfigurationException.cs" />
     <Compile Include="Exceptions\JungleBusException.cs" />
+    <Compile Include="Messaging\IMessageLogger.cs" />
     <Compile Include="Messaging\IMessagePublisher.cs" />
     <Compile Include="Messaging\IMessageQueue.cs" />
+    <Compile Include="Messaging\NoOpMessageLogger.cs" />
+    <Compile Include="Messaging\MessageLogger.cs" />
     <Compile Include="Messaging\MessageProcessingResult.cs" />
     <Compile Include="TransactionalBus.cs" />
     <Compile Include="Aws\Sns\SnsClient.cs" />

@@ -11,7 +11,10 @@
         /// <returns>Default bus configuration</returns>
         public static IConfigureObjectBuilder Create()
         {
-            return new BusConfiguration() as IConfigureObjectBuilder;
+            return new BusConfiguration()
+            {
+                MessageLogger = new Messaging.NoOpMessageLogger(),
+            } as IConfigureObjectBuilder;
         }
     }
 }

@@ -16,11 +16,13 @@ namespace JungleBus.Tests.Messaging
         private Mock<IMessageQueue> _queue;
         private Mock<IMessageProcessor> _messageProcessor;
         private Mock<IBus> _bus;
+        private Mock<IMessageLogger> _messageLogger;
         private TransportMessage _message;
 
         [TestInitialize]
         public void TestInitialized()
         {
+            _messageLogger = new Mock<IMessageLogger>();
             _message = new TransportMessage()
             {
                 ReceiptHandle = "123",
@@ -32,7 +34,7 @@ namespace JungleBus.Tests.Messaging
             _messageProcessor = new Mock<IMessageProcessor>(MockBehavior.Strict);
             _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = true });
 
-            _messagePump = new MessagePump(_queue.Object, 5, _messageProcessor.Object, _bus.Object, 1);
+            _messagePump = new MessagePump(_queue.Object, 5, _messageProcessor.Object, _messageLogger.Object, _bus.Object, 1);
 
             _queue.Setup(x => x.GetMessages(It.IsAny<CancellationToken>())).Returns(Task.FromResult((IEnumerable<TransportMessage>)new[] { _message }))
                 .Callback(() => _messagePump.Stop());

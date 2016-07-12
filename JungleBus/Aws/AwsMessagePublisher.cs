@@ -25,29 +25,40 @@ namespace JungleBus.Aws
         private readonly IMessageSerializer _messageSerializer = new JsonNetSerializer();
 
         /// <summary>
+        /// Message logger
+        /// </summary>
+        private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AwsMessagePublisher" /> class.
         /// </summary>
         /// <param name="snsClient">SNS client to publish to</param>
-        public AwsMessagePublisher(ISnsClient snsClient)
+        /// <param name="messageLogger">Message logger</param>
+        public AwsMessagePublisher(ISnsClient snsClient, IMessageLogger messageLogger)
         {
             _snsClient = snsClient;
+            _messageLogger = messageLogger;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AwsMessagePublisher" /> class.
         /// </summary>
         /// <param name="endpoint">Amazon Endpoint we are connecting to</param>
-        public AwsMessagePublisher(RegionEndpoint endpoint)
+        /// <param name="messageLogger">Message logger</param>
+        public AwsMessagePublisher(RegionEndpoint endpoint, IMessageLogger messageLogger)
         {
             _snsClient = new SnsClient(endpoint);
+            _messageLogger = messageLogger;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AwsMessagePublisher" /> class.
         /// </summary>
-        public AwsMessagePublisher()
+        /// <param name="messageLogger">Message logger</param>
+        public AwsMessagePublisher(IMessageLogger messageLogger)
         {
             _snsClient = null;
+            _messageLogger = messageLogger;
         }
 
         /// <summary>
@@ -63,6 +74,7 @@ namespace JungleBus.Aws
             }
 
             _snsClient.Publish(message, type);
+            _messageLogger.OutboundLogMessage(message, type.AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -73,16 +85,19 @@ namespace JungleBus.Aws
         /// <param name="localMessageQueue">Queue to send to</param>
         public void Send(string messageString, Type type, IMessageQueue localMessageQueue)
         {
+            string messageType = type.AssemblyQualifiedName;
             SnsMessage fakeMessage = new SnsMessage()
             {
                 Message = messageString,
                 MessageAttributes = new Dictionary<string, MessageAttribute>()
                 {
-                    { "messageType", new MessageAttribute() { Type = "String", Value = type.AssemblyQualifiedName } },
+                    { "messageType", new MessageAttribute() { Type = "String", Value = messageType } },
                 },
             };
 
-            localMessageQueue.AddMessage(_messageSerializer.Serialize(fakeMessage));
+            string messageBody = _messageSerializer.Serialize(fakeMessage);
+            localMessageQueue.AddMessage(messageBody);
+            _messageLogger.OutboundLogMessage(messageBody, messageType);
         }
 
         /// <summary>

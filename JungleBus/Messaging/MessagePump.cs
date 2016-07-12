@@ -43,6 +43,11 @@ namespace JungleBus.Messaging
         private CancellationTokenSource _cancellationToken;
 
         /// <summary>
+        /// Message logger
+        /// </summary>
+        private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MessagePump" /> class.
         /// </summary>
         /// <param name="queue">Queue to read messages from</param>
@@ -50,13 +55,14 @@ namespace JungleBus.Messaging
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
         /// <param name="bus">Instance of the bus to pass to the event handlers</param>
         /// <param name="id">Id of the message pump</param>
-        public MessagePump(IMessageQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IBus bus, int id)
+        public MessagePump(IMessageQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IMessageLogger messageLogger, IBus bus, int id)
         {
             _queue = queue;
             _messageRetryCount = messageRetryCount;
             _messageProcessor = messageProcessor;
             _cancellationToken = new CancellationTokenSource();
             _bus = bus;
+            _messageLogger = messageLogger;
         }
 
         /// <summary>
@@ -80,6 +86,7 @@ namespace JungleBus.Messaging
                     foreach (TransportMessage message in recievedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
+                        _messageLogger.InboundLogMessage(message.Body, message.MessageTypeName);
                         MessageProcessingResult result;
                         if (message.MessageParsingSucceeded)
                         {

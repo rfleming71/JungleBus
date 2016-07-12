@@ -12,14 +12,24 @@ namespace JungleBus.Tests.Aws
     [TestClass]
     public class AwsMessagePublisherTests
     {
+        private Mock<IMessageLogger> _mockLogger;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            _mockLogger = new Mock<IMessageLogger>(MockBehavior.Strict);
+            _mockLogger.Setup(x => x.OutboundLogMessage(It.IsAny<string>(), It.IsAny<string>()));
+        }
+
         [TestMethod]
         public void AwsMessagePublisherTests_Publish()
         {
             Mock<ISnsClient> mockClient = new Mock<ISnsClient>(MockBehavior.Strict);
             mockClient.Setup(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()));
-            AwsMessagePublisher publisher = new AwsMessagePublisher(mockClient.Object);
+            AwsMessagePublisher publisher = new AwsMessagePublisher(mockClient.Object, _mockLogger.Object);
             publisher.Publish("test message", typeof(TestMessage));
             mockClient.Verify(x => x.Publish("test message", typeof(TestMessage)), Times.Once());
+            _mockLogger.Verify(x => x.OutboundLogMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
         [TestMethod]
@@ -27,7 +37,7 @@ namespace JungleBus.Tests.Aws
         {
             try
             {
-                AwsMessagePublisher publisher = new AwsMessagePublisher();
+                AwsMessagePublisher publisher = new AwsMessagePublisher(_mockLogger.Object);
                 publisher.Publish("string", typeof(TestMessage));
                 Assert.Fail();
             }
@@ -42,7 +52,7 @@ namespace JungleBus.Tests.Aws
         {
             try
             {
-                AwsMessagePublisher publisher = new AwsMessagePublisher();
+                AwsMessagePublisher publisher = new AwsMessagePublisher(_mockLogger.Object);
                 publisher.SetupMessagesForPublishing(new Type[] { typeof(TestMessage) });
                 Assert.Fail();
             }
@@ -59,7 +69,7 @@ namespace JungleBus.Tests.Aws
             string sentMessage = null;
             mockQueue.Setup(x => x.AddMessage(It.IsAny<string>())).Callback<string>(x => sentMessage = x);
 
-            AwsMessagePublisher publisher = new AwsMessagePublisher();
+            AwsMessagePublisher publisher = new AwsMessagePublisher(_mockLogger.Object);
             publisher.Send("message body", typeof(TestMessage), mockQueue.Object);
             mockQueue.Verify(x => x.AddMessage(It.IsAny<string>()), Times.Once());
             Assert.IsNotNull(sentMessage);
@@ -68,6 +78,7 @@ namespace JungleBus.Tests.Aws
             Assert.AreEqual("message body", message.Message);
             Assert.AreEqual("String", message.MessageAttributes["messageType"].Type);
             Assert.AreEqual("JungleBus.Tests.TestMessage, JungleBus.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", message.MessageAttributes["messageType"].Value);
+            _mockLogger.Verify(x => x.OutboundLogMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
     }
 }
