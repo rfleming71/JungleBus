@@ -77,9 +77,10 @@
     <Compile Include="Aws\AwsMessagePublisher.cs" />
     <Compile Include="Aws\Sns\ISnsClient.cs" />
     <Compile Include="Aws\Sqs\SqsQueue.cs" />
+    <Compile Include="Configuration\IBusConfiguration.cs" />
+    <Compile Include="Configuration\IConfigureMessageSerializer.cs" />
     <Compile Include="Configuration\SendConfigurationExtensions.cs" />
     <Compile Include="Configuration\ReceiveConfigurationExtensions.cs" />
-    <Compile Include="Configuration\IBusConfiguration.cs" />
     <Compile Include="Configuration\IConfigureEventReceiving.cs" />
     <Compile Include="Configuration\IConfigureEventPublishing.cs" />
     <Compile Include="Configuration\IConfigureObjectBuilder.cs" />
