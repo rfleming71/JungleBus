@@ -40,7 +40,7 @@ namespace JungleBus.Messaging
         /// </summary>
         /// <param name="objectBuilder">Use to construct the message handlers</param>
         /// <param name="handlers">Collection of message handlers organized by message type</param>
-        /// <param name="handlers">Collection of message fault handlers organized by message type</param>
+        /// <param name="faultHandlers">Collection of message fault handlers organized by message type</param>
         public MessageProcessor(IObjectBuilder objectBuilder, Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers)
         {
             _objectBuilder = objectBuilder;
@@ -115,6 +115,7 @@ namespace JungleBus.Messaging
         /// </summary>
         /// <param name="message">Message to process</param>
         /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
+        /// <param name="ex">Exception caused by the message</param>
         public void ProcessFaultedMessage(TransportMessage message, IBus busInstance, Exception ex)
         {
             ProcessFaultedMessageHandlers(message, busInstance, ex);
@@ -124,6 +125,12 @@ namespace JungleBus.Messaging
             }
         }
 
+        /// <summary>
+        /// Calls the fault handler on the message object
+        /// </summary>
+        /// <param name="message">Message to process</param>
+        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
+        /// <param name="messageException">Exception caused by the message</param>
         private void ProcessFaultedMessageHandlers(object message, IBus busInstance, Exception messageException)
         {
             Type messageType = message.GetType();

@@ -180,6 +180,13 @@ namespace JungleBus.Configuration
             return configuration;
         }
 
+        /// <summary>
+        /// Scans the given types for instances of the requested interface
+        /// </summary>
+        /// <param name="typesToScan">Types to scan</param>
+        /// <param name="handlerTypeToFind">Handler type to find</param>
+        /// <param name="objectBuilder">Object builder to register the types with</param>
+        /// <returns>Types found</returns>
         private static Dictionary<Type, HashSet<Type>> ScanForTypes(IEnumerable<Type> typesToScan, Type handlerTypeToFind, IObjectBuilder objectBuilder)
         {
             Dictionary<Type, HashSet<Type>> results = new Dictionary<Type, HashSet<Type>>();

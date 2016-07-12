@@ -8,7 +8,7 @@ namespace JungleBus.Messaging
     public class MessageProcessingResult
     {
         /// <summary>
-        /// Gets or sets a flag indicating whether the message was
+        /// Gets or sets a value indicating whether the message was
         /// successfully processed
         /// </summary>
         public bool WasSuccessful { get; set; }

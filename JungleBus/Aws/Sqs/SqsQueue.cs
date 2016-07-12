@@ -44,6 +44,7 @@ namespace JungleBus.Aws.Sqs
         /// </summary>
         /// <param name="endpoint">Region the queue is in</param>
         /// <param name="queueName">Name of the queue</param>
+        /// <param name="retryCount">Number of times to retry a message before moving it to the dead letter queue</param>
         /// <param name="messageParser">Message parser</param>
         public SqsQueue(RegionEndpoint endpoint, string queueName, int retryCount, IMessageParser messageParser)
         {

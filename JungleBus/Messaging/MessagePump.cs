@@ -38,14 +38,14 @@ namespace JungleBus.Messaging
         private readonly int _messageRetryCount;
 
         /// <summary>
-        /// Token used to control when to stop the pump
-        /// </summary>
-        private CancellationTokenSource _cancellationToken;
-
-        /// <summary>
         /// Message logger
         /// </summary>
         private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
+        /// Token used to control when to stop the pump
+        /// </summary>
+        private CancellationTokenSource _cancellationToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePump" /> class.
@@ -53,6 +53,7 @@ namespace JungleBus.Messaging
         /// <param name="queue">Queue to read messages from</param>
         /// <param name="messageRetryCount">Number of times to retry a message</param>
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
+        /// <param name="messageLogger">Instance of the message logger</param>
         /// <param name="bus">Instance of the bus to pass to the event handlers</param>
         /// <param name="id">Id of the message pump</param>
         public MessagePump(IMessageQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IMessageLogger messageLogger, IBus bus, int id)

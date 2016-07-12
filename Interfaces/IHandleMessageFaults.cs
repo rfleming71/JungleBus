@@ -12,6 +12,7 @@ namespace JungleBus.Interfaces
         /// Handle the message fault of type T
         /// </summary>
         /// <param name="message">Message to handle</param>
+        /// <param name="ex">Exception caused by the message</param>
         void Handle(T message, Exception ex);
     }
 }

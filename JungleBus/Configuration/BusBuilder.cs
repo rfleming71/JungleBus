@@ -14,7 +14,9 @@
             return new BusConfiguration()
             {
                 MessageLogger = new Messaging.NoOpMessageLogger(),
-            } as IConfigureObjectBuilder;
+            } 
+
+            as IConfigureObjectBuilder;
         }
     }
 }

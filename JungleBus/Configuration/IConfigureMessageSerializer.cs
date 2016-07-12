@@ -8,7 +8,7 @@ namespace JungleBus.Configuration
     public interface IConfigureMessageSerializer
     {
         /// <summary>
-        /// Gets or sets the service locator for message handlers 
+        /// Gets the service locator for message handlers 
         /// </summary>
         IObjectBuilder ObjectBuilder { get; }
     }
