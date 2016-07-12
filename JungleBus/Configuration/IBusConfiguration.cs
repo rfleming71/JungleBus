@@ -11,7 +11,7 @@ namespace JungleBus.Configuration
         /// <summary>
         /// Gets or sets the service locator for message handlers 
         /// </summary>
-        IObjectBuilder ObjectBuilder { get; set; }
+        IObjectBuilder ObjectBuilder { get; }
 
         /// <summary>
         /// Gets or sets the inbound message settings
