@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>JungleBus.Interfaces</id>
-    <version>0.1.4</version>
+    <version>0.2.0</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
     <licenseUrl>https://raw.githubusercontent.com/rfleming71/JungleBus/master/LICENCE</licenseUrl>
