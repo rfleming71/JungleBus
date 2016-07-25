@@ -119,7 +119,10 @@ namespace JungleBus.Messaging
                     }
 
                     result.WasSuccessful = result.Exception == null;
-                    transactionScope.Complete();
+                    if (result.WasSuccessful)
+                    {
+                        transactionScope.Complete();
+                    }
                 }
             }
             else

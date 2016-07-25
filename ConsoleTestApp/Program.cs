@@ -10,7 +10,7 @@ namespace ConsoleTestApp
     {
         static void Main(string[] args)
         {
-            bool testFullBus = false;
+            bool testFullBus = true;
             IRunJungleBus bus;
             IBus sendBus;
             if (testFullBus)
