@@ -4,7 +4,7 @@ Transactional service bus built on top of Amazon Web Services.
 # Creating the Bus
 Creates a service bus that can send and recieve messages
 ```C#
-var bus = BusBuilder.Create()
+var bus = BusBuilder.Create("Development")
 	.WithStructureMapObjectBuilder()
 	.UsingJsonSerialization()
 	.PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
