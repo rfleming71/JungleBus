@@ -66,17 +66,6 @@ namespace JungleBus.Aws
         /// <summary>
         /// Initializes a new instance of the <see cref="AwsMessagePublisher" /> class.
         /// </summary>
-        /// <param name="endpoint">Amazon Endpoint we are connecting to</param>
-        /// <param name="messageLogger">Message logger</param>
-        public AwsMessagePublisher(RegionEndpoint endpoint, IMessageLogger messageLogger)
-        {
-            _snsClient = new SnsClient(endpoint);
-            _messageLogger = messageLogger;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AwsMessagePublisher" /> class.
-        /// </summary>
         /// <param name="messageLogger">Message logger</param>
         public AwsMessagePublisher(IMessageLogger messageLogger)
         {

@@ -40,6 +40,11 @@ namespace JungleBus.Aws.Sns
         private readonly Dictionary<string, string> _topicArns;
 
         /// <summary>
+        /// Function to build the names of the topics
+        /// </summary>
+        private readonly Func<Type, string> _topicFormatter;
+
+        /// <summary>
         /// Connection to SNS
         /// </summary>
         private IAmazonSimpleNotificationService _sns;
@@ -48,25 +53,17 @@ namespace JungleBus.Aws.Sns
         /// Initializes a new instance of the <see cref="SnsClient" /> class.
         /// </summary>
         /// <param name="endpoint">Amazon Endpoint we are connecting to</param>
-        public SnsClient(RegionEndpoint endpoint)
+        /// <param name="topicFormatter">Function to build the names of the topics</param>
+        public SnsClient(RegionEndpoint endpoint, Func<Type, string> topicFormatter)
         {
-            _sns = new AmazonSimpleNotificationServiceClient(endpoint);
-            _topicArns = new Dictionary<string, string>();
-        }
-
-        /// <summary>
-        /// Format a message type into a topic name
-        /// </summary>
-        /// <param name="messageType">Message type</param>
-        /// <returns>Formatted Topic name</returns>
-        public static string GetTopicName(Type messageType)
-        {
-            if (messageType == null)
+            if (topicFormatter == null)
             {
-                throw new ArgumentNullException("messageType");
+                throw new ArgumentNullException("topicFormatter");
             }
 
-            return messageType.FullName.Replace('.', '_');
+            _sns = new AmazonSimpleNotificationServiceClient(endpoint);
+            _topicArns = new Dictionary<string, string>();
+            _topicFormatter = topicFormatter;
         }
 
         /// <summary>
@@ -89,7 +86,7 @@ namespace JungleBus.Aws.Sns
         /// <param name="type">Payload type</param>
         public void Publish(string message, Type type)
         {
-            string topicName = GetTopicName(type);
+            string topicName = _topicFormatter(type);
             if (!_topicArns.ContainsKey(topicName))
             {
                 Topic topic = _sns.FindTopic(topicName);
@@ -118,7 +115,7 @@ namespace JungleBus.Aws.Sns
         {
             foreach (Type messageType in messageTypes)
             {
-                string topicName = GetTopicName(messageType);
+                string topicName = _topicFormatter(messageType);
                 if (!_topicArns.ContainsKey(topicName))
                 {
                     Topic topic = _sns.FindTopic(topicName);

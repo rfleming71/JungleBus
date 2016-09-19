@@ -68,6 +68,11 @@ namespace JungleBus.Configuration
                 configuration.Receive = new ReceiveConfiguration();
             }
 
+            if (!string.IsNullOrWhiteSpace(configuration.BusName))
+            {
+                sqsName = string.Format("{0}_{1}", configuration.BusName, sqsName);
+            }
+
             configuration.Receive.MessageRetryCount = 5;
             configuration.Receive.InputQueue = new SqsQueue(region, sqsName, configuration.Receive.MessageRetryCount, new MessageParser(null));
             return configuration as IConfigureEventReceiving;
@@ -171,7 +176,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.Receive.Handlers = ScanForTypes(eventHandlers, typeof(IHandleMessage<>), configuration.ObjectBuilder);
-            configuration.Receive.InputQueue.Subscribe(configuration.Receive.Handlers.Keys);
+            configuration.Receive.InputQueue.Subscribe(configuration.Receive.Handlers.Keys, configuration.SubscriptionFormatter);
             configuration.Receive.FaultHandlers = new Dictionary<Type, HashSet<Type>>();
             return configuration;
         }

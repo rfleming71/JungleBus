@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+using System;
 using JungleBus.Interfaces.IoC;
 using JungleBus.Messaging;
 
@@ -37,6 +38,11 @@ namespace JungleBus.Configuration
         IObjectBuilder ObjectBuilder { get; }
 
         /// <summary>
+        /// Gets or sets an ID for the entire bus
+        /// </summary>
+        string BusName { get; set; }
+
+        /// <summary>
         /// Gets or sets the inbound message settings
         /// </summary>
         ReceiveConfiguration Receive { get; set; }
@@ -50,5 +56,10 @@ namespace JungleBus.Configuration
         /// Gets or sets the message logger
         /// </summary>
         IMessageLogger MessageLogger { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function for formatting subscription names
+        /// </summary>
+        Func<Type, string> SubscriptionFormatter { get; set; }
     }
 }
