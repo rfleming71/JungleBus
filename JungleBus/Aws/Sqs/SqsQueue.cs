@@ -82,8 +82,9 @@ namespace JungleBus.Aws.Sqs
                 createResponse = _simpleQueueService.CreateQueue(queueName + "_Dead_Letter");
                 string deadLetterQueue = createResponse.QueueUrl;
                 var deadLetterAttributes = _simpleQueueService.GetAttributes(deadLetterQueue);
-                string redrivePolicy = string.Format(CultureInfo.InvariantCulture, "{{\"maxReceiveCount\":\"{0}\", \"deadLetterTargetArn\":\"{1}\"}}", retryCount, deadLetterAttributes["QueueArn"]);
-                _simpleQueueService.SetQueueAttributes(_queueUrl, new Dictionary<string, string>() { { "RedrivePolicy", redrivePolicy } });
+                string redrivePolicy = string.Format(CultureInfo.InvariantCulture, "{{\"maxReceiveCount\":\"{0}\", \"deadLetterTargetArn\":\"{1}\" }}", retryCount, deadLetterAttributes["QueueArn"]);
+                _simpleQueueService.SetQueueAttributes(_queueUrl, new Dictionary<string, string>() { { "RedrivePolicy", redrivePolicy }, { "MessageRetentionPeriod", "1209600" } });
+                _simpleQueueService.SetQueueAttributes(createResponse.QueueUrl, new Dictionary<string, string>() { { "MessageRetentionPeriod", "1209600" } });
             }
 
             MessageParser = messageParser;
