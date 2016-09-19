@@ -67,7 +67,7 @@ namespace ConsoleTestApp
 
         static IRunJungleBus CreateFullBus()
         {
-            return BusBuilder.Create()
+            return BusBuilder.Create("dev")
                 .WithStructureMapObjectBuilder()
                 .UsingJsonSerialization()
                 .EnableMessageLogging()

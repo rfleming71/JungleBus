@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+using System;
+
 namespace JungleBus.Configuration
 {
     /// <summary>
@@ -34,12 +36,44 @@ namespace JungleBus.Configuration
         /// <returns>Default bus configuration</returns>
         public static IConfigureObjectBuilder Create()
         {
-            return new BusConfiguration()
+            return Create(null);
+        }
+
+        /// <summary>
+        /// Create the default bus configuration
+        /// </summary>
+        /// <returns>Default bus configuration</returns>
+        public static IConfigureObjectBuilder Create(string busName)
+        {
+            IBusConfiguration configuration = new BusConfiguration()
             {
                 MessageLogger = new Messaging.NoOpMessageLogger(),
-            } 
+                BusName = busName,
+            };
 
-            as IConfigureObjectBuilder;
+            configuration.SubscriptionFormatter = GetDefaultFormatter(configuration);
+
+            return configuration as IConfigureObjectBuilder;
+        }
+
+        private static Func<Type, string> GetDefaultFormatter(IBusConfiguration configuration)
+        {
+            return (Type messageType) =>
+            {
+                if (messageType == null)
+                {
+                    throw new ArgumentNullException("messageType");
+                }
+
+                string name = messageType.FullName.Replace('.', '_');
+
+                if (!string.IsNullOrWhiteSpace(configuration.BusName))
+                {
+                    name = string.Format("{0}_{1}", configuration.BusName, name);
+                }
+
+                return name;
+            };
         }
     }
 }

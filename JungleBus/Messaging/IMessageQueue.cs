@@ -55,7 +55,8 @@ namespace JungleBus.Messaging
         /// Subscribe the queue to the given message types
         /// </summary>
         /// <param name="messageTypes">Message to subscribe to</param>
-        void Subscribe(IEnumerable<Type> messageTypes);
+        /// <param name="subscriptionNameBuilder">Function to format the type into a name for the queue to subscribe to</param>
+        void Subscribe(IEnumerable<Type> messageTypes, Func<Type, string> subscriptionNameBuilder);
 
         /// <summary>
         /// Adds the message to the queue

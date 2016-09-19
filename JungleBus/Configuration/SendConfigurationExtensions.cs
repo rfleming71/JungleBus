@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon;
 using JungleBus.Aws;
+using JungleBus.Aws.Sns;
 using JungleBus.Exceptions;
 
 namespace JungleBus.Configuration
@@ -65,7 +66,7 @@ namespace JungleBus.Configuration
             }
 
             configuration.Send = new SendConfiguration();
-            configuration.Send.MessagePublisher = new AwsMessagePublisher(region, configuration.MessageLogger);
+            configuration.Send.MessagePublisher = new AwsMessagePublisher(new SnsClient(region, configuration.SubscriptionFormatter), configuration.MessageLogger);
             configuration.Send.MessagePublisher.SetupMessagesForPublishing(messageTypes);
 
             return configuration as IConfigureEventPublishing;
