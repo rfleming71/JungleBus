@@ -2,13 +2,13 @@
 <package >
   <metadata>
     <id>JungleBus.Interfaces</id>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
     <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple service bus built on top of Amazon Web Services</description>
-    <releaseNotes>Initial build. Warning still in testing.</releaseNotes>
+    <releaseNotes>Updated to support prefixes on the queue and topic names</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <dependencies>
     </dependencies>
