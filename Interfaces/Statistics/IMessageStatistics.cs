@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessingResult.cs">
+﻿// <copyright file="MessageProcessor.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -23,27 +23,43 @@
 // </copyright>
 using System;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Interfaces.Statistics
 {
     /// <summary>
-    /// Result returns from the message processor when processing a message
+    /// Contains statistics about the completed message
     /// </summary>
-    public class MessageProcessingResult
+    public interface IMessageStatistics
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the message was
-        /// successfully processed
+        /// Gets the type of the message
         /// </summary>
-        public bool WasSuccessful { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the exception, if any, from message processing
-        /// </summary>
-        public Exception Exception { get; set; }
+        string MessageType { get; }
 
         /// <summary>
-        /// Gets or sets the amount of time processing this message
+        /// Gets the run time of the message 
         /// </summary>
-        public TimeSpan Runtime { get; set; }
+        TimeSpan HandlerRunTime { get; }
+
+        /// <summary>
+        /// Get the number of times this message has been tried before this
+        /// attempt
+        /// </summary>
+        int PreviousRetryCount { get; }
+
+        /// <summary>
+        /// Gets the number of bytes in the message
+        /// </summary>
+        int MessageLength { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this message was successful
+        /// </summary>
+        bool Success { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this the final attempt to process
+        /// this message
+        /// </summary>
+        bool FinalAttempt { get; }
     }
 }

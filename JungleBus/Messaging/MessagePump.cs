@@ -134,6 +134,17 @@ namespace JungleBus.Messaging
                             Log.InfoFormat("[{0}] Message faulted ", Id);
                             _messageProcessor.ProcessFaultedMessage(message, _bus, result.Exception);
                         }
+
+                        MessageStatistics stats = new MessageStatistics()
+                        {
+                            FinalAttempt = message.RetryCount + 1 == _messageRetryCount,
+                            HandlerRunTime = result.Runtime,
+                            MessageLength = message.Body.Length,
+                            MessageType = message.MessageTypeName,
+                            Success = result.WasSuccessful,
+                            PreviousRetryCount = message.RetryCount,
+                        };
+                        _messageProcessor.ProcessMessageStatistics(stats);
                     }
                 }
                 catch (OperationCanceledException)

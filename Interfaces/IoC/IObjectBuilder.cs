@@ -22,6 +22,7 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using System.Collections.Generic;
 
 namespace JungleBus.Interfaces.IoC
 {
@@ -56,6 +57,13 @@ namespace JungleBus.Interfaces.IoC
         /// <typeparam name="T">Type to get</typeparam>
         /// <returns>Instance of type T</returns>
         T GetValue<T>();
+
+        /// <summary>
+        /// Gets all instances of type T
+        /// </summary>
+        /// <typeparam name="T">Type to get</typeparam>
+        /// <returns>Instances of type T</returns>
+        IEnumerable<T> GetValues<T>();
 
         /// <summary>
         /// Gets an instance of type type

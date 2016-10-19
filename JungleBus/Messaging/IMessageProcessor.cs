@@ -23,6 +23,7 @@
 // </copyright>
 using System;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.Statistics;
 
 namespace JungleBus.Messaging
 {
@@ -46,5 +47,11 @@ namespace JungleBus.Messaging
         /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
         /// <param name="ex">Exception thrown by the message</param>
         void ProcessFaultedMessage(TransportMessage message, IBus busInstance, Exception ex);
+
+        /// <summary>
+        /// Processes inbound message statistics
+        /// </summary>
+        /// <param name="statistics">Message statistics</param>
+        void ProcessMessageStatistics(IMessageStatistics statistics);
     }
 }

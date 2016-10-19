@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessingResult.cs">
+﻿// <copyright file="MessageProcessor.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -21,29 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-using System;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Interfaces.Statistics
 {
     /// <summary>
-    /// Result returns from the message processor when processing a message
+    /// Interface to handle getting message statistics from the bus
     /// </summary>
-    public class MessageProcessingResult
+    public interface IWantMessageStatistics
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the message was
-        /// successfully processed
+        /// Called when a message completes processing
         /// </summary>
-        public bool WasSuccessful { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the exception, if any, from message processing
-        /// </summary>
-        public Exception Exception { get; set; }
-
-        /// <summary>
-        /// Gets or sets the amount of time processing this message
-        /// </summary>
-        public TimeSpan Runtime { get; set; }
+        /// <param name="statistics">Message Statistics</param>
+        void RecieveStatisitics(IMessageStatistics statistics);
     }
 }

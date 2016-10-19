@@ -22,6 +22,7 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using System.Collections.Generic;
 using JungleBus.Interfaces.IoC;
 using StructureMap;
 
@@ -110,6 +111,16 @@ namespace JungleBus.IoC
         public void Dispose()
         {
             _container.Dispose();
+        }
+
+        /// <summary>
+        /// Gets all instances of type T
+        /// </summary>
+        /// <typeparam name="T">Type to get</typeparam>
+        /// <returns>Instances of type T</returns>
+        public IEnumerable<T> GetValues<T>()
+        {
+            return _container.GetAllInstances<T>();
         }
     }
 }

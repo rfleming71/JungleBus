@@ -23,11 +23,13 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Transactions;
 using Common.Logging;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.IoC;
+using JungleBus.Interfaces.Statistics;
 
 namespace JungleBus.Messaging
 {
@@ -83,6 +85,8 @@ namespace JungleBus.Messaging
             }
 
             MessageProcessingResult result = new MessageProcessingResult();
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             if (_handlerTypes.ContainsKey(message.MessageType))
             {
                 Log.TraceFormat("Processing {0} handlers for message type {1}", _handlerTypes[message.MessageType].Count, message.MessageTypeName);
@@ -131,6 +135,9 @@ namespace JungleBus.Messaging
                 result.Exception = new Exception(string.Format("Could not find a handler for {0}", message.MessageTypeName));
             }
 
+            watch.Stop();
+            result.Runtime = watch.Elapsed;
+
             return result;
         }
 
@@ -146,6 +153,22 @@ namespace JungleBus.Messaging
             if (message.MessageParsingSucceeded)
             {
                 ProcessFaultedMessageHandlers(message.Message, busInstance, ex);
+            }
+        }
+
+        /// <summary>
+        /// Processes inbound message statistics
+        /// </summary>
+        /// <param name="statistics">Message statistics</param>
+        public void ProcessMessageStatistics(IMessageStatistics statistics)
+        {
+            var recievers = _objectBuilder.GetValues<IWantMessageStatistics>();
+            if (recievers != null)
+            {
+                foreach (IWantMessageStatistics reciever in recievers)
+                {
+                    reciever.RecieveStatisitics(statistics);
+                }
             }
         }
 
