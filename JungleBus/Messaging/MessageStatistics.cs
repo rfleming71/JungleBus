@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessingResult.cs">
+﻿// <copyright file="MessageProcessor.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,28 +22,45 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using JungleBus.Interfaces.Statistics;
 
 namespace JungleBus.Messaging
 {
     /// <summary>
-    /// Result returns from the message processor when processing a message
+    /// Contains statistics about the completed message
     /// </summary>
-    public class MessageProcessingResult
+    internal class MessageStatistics : IMessageStatistics
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the message was
-        /// successfully processed
+        /// Gets a value indicating whether this the final attempt to process
+        /// this message
         /// </summary>
-        public bool WasSuccessful { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the exception, if any, from message processing
-        /// </summary>
-        public Exception Exception { get; set; }
+        public bool FinalAttempt { get; set; }
 
         /// <summary>
-        /// Gets or sets the amount of time processing this message
+        /// Gets the run time of the message 
         /// </summary>
-        public TimeSpan Runtime { get; set; }
+        public TimeSpan HandlerRunTime { get; set; }
+
+        /// <summary>
+        /// Gets the number of bytes in the message
+        /// </summary>
+        public int MessageLength { get; set; }
+
+        /// <summary>
+        /// Gets the type of the message
+        /// </summary>
+        public string MessageType { get; set; }
+
+        /// <summary>
+        /// Get the number of times this message has been tried before this
+        /// attempt
+        /// </summary>
+        public int PreviousRetryCount { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this message was successful
+        /// </summary>
+        public bool Success { get; set; }
     }
 }

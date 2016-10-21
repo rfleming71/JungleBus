@@ -89,6 +89,7 @@
     <Compile Include="Messaging\IMessageLogger.cs" />
     <Compile Include="Messaging\IMessagePublisher.cs" />
     <Compile Include="Messaging\IMessageQueue.cs" />
+    <Compile Include="Messaging\MessageStatistics.cs" />
     <Compile Include="Messaging\NoOpMessageLogger.cs" />
     <Compile Include="Messaging\MessageLogger.cs" />
     <Compile Include="Messaging\MessageProcessingResult.cs" />

@@ -2,14 +2,24 @@
 using Amazon;
 using JungleBus.Configuration;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.Statistics;
 using Messages;
+using StructureMap;
 
 namespace ConsoleTestApp
 {
     class Program
     {
+        private static IContainer _container;
+
         static void Main(string[] args)
         {
+            _container = new Container();
+            _container.Configure(x =>
+            {
+                x.For<IWantMessageStatistics>().Use<StatsTracker>();
+            });
+
             bool testFullBus = true;
             IRunJungleBus bus;
             IBus sendBus;
@@ -44,7 +54,7 @@ namespace ConsoleTestApp
         static IRunJungleBus CreateRecieveOnlyBus()
         {
             return BusBuilder.Create()
-                .WithStructureMapObjectBuilder()
+                .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
@@ -58,7 +68,7 @@ namespace ConsoleTestApp
         static IBus CreateSendOnlyBus()
         {
             return BusBuilder.Create()
-                .WithStructureMapObjectBuilder()
+                .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
@@ -68,7 +78,7 @@ namespace ConsoleTestApp
         static IRunJungleBus CreateFullBus()
         {
             return BusBuilder.Create("dev")
-                .WithStructureMapObjectBuilder()
+                .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
