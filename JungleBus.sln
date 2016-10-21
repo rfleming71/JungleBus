@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus", "JungleBus\JungleBus.csproj", "{22D96BE2-FD5E-4CEC-A39C-CC9871FE2123}"
 EndProject
@@ -12,6 +12,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus.Tests", "JungleBus.Tests\JungleBus.Tests.csproj", "{C3C8081B-64EE-453D-8543-A69CE022D66A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{09CF3161-D0C9-4390-B66B-B6BF5AD17514}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuSpecs", "NuSpecs", "{C7F54577-1A7B-4977-AD59-D8D33392BB36}"
+	ProjectSection(SolutionItems) = preProject
+		JungleBus.Interfaces.nuspec = JungleBus.Interfaces.nuspec
+		JungleBus.nuspec = JungleBus.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
