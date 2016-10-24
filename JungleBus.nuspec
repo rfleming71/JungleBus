@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>JungleBus</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
     <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
@@ -16,7 +16,7 @@
       <dependency id="Common.Logging" version="[3.0,4.0)" />
       <dependency id="Newtonsoft.Json" version="[8.0.1,10)" />
       <dependency id="structuremap" version="4.2.0.402" />
-      <dependency id="JungleBus.Interfaces" version="[1.0,2.0)" />
+      <dependency id="JungleBus.Interfaces" version="[1.0.1,2.0)" />
     </dependencies>
   </metadata>
   <files>
