@@ -23,7 +23,7 @@
 // </copyright>
 using JungleBus.Interfaces.IoC;
 
-namespace JungleBus.Configuration
+namespace JungleBus.Interfaces.Configuration
 {
     /// <summary>
     /// Interface for configuring the object builder

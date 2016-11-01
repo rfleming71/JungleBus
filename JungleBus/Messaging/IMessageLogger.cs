@@ -33,7 +33,9 @@ namespace JungleBus.Messaging
         /// </summary>
         /// <param name="messageBody">Message body</param>
         /// <param name="messageType">Message type</param>
-        void InboundLogMessage(string messageBody, string messageType);
+        /// <param name="messageId">Id of the message</param>
+        /// <param name="attemptNumber">Number of times this message has been processed</param>
+        void InboundLogMessage(string messageBody, string messageType, string messageId, int attemptNumber);
 
         /// <summary>
         /// Logs messages being sent by the bus

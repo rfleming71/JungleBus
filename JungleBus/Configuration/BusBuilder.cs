@@ -22,6 +22,7 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using JungleBus.Interfaces.Configuration;
 
 namespace JungleBus.Configuration
 {

@@ -55,14 +55,6 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="StructureMap, Version=4.2.0.402, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\structuremap.4.2.0.402\lib\net40\StructureMap.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="StructureMap.Net4, Version=4.2.0.402, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\structuremap.4.2.0.402\lib\net40\StructureMap.Net4.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
@@ -78,12 +70,10 @@
     <Compile Include="Aws\Sns\ISnsClient.cs" />
     <Compile Include="Aws\Sqs\SqsQueue.cs" />
     <Compile Include="Configuration\IBusConfiguration.cs" />
-    <Compile Include="Configuration\IConfigureMessageSerializer.cs" />
     <Compile Include="Configuration\SendConfigurationExtensions.cs" />
     <Compile Include="Configuration\ReceiveConfigurationExtensions.cs" />
     <Compile Include="Configuration\IConfigureEventReceiving.cs" />
     <Compile Include="Configuration\IConfigureEventPublishing.cs" />
-    <Compile Include="Configuration\IConfigureObjectBuilder.cs" />
     <Compile Include="Exceptions\JungleBusConfigurationException.cs" />
     <Compile Include="Exceptions\JungleBusException.cs" />
     <Compile Include="Messaging\IMessageLogger.cs" />
@@ -106,7 +96,6 @@
     <Compile Include="Configuration\ReceiveConfiguration.cs" />
     <Compile Include="Configuration\SendConfiguration.cs" />
     <Compile Include="JungleBus.cs" />
-    <Compile Include="IoC\StructureMapObjectBuilder.cs" />
     <Compile Include="Messaging\IMessageParser.cs" />
     <Compile Include="Messaging\MessageParser.cs" />
     <Compile Include="Messaging\TransportMessage.cs" />

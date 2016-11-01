@@ -31,6 +31,11 @@ namespace JungleBus.Messaging
     public class TransportMessage
     {
         /// <summary>
+        /// Gets or sets the message id
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
         /// Gets or sets the body value
         /// </summary>
         public string Body { get; set; }
@@ -69,6 +74,6 @@ namespace JungleBus.Messaging
         /// <summary>
         /// Gets or sets the number of times this message has already been processed
         /// </summary>
-        public int RetryCount { get; set; }
+        public int AttemptNumber { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace JungleBus.Tests.Messaging
         private Mock<IBus> _bus;
         private Mock<IMessageLogger> _messageLogger;
         private TransportMessage _message;
+        private const int MaxTryCount = 5;
 
         [TestInitialize]
         public void TestInitialized()
@@ -34,7 +35,7 @@ namespace JungleBus.Tests.Messaging
             _messageProcessor = new Mock<IMessageProcessor>(MockBehavior.Strict);
             _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = true });
 
-            _messagePump = new MessagePump(_queue.Object, 5, _messageProcessor.Object, _messageLogger.Object, _bus.Object, 1);
+            _messagePump = new MessagePump(_queue.Object, MaxTryCount, _messageProcessor.Object, _messageLogger.Object, _bus.Object, 1);
 
             _queue.Setup(x => x.GetMessages(It.IsAny<CancellationToken>())).Returns(Task.FromResult((IEnumerable<TransportMessage>)new[] { _message }))
                 .Callback(() => _messagePump.Stop());
@@ -62,7 +63,7 @@ namespace JungleBus.Tests.Messaging
         [TestMethod]
         public void MessagePumpTests_SinglePass_processing_failure()
         {
-            _message.RetryCount = 1;
+            _message.AttemptNumber = 1;
             _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = false });
             _messagePump.Run();
             _queue.Verify(x => x.GetMessages(It.IsAny<CancellationToken>()), Times.Once());
@@ -74,7 +75,7 @@ namespace JungleBus.Tests.Messaging
         [TestMethod]
         public void MessagePumpTests_SinglePass_FinalPass_processing_failure()
         {
-            _message.RetryCount = 4;
+            _message.AttemptNumber = MaxTryCount;
             _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = false, Exception = new Exception()});
             _messagePump.Run();
             _queue.Verify(x => x.GetMessages(It.IsAny<CancellationToken>()), Times.Once());

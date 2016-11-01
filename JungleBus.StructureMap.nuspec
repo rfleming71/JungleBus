@@ -1,19 +1,20 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>JungleBus.Interfaces</id>
-    <version>2.0.0</version>
+    <id>JungleBus.StructureMap</id>
+    <version>1.0.0</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
     <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple service bus built on top of Amazon Web Services</description>
-    <releaseNotes>Adding message stats hook</releaseNotes>
+    <releaseNotes>Initial Release for StructureMap support</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <dependencies>
+      <dependency id="JungleBus.Interfaces" version="[2.0,3.0)" />
     </dependencies>
   </metadata>
   <files>
-	  <file src="JungleBus\bin\Release\JungleBus.Interfaces.dll" target="lib\net45" />
+	  <file src="JungleBus.StructureMap\bin\Release\JungleBus.StructureMap.dll" target="lib\net45" />
   </files>
 </package>

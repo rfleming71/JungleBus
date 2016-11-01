@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+using System;
+
 namespace JungleBus.Messaging
 {
     /// <summary>
@@ -33,7 +35,9 @@ namespace JungleBus.Messaging
         /// </summary>
         /// <param name="messageBody">Message body</param>
         /// <param name="messageType">Message type</param>
-        public void InboundLogMessage(string messageBody, string messageType)
+        /// <param name="messageId">Id of the message</param>
+        /// <param name="attemptNumber">Number of times this message has been processed</param>
+        public void InboundLogMessage(string messageBody, string messageType, string messageId, int attemptNumber)
         {
         }
 

@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using JungleBus.Interfaces.IoC;
 using StructureMap;
 
-namespace JungleBus.IoC
+namespace JungleBus.StructureMap
 {
     /// <summary>
     /// Implements the object builder interface backed by a StructureMap container

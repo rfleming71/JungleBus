@@ -3,6 +3,7 @@ using Amazon;
 using JungleBus.Configuration;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.Statistics;
+using JungleBus.StructureMap;
 using Messages;
 using StructureMap;
 

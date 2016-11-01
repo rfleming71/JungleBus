@@ -22,6 +22,7 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using JungleBus.Interfaces.Configuration;
 using JungleBus.Interfaces.IoC;
 using JungleBus.Messaging;
 

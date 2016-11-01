@@ -24,11 +24,11 @@
 using System;
 using JungleBus.Exceptions;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.Configuration;
+using JungleBus.Interfaces.IoC;
 using JungleBus.Interfaces.Serialization;
-using JungleBus.IoC;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
-using StructureMap;
 
 namespace JungleBus.Configuration
 {
@@ -42,31 +42,14 @@ namespace JungleBus.Configuration
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
         /// <returns>Modified configuration</returns>
-        public static IConfigureMessageSerializer WithStructureMapObjectBuilder(this IConfigureObjectBuilder configuration)
+        public static IConfigureMessageSerializer WithObjectBuilder(this IConfigureObjectBuilder configuration, IObjectBuilder objectBuilder)
         {
             if (configuration == null)
             {
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
-            configuration.ObjectBuilder = new StructureMapObjectBuilder();
-            return configuration as IConfigureMessageSerializer;
-        }
-
-        /// <summary>
-        /// Configure the the bus to use structure map to build the handlers with the given container
-        /// </summary>
-        /// <param name="configuration">Configuration to modify</param>
-        /// <param name="container">Structure Map container to use</param>
-        /// <returns>Modified configuration</returns>
-        public static IConfigureMessageSerializer WithStructureMapObjectBuilder(this IConfigureObjectBuilder configuration, IContainer container)
-        {
-            if (configuration == null)
-            {
-                throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
-            }
-
-            configuration.ObjectBuilder = new StructureMapObjectBuilder(container);
+            configuration.ObjectBuilder = objectBuilder;
             return configuration as IConfigureMessageSerializer;
         }
 

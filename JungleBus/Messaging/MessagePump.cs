@@ -110,7 +110,7 @@ namespace JungleBus.Messaging
                     foreach (TransportMessage message in recievedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
-                        _messageLogger.InboundLogMessage(message.Body, message.MessageTypeName);
+                        _messageLogger.InboundLogMessage(message.Body, message.MessageTypeName, message.Id, message.AttemptNumber);
                         MessageProcessingResult result;
                         if (message.MessageParsingSucceeded)
                         {
@@ -129,7 +129,7 @@ namespace JungleBus.Messaging
                             Log.InfoFormat("[{0}] Removing message from the queue", Id);
                             _queue.RemoveMessage(message);
                         }
-                        else if (message.RetryCount + 1 == _messageRetryCount)
+                        else if (message.AttemptNumber == _messageRetryCount)
                         {
                             Log.InfoFormat("[{0}] Message faulted ", Id);
                             _messageProcessor.ProcessFaultedMessage(message, _bus, result.Exception);
@@ -137,12 +137,12 @@ namespace JungleBus.Messaging
 
                         MessageStatistics stats = new MessageStatistics()
                         {
-                            FinalAttempt = message.RetryCount + 1 == _messageRetryCount,
+                            FinalAttempt = message.AttemptNumber == _messageRetryCount,
                             HandlerRunTime = result.Runtime,
                             MessageLength = message.Body.Length,
                             MessageType = message.MessageTypeName,
                             Success = result.WasSuccessful,
-                            PreviousRetryCount = message.RetryCount,
+                            PreviousRetryCount = message.AttemptNumber,
                         };
                         _messageProcessor.ProcessMessageStatistics(stats);
                     }
