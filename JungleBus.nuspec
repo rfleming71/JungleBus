@@ -2,14 +2,15 @@
 <package >
   <metadata>
     <id>JungleBus</id>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
     <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple service bus built on top of Amazon Web Services</description>
-    <releaseNotes>Splitting StructureMap object builder into seperate package</releaseNotes>
+    <releaseNotes>Adding message metadata</releaseNotes>
     <copyright>Copyright 2016</copyright>
+    <tags>EventBus Bus AWS Amazon-web-services SQS SNS</tags>
     <dependencies>
       <dependency id="AWSSDK.SimpleNotificationService" version="[3.1,4.0)" />
       <dependency id="AWSSDK.SQS" version="[3.1,4.0)" />

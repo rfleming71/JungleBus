@@ -23,6 +23,9 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
 using Amazon;
 using JungleBus.Aws.Sns;
 using JungleBus.Exceptions;
@@ -51,6 +54,11 @@ namespace JungleBus.Aws
         /// Message logger
         /// </summary>
         private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
+        /// Gets the common message metadata
+        /// </summary>
+        private Dictionary<string, string> _commonMessageMetadata;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AwsMessagePublisher" /> class.
@@ -85,7 +93,7 @@ namespace JungleBus.Aws
                 throw new JungleBusException("Public publishing is disabled");
             }
 
-            _snsClient.Publish(message, type);
+            _snsClient.Publish(message, type, GetCommonMetadata());
             _messageLogger.OutboundLogMessage(message, type.AssemblyQualifiedName);
         }
 
@@ -106,6 +114,11 @@ namespace JungleBus.Aws
                     { "messageType", new MessageAttribute() { Type = "String", Value = messageType } },
                 },
             };
+            
+            foreach (var entry in GetCommonMetadata())
+            {
+                fakeMessage.MessageAttributes.Add(entry.Key, new MessageAttribute() { Type = "String", Value = entry.Value });
+            }
 
             string messageBody = _messageSerializer.Serialize(fakeMessage);
             localMessageQueue.AddMessage(messageBody);
@@ -124,6 +137,35 @@ namespace JungleBus.Aws
             }
 
             _snsClient.SetupMessagesForPublishing(messageTypes);
+        }
+
+        private Dictionary<string, string> GetCommonMetadata()
+        {
+            if (_commonMessageMetadata == null)
+            {
+                _commonMessageMetadata = new Dictionary<string, string>()
+                {
+                    { "BusVersion", typeof(JungleBus).Assembly.GetName().Version.ToString(4) },
+                    { "SenderIpAddress", GetLocalIPAddress() },
+                    { "SenderVersion", Assembly.GetEntryAssembly().GetName().Version.ToString(4) },
+                };
+            }
+
+            return _commonMessageMetadata;
+        }
+
+        private static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+
+            return "0.0.0.0";
         }
     }
 }

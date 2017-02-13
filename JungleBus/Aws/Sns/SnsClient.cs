@@ -84,7 +84,7 @@ namespace JungleBus.Aws.Sns
         /// </summary>
         /// <param name="message">Serialized Message</param>
         /// <param name="type">Payload type</param>
-        public void Publish(string message, Type type)
+        public void Publish(string message, Type type, Dictionary<string, string> metadata)
         {
             string topicName = _topicFormatter(type);
             if (!_topicArns.ContainsKey(topicName))
@@ -103,6 +103,13 @@ namespace JungleBus.Aws.Sns
             PublishRequest request = new PublishRequest(_topicArns[topicName], message);
             request.MessageAttributes["messageType"] = new MessageAttributeValue() { StringValue = type.AssemblyQualifiedName, DataType = "String" };
             request.MessageAttributes["fromSns"] = new MessageAttributeValue() { StringValue = "True", DataType = "String" };
+            if (metadata != null)
+            {
+                foreach (var md in metadata)
+                {
+                    request.MessageAttributes[md.Key] = new MessageAttributeValue() { StringValue = md.Value, DataType = "String" };
+                }
+            }
 
             _sns.Publish(request);
         }

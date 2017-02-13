@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using JungleBus.Aws;
 using JungleBus.Aws.Sns;
 using JungleBus.Exceptions;
@@ -25,10 +26,10 @@ namespace JungleBus.Tests.Aws
         public void AwsMessagePublisherTests_Publish()
         {
             Mock<ISnsClient> mockClient = new Mock<ISnsClient>(MockBehavior.Strict);
-            mockClient.Setup(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()));
+            mockClient.Setup(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<Dictionary<string, string>>()));
             AwsMessagePublisher publisher = new AwsMessagePublisher(mockClient.Object, _mockLogger.Object);
             publisher.Publish("test message", typeof(TestMessage));
-            mockClient.Verify(x => x.Publish("test message", typeof(TestMessage)), Times.Once());
+            mockClient.Verify(x => x.Publish("test message", typeof(TestMessage), It.IsAny<Dictionary<string, string>>()), Times.Once());
             _mockLogger.Verify(x => x.OutboundLogMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
