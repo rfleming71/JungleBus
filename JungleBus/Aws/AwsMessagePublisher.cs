@@ -147,22 +147,21 @@ namespace JungleBus.Aws
                 {
                     { "BusVersion", typeof(JungleBus).Assembly.GetName().Version.ToString(4) },
                     { "SenderIpAddress", GetLocalIPAddress() },
-                    { "SenderVersion", GetSenderVersion() },
                 };
+
+                AddSenderVersion();
             }
 
             return _commonMessageMetadata;
         }
 
-        private static string GetSenderVersion()
+        private void AddSenderVersion()
         {
             Assembly entryAssembly = Assembly.GetEntryAssembly();
             if (entryAssembly != null)
             {
-                return entryAssembly.GetName().Version.ToString(4);
+                _commonMessageMetadata["SenderVersion"] = entryAssembly.GetName().Version.ToString(4);
             }
-
-            return "";
         }
 
         private static string GetLocalIPAddress()
