@@ -77,7 +77,13 @@ namespace JungleBus.Testing
         /// <param name="message">Message to send</param>
         public void PublishLocal<T>(T message)
         {
-            throw new NotImplementedException();
+            Type messageType = typeof(T);
+            if (!_publishedLocalMessages.ContainsKey(messageType))
+            {
+                _publishedLocalMessages[messageType] = new List<object>();
+            }
+
+            _publishedLocalMessages[messageType].Add(message);
         }
 
         /// <summary>
