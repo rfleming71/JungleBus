@@ -2,17 +2,17 @@
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -63,10 +63,7 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
-            if (configuration.Receive == null)
-            {
-                configuration.Receive = new ReceiveConfiguration();
-            }
+            configuration.Receive = configuration.Receive ?? new ReceiveConfiguration();
 
             if (!string.IsNullOrWhiteSpace(configuration.BusName))
             {
@@ -113,16 +110,16 @@ namespace JungleBus.Configuration
         }
 
         /// <summary>
-        /// Configure the polling wait time for receive bus
+        /// Configure the number of polling instances to run for receive bus
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
-        /// <param name="instances">Number of seconds to the long polling to wait</param>
+        /// <param name="instances">Number of polling instances to run</param>
         /// <returns>Modified configuration</returns>
         public static IConfigureEventReceiving SetNumberOfPollingInstances(this IConfigureEventReceiving configuration, int instances)
         {
             if (instances < 0)
             {
-                throw new JungleBusConfigurationException("instances", "Time in seconds must be between 0 and 14");
+                throw new JungleBusConfigurationException("instances", "Number of instances must be zero or greater");
             }
 
             if (configuration == null)
@@ -132,7 +129,7 @@ namespace JungleBus.Configuration
 
             if (configuration.Receive == null)
             {
-                throw new JungleBusConfigurationException("configuration", "Input queue needs to be configured before setting the wait timeout");
+                throw new JungleBusConfigurationException("configuration", "Input queue needs to be configured before setting the number of polling instances");
             }
 
             configuration.Receive.NumberOfPollingInstances = instances;
@@ -201,7 +198,7 @@ namespace JungleBus.Configuration
 
             if (configuration.Receive == null)
             {
-                throw new JungleBusConfigurationException("Receive", "Input queue needs to be configured before setting event handlers");
+                throw new JungleBusConfigurationException("Receive", "Input queue needs to be configured before setting event fault handlers");
             }
 
             configuration.Receive.FaultHandlers = ScanForTypes(eventFaultHandlers, typeof(IHandleMessageFaults<>), configuration.ObjectBuilder);
