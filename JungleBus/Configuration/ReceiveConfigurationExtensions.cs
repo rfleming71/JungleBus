@@ -137,6 +137,33 @@ namespace JungleBus.Configuration
         }
 
         /// <summary>
+        /// Configure the number of times to attempt to process a message
+        /// </summary>
+        /// <param name="configuration">Configuration to modify</param>
+        /// <param name="count">Number of times to attempt to process a message</param>
+        /// <returns>Modified configuration</returns>
+        public static IConfigureEventReceiving SetMessageRetryCount(this IConfigureEventReceiving configuration, int count)
+        {
+            if (count < 1 || count > 1000)
+            {
+                throw new JungleBusConfigurationException("count", "Number of retries must be between 1 and 1000");
+            }
+
+            if (configuration == null)
+            {
+                throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
+            }
+
+            if (configuration.Receive == null)
+            {
+                throw new JungleBusConfigurationException("configuration", "Input queue needs to be configured before setting retry count");
+            }
+
+            configuration.Receive.MessageRetryCount = count;
+            return configuration;
+        }
+
+        /// <summary>
         /// Load the event handlers from the entry assembly
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
