@@ -98,34 +98,6 @@ namespace JungleBus.Aws
         }
 
         /// <summary>
-        /// Sends a message to the given queue
-        /// </summary>
-        /// <param name="messageString">Message to publish</param>
-        /// <param name="type">Type of message to send</param>
-        /// <param name="localMessageQueue">Queue to send to</param>
-        public void Send(string messageString, Type type, IMessageQueue localMessageQueue)
-        {
-            string messageType = type.AssemblyQualifiedName;
-            SnsMessage fakeMessage = new SnsMessage()
-            {
-                Message = messageString,
-                MessageAttributes = new Dictionary<string, MessageAttribute>()
-                {
-                    { "messageType", new MessageAttribute() { Type = "String", Value = messageType } },
-                },
-            };
-            
-            foreach (var entry in GetCommonMetadata())
-            {
-                fakeMessage.MessageAttributes.Add(entry.Key, new MessageAttribute() { Type = "String", Value = entry.Value });
-            }
-
-            string messageBody = _messageSerializer.Serialize(fakeMessage);
-            localMessageQueue.AddMessage(messageBody);
-            _messageLogger.OutboundLogMessage(messageBody, messageType);
-        }
-
-        /// <summary>
         /// Setups the bus for publishing the given message types
         /// </summary>
         /// <param name="messageTypes">Message types</param>

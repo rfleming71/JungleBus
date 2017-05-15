@@ -9,9 +9,9 @@ namespace ConsoleTestApp.Handlers
     {
         private readonly IBus _bus;
         private readonly ILog _log;
-        public Handler1(IBus bus, ILog log)
+        public Handler1(/*IBus bus,*/ ILog log)
         {
-            _bus = bus;
+            /*_bus = bus;*/
             _log = log;
         }
 

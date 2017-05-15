@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessingResult.cs">
+﻿// <copyright file="IMessageProcessor.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,28 +22,33 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
-    /// Result returns from the message processor when processing a message
+    /// Processes inbound messages and call the event handlers
     /// </summary>
-    public class MessageProcessingResult
+    public interface IMessageProcessor
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the message was
-        /// successfully processed
+        /// Processes inbound message and call the event handlers
         /// </summary>
-        public bool WasSuccessful { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the exception, if any, from message processing
-        /// </summary>
-        public Exception Exception { get; set; }
+        /// <param name="message">Message to process</param>
+        /// <returns>True is all event handles succeeded</returns>
+        MessageProcessingResult ProcessMessage(TransportMessage message);
 
         /// <summary>
-        /// Gets or sets the amount of time processing this message
+        /// Processes inbound message that have faulted more than the retry limit
         /// </summary>
-        public TimeSpan Runtime { get; set; }
+        /// <param name="message">Message to process</param>
+        /// <param name="ex">Exception thrown by the message</param>
+        void ProcessFaultedMessage(TransportMessage message, Exception ex);
+
+        /// <summary>
+        /// Processes inbound message statistics
+        /// </summary>
+        /// <param name="statistics">Message statistics</param>
+        void ProcessMessageStatistics(IMessageStatistics statistics);
     }
 }

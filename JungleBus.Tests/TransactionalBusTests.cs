@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Transactions;
+using JungleBus.Interfaces;
 using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
@@ -11,25 +12,21 @@ namespace JungleBus.Tests
     [TestClass]
     public class TransactionalBusTests
     {
-        private const string SerializedMessage = "Serialized message";
         private TransactionalBus _busUnderTest;
         private Mock<IMessagePublisher> _messagePublisher;
-        private Mock<IMessageSerializer> _messageSerializer;
-        private Mock<IMessageQueue> _messageQueue;
+        private Mock<IQueue> _messageQueue;
 
         [TestInitialize]
         public void TestInitialize()
         {
             _messagePublisher = new Mock<IMessagePublisher>(MockBehavior.Strict);
             _messagePublisher.Setup(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()));
-            _messagePublisher.Setup(x => x.Send(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<IMessageQueue>()));
 
-            _messageSerializer = new Mock<IMessageSerializer>(MockBehavior.Strict);
-            _messageSerializer.Setup(x => x.Serialize(It.IsAny<object>())).Returns(SerializedMessage);
+            _messageQueue = new Mock<IQueue>(MockBehavior.Strict);
+            _messageQueue.Setup(x => x.Send(It.IsAny<TestMessage>()));
+            _messageQueue.Setup(x => x.Send(It.IsAny<Action<TestMessage>>()));
 
-            _messageQueue = new Mock<IMessageQueue>(MockBehavior.Strict);
-
-            _busUnderTest = new TransactionalBus(_messagePublisher.Object, _messageSerializer.Object, _messageQueue.Object);
+            _busUnderTest = new TransactionalBus(_messagePublisher.Object, _messageQueue.Object);
         }
 
         #region PUBLISH MESSAGE TESTS
@@ -38,16 +35,14 @@ namespace JungleBus.Tests
         public void TransactionalBusTests_NoTransaction_Publishes_Message()
         {
             _busUnderTest.Publish(new TestMessage());
-            _messageSerializer.Verify(x => x.Serialize(It.IsAny<TestMessage>()), Times.Once());
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Once());
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":null,\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
         }
 
         [TestMethod]
         public void TransactionalBusTests_NoTransaction_Publishes_Builds_Message()
         {
             _busUnderTest.Publish<TestMessage>(x => x.Name = "Name");
-            _messageSerializer.Verify(x => x.Serialize(It.Is<TestMessage>(m => m.Name == "Name")), Times.Once());
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Once());
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
         }
 
         [TestMethod]
@@ -59,9 +54,8 @@ namespace JungleBus.Tests
                 _busUnderTest.Publish<TestMessage>(x => x.Name = "Name2");
                 scope.Complete();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name1")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name2")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name1\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name2\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
         }
 
         [TestMethod]
@@ -73,8 +67,7 @@ namespace JungleBus.Tests
                 _busUnderTest.Publish<TestMessage>(x => x.Name = "Name2");
                 scope.Dispose();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Never());
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Never());
+            _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), typeof(TestMessage)), Times.Never());
         }
 
         [TestMethod]
@@ -93,9 +86,8 @@ namespace JungleBus.Tests
                 _busUnderTest.Publish<TestMessage>(x => x.Name = "Name21");
                 scope.Complete();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name11")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name21")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name11\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name21\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
         }
 
         [TestMethod]
@@ -107,9 +99,8 @@ namespace JungleBus.Tests
                 _busUnderTest.Publish(new TestMessage() { Name = "Name2" });
                 scope.Complete();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name1")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name2")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name1\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name2\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
         }
 
         [TestMethod]
@@ -121,8 +112,7 @@ namespace JungleBus.Tests
                 _busUnderTest.Publish(new TestMessage() { Name = "Name2" });
                 scope.Dispose();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Never());
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Never());
+            _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), typeof(TestMessage)), Times.Never());
         }
 
         [TestMethod]
@@ -141,9 +131,8 @@ namespace JungleBus.Tests
                 _busUnderTest.Publish(new TestMessage() { Name = "Name21" });
                 scope.Complete();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name11")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name21")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name11\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
+            _messagePublisher.Verify(x => x.Publish("{\"ID\":0,\"Price\":0.0,\"Name\":\"Name21\",\"Modified\":\"0001-01-01T00:00:00\"}", typeof(TestMessage)), Times.Once());
         }
 
         #endregion PUBLISH MESSAGE TESTS
@@ -154,8 +143,7 @@ namespace JungleBus.Tests
         public void TransactionalBusTests_NoTransaction_PublishLocal_Message()
         {
             _busUnderTest.PublishLocal(new TestMessage());
-            _messageSerializer.Verify(x => x.Serialize(It.IsAny<TestMessage>()), Times.Once());
-            _messagePublisher.Verify(x => x.Send(SerializedMessage, typeof(TestMessage), It.IsAny<IMessageQueue>()), Times.Once());
+            _messageQueue.Verify(x => x.Send(It.IsAny<TestMessage>()), Times.Once());
             _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()), Times.Never());
         }
 
@@ -163,8 +151,7 @@ namespace JungleBus.Tests
         public void TransactionalBusTests_NoTransaction_PublishLocal_Builds_Message()
         {
             _busUnderTest.PublishLocal<TestMessage>(x => x.Name = "Name");
-            _messageSerializer.Verify(x => x.Serialize(It.Is<TestMessage>(m => m.Name == "Name")), Times.Once());
-            _messagePublisher.Verify(x => x.Send(SerializedMessage, typeof(TestMessage), It.IsAny<IMessageQueue>()), Times.Once());
+            _messageQueue.Verify(x => x.Send(It.IsAny<Action<TestMessage>>()), Times.Once());
             _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()), Times.Never());
         }
         [TestMethod]
@@ -177,10 +164,8 @@ namespace JungleBus.Tests
                 scope.Complete();
             }
 
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name1")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name2")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Never());
-            _messagePublisher.Verify(x => x.Send(SerializedMessage, typeof(TestMessage), It.IsAny<IMessageQueue>()), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), typeof(TestMessage)), Times.Never());
+            _messageQueue.Verify(x => x.Send(It.IsAny<Action<TestMessage>>()), Times.Exactly(2));
         }
 
         [TestMethod]
@@ -192,9 +177,8 @@ namespace JungleBus.Tests
                 _busUnderTest.PublishLocal<TestMessage>(x => x.Name = "Name2");
                 scope.Dispose();
             }
-            _messageSerializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Never());
             _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()), Times.Never());
-            _messagePublisher.Verify(x => x.Send(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<IMessageQueue>()), Times.Never());
+            _messageQueue.Verify(x => x.Send(It.IsAny<Action<TestMessage>>()), Times.Exactly(2));
         }
 
         [TestMethod]
@@ -214,10 +198,8 @@ namespace JungleBus.Tests
                 scope.Complete();
             }
 
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name11")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name21")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Never());
-            _messagePublisher.Verify(x => x.Send(SerializedMessage, typeof(TestMessage), It.IsAny<IMessageQueue>()), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), typeof(TestMessage)), Times.Never());
+            _messageQueue.Verify(x => x.Send(It.IsAny<Action<TestMessage>>()), Times.Exactly(4));
         }
 
         [TestMethod]
@@ -230,10 +212,8 @@ namespace JungleBus.Tests
                 scope.Complete();
             }
 
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name1")), Times.Once());
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name2")), Times.Once());
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Never());
-            _messagePublisher.Verify(x => x.Send(SerializedMessage, typeof(TestMessage), It.IsAny<IMessageQueue>()), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), typeof(TestMessage)), Times.Never());
+            _messageQueue.Verify(x => x.Send(It.IsAny<TestMessage>()), Times.Exactly(2));
         }
 
         [TestMethod]
@@ -246,9 +226,8 @@ namespace JungleBus.Tests
                 scope.Dispose();
             }
 
-            _messageSerializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Never());
             _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), It.IsAny<Type>()), Times.Never());
-            _messagePublisher.Verify(x => x.Send(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<IMessageQueue>()), Times.Never());
+            _messageQueue.Verify(x => x.Send(It.IsAny<Action<TestMessage>>()), Times.Never());
         }
 
         [TestMethod]
@@ -268,10 +247,8 @@ namespace JungleBus.Tests
                 scope.Complete();
             }
 
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name11")), Times.Exactly(1));
-            _messageSerializer.Verify(x => x.Serialize(It.Is<object>(o => (o is TestMessage) && (o as TestMessage).Name == "Name21")), Times.Exactly(1));
-            _messagePublisher.Verify(x => x.Publish(SerializedMessage, typeof(TestMessage)), Times.Never());
-            _messagePublisher.Verify(x => x.Send(SerializedMessage, typeof(TestMessage), It.IsAny<IMessageQueue>()), Times.Exactly(2));
+            _messagePublisher.Verify(x => x.Publish(It.IsAny<string>(), typeof(TestMessage)), Times.Never());
+            _messageQueue.Verify(x => x.Send(It.IsAny<TestMessage>()), Times.Exactly(4));
         }
 
         #endregion PUBLISH LOCAL TESTS

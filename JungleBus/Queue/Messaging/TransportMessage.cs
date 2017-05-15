@@ -23,7 +23,7 @@
 // </copyright>
 using System;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
     /// Object for holding parsed message information

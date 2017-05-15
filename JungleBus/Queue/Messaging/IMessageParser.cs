@@ -23,7 +23,7 @@
 // </copyright>
 using Amazon.SQS.Model;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
     /// Parses out messages from the input queue

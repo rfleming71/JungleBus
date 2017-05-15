@@ -1,4 +1,4 @@
-﻿// <copyright file="IMessageProcessor.cs">
+﻿// <copyright file="MessageProcessingResult.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,36 +22,28 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using JungleBus.Interfaces;
-using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
-    /// Processes inbound messages and call the event handlers
+    /// Result returns from the message processor when processing a message
     /// </summary>
-    public interface IMessageProcessor
+    public class MessageProcessingResult
     {
         /// <summary>
-        /// Processes inbound message and call the event handlers
+        /// Gets or sets a value indicating whether the message was
+        /// successfully processed
         /// </summary>
-        /// <param name="message">Message to process</param>
-        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
-        /// <returns>True is all event handles succeeded</returns>
-        MessageProcessingResult ProcessMessage(TransportMessage message, IBus busInstance);
+        public bool WasSuccessful { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the exception, if any, from message processing
+        /// </summary>
+        public Exception Exception { get; set; }
 
         /// <summary>
-        /// Processes inbound message that have faulted more than the retry limit
+        /// Gets or sets the amount of time processing this message
         /// </summary>
-        /// <param name="message">Message to process</param>
-        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
-        /// <param name="ex">Exception thrown by the message</param>
-        void ProcessFaultedMessage(TransportMessage message, IBus busInstance, Exception ex);
-
-        /// <summary>
-        /// Processes inbound message statistics
-        /// </summary>
-        /// <param name="statistics">Message statistics</param>
-        void ProcessMessageStatistics(IMessageStatistics statistics);
+        public TimeSpan Runtime { get; set; }
     }
 }

@@ -99,15 +99,9 @@ namespace JungleBus.Configuration
         {
             configuration.RunGeneralConfigurationValidation();
 
-            if (configuration.Receive == null)
+            if (configuration.InputQueueConfiguration == null)
             {
                 throw new JungleBusConfigurationException("Receive", "Receive has not been configured for this bus");
-            }
-
-            if (configuration.Receive != null)
-            {
-                configuration.ObjectBuilder.RegisterType(typeof(IMessageParser), typeof(MessageParser));
-                configuration.Receive.InputQueue.MessageParser = configuration.ObjectBuilder.GetValue<IMessageParser>();
             }
 
             JungleBus jungleBus = new JungleBus(configuration);

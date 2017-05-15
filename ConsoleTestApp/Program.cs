@@ -6,6 +6,7 @@ using JungleBus.Interfaces.Statistics;
 using JungleBus.StructureMap;
 using Messages;
 using StructureMap;
+using System.Collections.Generic;
 
 namespace ConsoleTestApp
 {
@@ -54,7 +55,7 @@ namespace ConsoleTestApp
 
         static IRunJungleBus CreateRecieveOnlyBus()
         {
-            return BusBuilder.Create()
+            return BusBuilder.Create("fleming")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
@@ -68,7 +69,7 @@ namespace ConsoleTestApp
 
         static IBus CreateSendOnlyBus()
         {
-            return BusBuilder.Create()
+            return BusBuilder.Create("fleming")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
@@ -78,7 +79,7 @@ namespace ConsoleTestApp
 
         static IRunJungleBus CreateFullBus()
         {
-            return BusBuilder.Create("dev")
+            return BusBuilder.Create("fleming")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()

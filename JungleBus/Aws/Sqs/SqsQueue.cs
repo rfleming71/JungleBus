@@ -31,16 +31,15 @@ using Amazon;
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using JungleBus.Aws.Sns;
-using JungleBus.Exceptions;
-using JungleBus.Messaging;
+using JungleBus.Interfaces.Exceptions;
+using JungleBus.Queue.Messaging;
 
 namespace JungleBus.Aws.Sqs
 {
     /// <summary>
     /// Represents the SQS queue in Amazon AWS
     /// </summary>
-    public sealed class SqsQueue : IMessageQueue, IDisposable
+    public sealed class SqsQueue : ISqsQueue, IDisposable
     {
         /// <summary>
         /// URL for the underlying queue
@@ -69,7 +68,7 @@ namespace JungleBus.Aws.Sqs
         /// <param name="queueName">Name of the queue</param>
         /// <param name="retryCount">Number of times to retry a message before moving it to the dead letter queue</param>
         /// <param name="messageParser">Message parser</param>
-        public SqsQueue(RegionEndpoint endpoint, string queueName, int retryCount, IMessageParser messageParser)
+        public SqsQueue(RegionEndpoint endpoint, string queueName, int retryCount)
         {
             _simpleQueueService = new AmazonSQSClient(endpoint);
             _simpleNotificationService = new Lazy<IAmazonSimpleNotificationService>(() => new AmazonSimpleNotificationServiceClient(endpoint));
@@ -87,7 +86,7 @@ namespace JungleBus.Aws.Sqs
                 _simpleQueueService.SetQueueAttributes(createResponse.QueueUrl, new Dictionary<string, string>() { { "MessageRetentionPeriod", "1209600" } });
             }
 
-            MessageParser = messageParser;
+            MessageParser = new MessageParser();
             MaxNumberOfMessages = 10;
         }
 
@@ -117,6 +116,7 @@ namespace JungleBus.Aws.Sqs
             receiveMessageRequest.WaitTimeSeconds = WaitTimeSeconds;
             receiveMessageRequest.MaxNumberOfMessages = MaxNumberOfMessages;
             receiveMessageRequest.AttributeNames = new List<string>() { "ApproximateReceiveCount" };
+            receiveMessageRequest.MessageAttributeNames = new List<string>() { "messageType" };
             receiveMessageRequest.QueueUrl = _queueUrl;
 
             ReceiveMessageResponse receiveMessageResponse = await _simpleQueueService.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
@@ -143,22 +143,6 @@ namespace JungleBus.Aws.Sqs
         }
 
         /// <summary>
-        /// Subscribe the queue to the given message types
-        /// </summary>
-        /// <param name="messageTypes">Message to subscribe to</param>
-        public void Subscribe(IEnumerable<Type> messageTypes, Func<Type, string> subscriptionNameBuilder)
-        {
-            foreach (Type messageType in messageTypes)
-            {
-                var topic = _simpleNotificationService.Value.FindTopic(subscriptionNameBuilder(messageType));
-                if (topic != null)
-                {
-                    _simpleNotificationService.Value.SubscribeQueue(topic.TopicArn, _simpleQueueService, _queueUrl);
-                }
-            }
-        }
-
-        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, 
         /// or resetting unmanaged resources.
         /// </summary>
@@ -169,11 +153,21 @@ namespace JungleBus.Aws.Sqs
                 _simpleQueueService.Dispose();
                 _simpleQueueService = null;
             }
+        }
 
-            if (_simpleNotificationService != null && _simpleNotificationService.IsValueCreated)
+        /// <summary>
+        /// Subscribe the queue to the given sns topics
+        /// </summary>
+        /// <param name="snsTopics">Message topics to subscribe to</param>
+        public void Subscribe(IEnumerable<string> snsTopics)
+        {
+            foreach (string topicName in snsTopics)
             {
-                _simpleNotificationService.Value.Dispose();
-                _simpleNotificationService = null;
+                var topic = _simpleNotificationService.Value.FindTopic(topicName);
+                if (topic != null)
+                {
+                    _simpleNotificationService.Value.SubscribeQueue(topic.TopicArn, _simpleQueueService, _queueUrl);
+                }
             }
         }
 
@@ -181,9 +175,15 @@ namespace JungleBus.Aws.Sqs
         /// Adds the message to the queue
         /// </summary>
         /// <param name="message">Message to add to the queue</param>
-        public void AddMessage(string message)
+        public void AddMessage(string message, IEnumerable<KeyValuePair<string, string>> metadata)
         {
-            _simpleQueueService.SendMessage(_queueUrl, message);
+            SendMessageRequest request = new SendMessageRequest(_queueUrl, message);
+            foreach (KeyValuePair<string, string> kvp in metadata)
+            {
+                request.MessageAttributes[kvp.Key] = new MessageAttributeValue() { StringValue = kvp.Value, DataType = "String" };
+            }
+
+            _simpleQueueService.SendMessage(request);
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿// <copyright file="MessageProcessor.cs">
+﻿// <copyright file="IQueue.cs">
 //     The MIT License (MIT)
 //
-// Copyright(c) 2016 Ryan Fleming
+// Copyright(c) 2017 Ryan Fleming
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,46 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+
 using System;
-using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Interfaces
 {
-    /// <summary>
-    /// Contains statistics about the completed message
-    /// </summary>
-    internal class MessageStatistics : IMessageStatistics
+    public interface IQueue
     {
-        /// <summary>
-        /// Gets a value indicating whether this the final attempt to process
-        /// this message
-        /// </summary>
-        public bool FinalAttempt { get; set; }
 
         /// <summary>
-        /// Gets the run time of the message 
+        /// Send a message to the queue
         /// </summary>
-        public TimeSpan HandlerRunTime { get; set; }
+        /// <typeparam name="T">Message type</typeparam>
+        /// <param name="message">Message to send</param>
+        void Send<T>(T message);
 
         /// <summary>
-        /// Gets the number of bytes in the message
+        /// Send a message to the queue
         /// </summary>
-        public int MessageLength { get; set; }
-
-        /// <summary>
-        /// Gets the type of the message
-        /// </summary>
-        public string MessageType { get; set; }
-
-        /// <summary>
-        /// Get the number of times this message has been tried before this
-        /// attempt
-        /// </summary>
-        public int PreviousRetryCount { get; set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this message was successful
-        /// </summary>
-        public bool Success { get; set; }
+        /// <typeparam name="T">Message type</typeparam>
+        /// <param name="messageBuilder">Function to initialize the message</param>
+        void Send<T>(Action<T> messageBuilder)
+            where T : new();
     }
 }

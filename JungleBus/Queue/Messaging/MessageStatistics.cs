@@ -1,4 +1,4 @@
-﻿// <copyright file="ReceiveConfiguration.cs">
+﻿// <copyright file="MessageProcessor.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,34 +22,45 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using System.Collections.Generic;
-using JungleBus.Messaging;
+using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Configuration
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
-    /// Configuration information for the receive bus
+    /// Contains statistics about the completed message
     /// </summary>
-    public class ReceiveConfiguration
+    internal class MessageStatistics : IMessageStatistics
     {
         /// <summary>
-        /// Gets or sets the number of times to attempt to process a message
+        /// Gets a value indicating whether this the final attempt to process
+        /// this message
         /// </summary>
-        public int MessageRetryCount { get; set; }
+        public bool FinalAttempt { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of polling instances to run
+        /// Gets the run time of the message 
         /// </summary>
-        public int NumberOfPollingInstances { get; set; }
+        public TimeSpan HandlerRunTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of message handlers organized by message type
+        /// Gets the number of bytes in the message
         /// </summary>
-        internal Dictionary<Type, HashSet<Type>> Handlers { get; set; }
+        public int MessageLength { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of message fault handlers organized by message type
+        /// Gets the type of the message
         /// </summary>
-        internal Dictionary<Type, HashSet<Type>> FaultHandlers { get; set; }
+        public string MessageType { get; set; }
+
+        /// <summary>
+        /// Get the number of times this message has been tried before this
+        /// attempt
+        /// </summary>
+        public int PreviousRetryCount { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this message was successful
+        /// </summary>
+        public bool Success { get; set; }
     }
 }

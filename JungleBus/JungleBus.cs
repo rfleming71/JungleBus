@@ -30,6 +30,7 @@ using JungleBus.Configuration;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
+using JungleBus.Queue;
 
 namespace JungleBus
 {
@@ -44,29 +45,14 @@ namespace JungleBus
         private static readonly ILog Log = LogManager.GetLogger(typeof(JungleBus));
 
         /// <summary>
-        /// The configured message serializer
-        /// </summary>
-        private readonly IMessageSerializer _messageSerializer;
-
-        /// <summary>
         /// Client for actually sending out messages
         /// </summary>
         private readonly IMessagePublisher _messagePublisher;
 
         /// <summary>
-        /// Receive event message pump
-        /// </summary>
-        private readonly List<MessagePump> _messagePumps;
-
-        /// <summary>
-        /// Tasks running the message pumps
-        /// </summary>
-        private readonly List<Task> _messagePumpTasks;
-
-        /// <summary>
         /// Local message queue
         /// </summary>
-        private readonly IMessageQueue _localQueue;
+        private readonly JungleQueue _localQueue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JungleBus" /> class.
@@ -76,22 +62,13 @@ namespace JungleBus
         {
             if (configuration.Send != null)
             {
-                _messageSerializer = configuration.ObjectBuilder.GetValue<IMessageSerializer>();
                 _messagePublisher = configuration.Send.MessagePublisher;
             }
 
-            if (configuration.Receive != null)
+            if (configuration.InputQueueConfiguration != null)
             {
-                _localQueue = configuration.Receive.InputQueue;
-                MessageProcessor messageProcessor = new MessageProcessor(configuration.ObjectBuilder, configuration.Receive.Handlers, configuration.Receive.FaultHandlers);
-                _messagePumps = new List<MessagePump>();
-                _messagePumpTasks = new List<Task>();
-                for (int x = 0; x < configuration.Receive.NumberOfPollingInstances; ++x)
-                {
-                    MessagePump pump = new MessagePump(configuration.Receive.InputQueue, configuration.Receive.MessageRetryCount, messageProcessor, configuration.MessageLogger, CreateSendBus(), x + 1);
-                    _messagePumps.Add(pump);
-                    _messagePumpTasks.Add(new Task(() => pump.Run()));
-                }
+                _localQueue = new JungleQueue(configuration.InputQueueConfiguration, configuration.ObjectBuilder);
+                _localQueue.Subscribe(configuration.InputQueueConfiguration.Handlers.Keys.Select(x => configuration.SubscriptionFormatter(x)));
             }
         }
 
@@ -106,7 +83,7 @@ namespace JungleBus
                 return null;
             }
 
-            TransactionalBus sendBus = new TransactionalBus(_messagePublisher, _messageSerializer, _localQueue);
+            TransactionalBus sendBus = new TransactionalBus(_messagePublisher, _localQueue.CreateQueue());
             return sendBus;
         }
 
@@ -115,13 +92,13 @@ namespace JungleBus
         /// </summary>
         public void StartReceiving()
         {
-            if (_messagePumpTasks == null || !_messagePumpTasks.Any())
+            if (_localQueue == null)
             {
                 throw new InvalidOperationException("Bus is not configured for receive operations");
             }
 
-            Log.Info("Starting message pumps");
-            _messagePumpTasks.ForEach(x => x.Start());
+            Log.Info("Starting queue receive");
+            _localQueue.StartReceiving();
         }
 
         /// <summary>
@@ -129,12 +106,8 @@ namespace JungleBus
         /// </summary>
         public void StopReceiving()
         {
-            Log.Info("Stopping the bus");
-            _messagePumps.ForEach(x => x.Stop());
-            Task.WaitAll(_messagePumpTasks.ToArray());
-            _messagePumps.ForEach(x => x.Dispose());
-            _messagePumps.Clear();
-            _messagePumpTasks.Clear();
+            Log.Info("Stopping the queue");
+            _localQueue.StopReceiving();
         }
     }
 }

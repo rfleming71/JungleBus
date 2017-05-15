@@ -31,7 +31,7 @@ using JungleBus.Interfaces;
 using JungleBus.Interfaces.IoC;
 using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
     /// Responsible for handling transport messages and calling the appropriate message handlers
@@ -49,14 +49,14 @@ namespace JungleBus.Messaging
         private readonly Dictionary<Type, HashSet<Type>> _handlerTypes;
 
         /// <summary>
-        /// Configured object builder
-        /// </summary>
-        private readonly IObjectBuilder _objectBuilder;
-
-        /// <summary>
         /// Collection of message fault handlers organized by message type
         /// </summary>
         private readonly Dictionary<Type, HashSet<Type>> _faultHandlers;
+
+        /// <summary>
+        /// Use to construct the message handlers
+        /// </summary>
+        private readonly IObjectBuilder _objectBuilder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageProcessor" /> class.
@@ -64,20 +64,20 @@ namespace JungleBus.Messaging
         /// <param name="objectBuilder">Use to construct the message handlers</param>
         /// <param name="handlers">Collection of message handlers organized by message type</param>
         /// <param name="faultHandlers">Collection of message fault handlers organized by message type</param>
-        public MessageProcessor(IObjectBuilder objectBuilder, Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers)
+        public MessageProcessor(Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers, IObjectBuilder objectBuilder)
         {
-            _objectBuilder = objectBuilder;
             _handlerTypes = handlers;
             _faultHandlers = faultHandlers;
+            _objectBuilder = objectBuilder;
         }
 
         /// <summary>
         /// Process the given message
         /// </summary>
         /// <param name="message">Transport message to be dispatched to the event handlers</param>
-        /// <param name="busInstance">Instance of the send bus to inject into the event handlers</param>
+        /// <param name="queueInstance">Instance of the send queue to inject into the event handlers</param>
         /// <returns>True is all event handlers processed successfully</returns>
-        public MessageProcessingResult ProcessMessage(TransportMessage message, IBus busInstance)
+        public MessageProcessingResult ProcessMessage(TransportMessage message)
         {
             if (message == null)
             {
@@ -97,11 +97,6 @@ namespace JungleBus.Messaging
                     {
                         using (IObjectBuilder childBuilder = _objectBuilder.GetNestedBuilder())
                         {
-                            if (busInstance != null)
-                            {
-                                childBuilder.RegisterInstance<IBus>(busInstance);
-                            }
-
                             childBuilder.RegisterInstance(LogManager.GetLogger(handlerType));
                             Log.TraceFormat("Running handler {0}", handlerType.Name);
                             try
@@ -147,12 +142,12 @@ namespace JungleBus.Messaging
         /// <param name="message">Message to process</param>
         /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
         /// <param name="ex">Exception caused by the message</param>
-        public void ProcessFaultedMessage(TransportMessage message, IBus busInstance, Exception ex)
+        public void ProcessFaultedMessage(TransportMessage message, Exception ex)
         {
-            ProcessFaultedMessageHandlers(message, busInstance, ex);
+            ProcessFaultedMessageHandlers(message, ex);
             if (message.MessageParsingSucceeded)
             {
-                ProcessFaultedMessageHandlers(message.Message, busInstance, ex);
+                ProcessFaultedMessageHandlers(message.Message, ex);
             }
         }
 
@@ -178,7 +173,7 @@ namespace JungleBus.Messaging
         /// <param name="message">Message to process</param>
         /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
         /// <param name="messageException">Exception caused by the message</param>
-        private void ProcessFaultedMessageHandlers(object message, IBus busInstance, Exception messageException)
+        private void ProcessFaultedMessageHandlers(object message, Exception messageException)
         {
             Type messageType = message.GetType();
             if (_faultHandlers.ContainsKey(messageType))
@@ -187,24 +182,15 @@ namespace JungleBus.Messaging
                 var handlerMethod = typeof(IHandleMessageFaults<>).MakeGenericType(messageType).GetMethod("Handle");
                 foreach (Type handlerType in _faultHandlers[messageType])
                 {
-                    using (IObjectBuilder childBuilder = _objectBuilder.GetNestedBuilder())
+                    Log.TraceFormat("Running handler {0}", handlerType.Name);
+                    try
                     {
-                        if (busInstance != null)
-                        {
-                            childBuilder.RegisterInstance<IBus>(busInstance);
-                        }
-
-                        childBuilder.RegisterInstance(LogManager.GetLogger(handlerType));
-                        Log.TraceFormat("Running handler {0}", handlerType.Name);
-                        try
-                        {
-                            var handler = childBuilder.GetValue(handlerType);
-                            handlerMethod.Invoke(handler, new object[] { message, messageException });
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.ErrorFormat("Error in handling message fault {0} with {1}", ex, messageType.Name, handlerType.Name);
-                        }
+                        var handler = Activator.CreateInstance(handlerType);
+                        handlerMethod.Invoke(handler, new object[] { message, messageException });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.ErrorFormat("Error in handling message fault {0} with {1}", ex, messageType.Name, handlerType.Name);
                     }
                 }
             }

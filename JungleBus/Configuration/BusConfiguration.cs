@@ -59,5 +59,7 @@ namespace JungleBus.Configuration
         public IMessageLogger MessageLogger { get; set; }
 
         public Func<Type, string> SubscriptionFormatter { get; set; }
+
+        public Queue.QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }
