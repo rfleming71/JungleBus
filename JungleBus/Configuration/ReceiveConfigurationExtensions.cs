@@ -146,7 +146,7 @@ namespace JungleBus.Configuration
         {
             if (count < 1 || count > 1000)
             {
-                throw new JungleBusConfigurationException("count", "Number of retries must be between 1 and 1000");
+                throw new JungleBusConfigurationException("messageRetryCount", "Number of retries must be between 1 and 1000");
             }
 
             if (configuration == null)
