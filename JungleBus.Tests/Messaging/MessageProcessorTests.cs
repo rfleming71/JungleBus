@@ -69,6 +69,19 @@ namespace JungleBus.Tests.Messaging
         }
 
         [TestMethod]
+        public void MessageProcessorTests_process_with_preHandler()
+        {
+            int preHandlerCalled = 0;
+            _processor = new MessageProcessor(_typeMapping, _faultHandlers, _objectBuilder.Object, x => preHandlerCalled++);
+            MessageProcessingResult result = _processor.ProcessMessage(_message);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, _testHandler1Called);
+            Assert.AreEqual(1, _testHandler2Called);
+            Assert.AreEqual(0, _testHandler3Called);
+            Assert.AreEqual(2, preHandlerCalled);
+        }
+
+        [TestMethod]
         public void MessageProcessorTests_Exception_Thrown_in_Handler()
         {
             _typeMapping[typeof(TestMessage)].Add(typeof(TestHandler3));
@@ -142,6 +155,20 @@ namespace JungleBus.Tests.Messaging
             Assert.AreEqual(1, _testFaultHandler1Called);
             Assert.AreEqual(1, _testFaultHandler2Called);
             Assert.AreEqual(1, _testFaultHandler3Called);
+        }
+
+        [TestMethod]
+        public void MessageProcessorTests_Exception_Thrown_IfNull()
+        {
+            try
+            {
+                _processor.ProcessMessage(null);
+                Assert.Fail();
+            }
+            catch
+            {
+
+            }
         }
 
         #region TEST HANDLERS

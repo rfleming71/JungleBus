@@ -34,7 +34,7 @@ using JungleBus.Interfaces;
 using JungleBus.Messaging;
 using Newtonsoft.Json;
 
-namespace JungleBus
+namespace JungleBus.Queue
 {
     /// <summary>
     /// Queue class that supports transactions
