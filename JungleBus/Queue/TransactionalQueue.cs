@@ -64,6 +64,7 @@ namespace JungleBus
         public TransactionalQueue(ISqsQueue queue)
         {
             _queue = queue;
+            _transactionalMessages = new List<KeyValuePair<object, Type>>();
         }
 
         /// <summary>

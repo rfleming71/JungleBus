@@ -63,10 +63,19 @@ namespace JungleBus.Queue
         /// </summary>
         /// <param name="configuration">Configuration object</param>
         /// <param name="objectBuilder">Object builder</param>
-        public JungleQueue(QueueConfiguration configuration, IObjectBuilder objectBuilder)
+        /// <param name="preHandler">Function called before the handler is invoked</param>
+        public JungleQueue(QueueConfiguration configuration, IObjectBuilder objectBuilder, Action<IObjectBuilder> preHandler = null)
         {
+            Action<IObjectBuilder> queuePreHandler = x =>
+            {
+                x.RegisterInstance(CreateQueue());
+                if (preHandler != null)
+                {
+                    preHandler(x);
+                }
+            };
             _queue = new SqsQueue(configuration.Region, configuration.QueueName, configuration.RetryCount);
-            MessageProcessor messageProcessor = new MessageProcessor(configuration.Handlers, configuration.FaultHandlers, objectBuilder);
+            MessageProcessor messageProcessor = new MessageProcessor(configuration.Handlers, configuration.FaultHandlers, objectBuilder, queuePreHandler);
             if (configuration.NumberOfPollingInstances > 0)
             {
                 _messagePumps = new List<MessagePump>();

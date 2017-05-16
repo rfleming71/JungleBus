@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using Common.Logging;
 using JungleBus.Configuration;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.IoC;
 using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Queue;
@@ -67,7 +68,8 @@ namespace JungleBus
 
             if (configuration.InputQueueConfiguration != null)
             {
-                _localQueue = new JungleQueue(configuration.InputQueueConfiguration, configuration.ObjectBuilder);
+                Action<IObjectBuilder> preHandler = x => x.RegisterInstance(CreateSendBus());
+                _localQueue = new JungleQueue(configuration.InputQueueConfiguration, configuration.ObjectBuilder, preHandler);
                 _localQueue.Subscribe(configuration.InputQueueConfiguration.Handlers.Keys.Select(x => configuration.SubscriptionFormatter(x)));
             }
         }

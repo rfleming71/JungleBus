@@ -40,13 +40,13 @@ namespace ConsoleTestApp
 
             do
             {
+                Console.WriteLine("Press any key to send a message");
                 sendBus.Publish<TestMessage>(x =>
                 {
                     x.ID = 123;
                     x.Modified = DateTime.Now;
                     x.Name = Guid.NewGuid().ToString();
                 });
-                Console.WriteLine("Press any key to send a message");
             }
             while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 

@@ -59,16 +59,22 @@ namespace JungleBus.Queue.Messaging
         private readonly IObjectBuilder _objectBuilder;
 
         /// <summary>
+        /// Function called before the message handler is invoked
+        /// </summary>
+        private readonly Action<IObjectBuilder> _preHandler = null;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MessageProcessor" /> class.
         /// </summary>
         /// <param name="objectBuilder">Use to construct the message handlers</param>
         /// <param name="handlers">Collection of message handlers organized by message type</param>
         /// <param name="faultHandlers">Collection of message fault handlers organized by message type</param>
-        public MessageProcessor(Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers, IObjectBuilder objectBuilder)
+        public MessageProcessor(Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers, IObjectBuilder objectBuilder, Action<IObjectBuilder> preHandler = null)
         {
             _handlerTypes = handlers;
             _faultHandlers = faultHandlers;
             _objectBuilder = objectBuilder;
+            _preHandler = preHandler;
         }
 
         /// <summary>
@@ -98,6 +104,11 @@ namespace JungleBus.Queue.Messaging
                         using (IObjectBuilder childBuilder = _objectBuilder.GetNestedBuilder())
                         {
                             childBuilder.RegisterInstance(LogManager.GetLogger(handlerType));
+                            if (_preHandler != null)
+                            {
+                                Log.TraceFormat("Running preHandler");
+                                _preHandler(childBuilder);
+                            }
                             Log.TraceFormat("Running handler {0}", handlerType.Name);
                             try
                             {
@@ -182,15 +193,25 @@ namespace JungleBus.Queue.Messaging
                 var handlerMethod = typeof(IHandleMessageFaults<>).MakeGenericType(messageType).GetMethod("Handle");
                 foreach (Type handlerType in _faultHandlers[messageType])
                 {
-                    Log.TraceFormat("Running handler {0}", handlerType.Name);
-                    try
+
+                    using (IObjectBuilder childBuilder = _objectBuilder.GetNestedBuilder())
                     {
-                        var handler = Activator.CreateInstance(handlerType);
-                        handlerMethod.Invoke(handler, new object[] { message, messageException });
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.ErrorFormat("Error in handling message fault {0} with {1}", ex, messageType.Name, handlerType.Name);
+                        childBuilder.RegisterInstance(LogManager.GetLogger(handlerType));
+                        if (_preHandler != null)
+                        {
+                            Log.TraceFormat("Running preHandler");
+                            _preHandler(childBuilder);
+                        }
+                        Log.TraceFormat("Running handler {0}", handlerType.Name);
+                        try
+                        {
+                            var handler = childBuilder.GetValue(handlerType);
+                            handlerMethod.Invoke(handler, new object[] { message, messageException });
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.ErrorFormat("Error in handling message fault {0} with {1}", ex, messageType.Name, handlerType.Name);
+                        }
                     }
                 }
             }
