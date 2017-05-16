@@ -98,8 +98,8 @@ namespace JungleBus.Configuration
             {
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
-            
-            // ToDo: Add back in support for this
+
+            configuration.InputQueueConfiguration.SqsPollWaitTime = timeInSeconds;
             return configuration;
         }
 

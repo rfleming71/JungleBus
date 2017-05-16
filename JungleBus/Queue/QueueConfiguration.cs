@@ -53,6 +53,11 @@ namespace JungleBus.Queue
         public int NumberOfPollingInstances { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of seconds to long poll for
+        /// </summary>
+        public int SqsPollWaitTime { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of message handlers organized by message type
         /// </summary>
         public Dictionary<Type, HashSet<Type>> Handlers { get; set; }

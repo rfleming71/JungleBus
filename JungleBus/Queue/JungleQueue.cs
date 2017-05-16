@@ -75,6 +75,7 @@ namespace JungleBus.Queue
                 }
             };
             _queue = new SqsQueue(configuration.Region, configuration.QueueName, configuration.RetryCount);
+            _queue.WaitTimeSeconds = configuration.SqsPollWaitTime;
             MessageProcessor messageProcessor = new MessageProcessor(configuration.Handlers, configuration.FaultHandlers, objectBuilder, queuePreHandler);
             if (configuration.NumberOfPollingInstances > 0)
             {

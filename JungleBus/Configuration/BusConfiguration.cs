@@ -44,11 +44,6 @@ namespace JungleBus.Configuration
         public string BusName { get; set; }
 
         /// <summary>
-        /// Gets or sets the inbound message settings
-        /// </summary>
-        public ReceiveConfiguration Receive { get; set; }
-
-        /// <summary>
         /// Gets or sets the outbound message settings
         /// </summary>
         public SendConfiguration Send { get; set; }

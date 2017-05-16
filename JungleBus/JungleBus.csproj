@@ -99,7 +99,6 @@
     <Compile Include="Configuration\BusBuilder.cs" />
     <Compile Include="Configuration\BusConfiguration.cs" />
     <Compile Include="Configuration\GeneralConfigurationExtensions.cs" />
-    <Compile Include="Configuration\ReceiveConfiguration.cs" />
     <Compile Include="Configuration\SendConfiguration.cs" />
     <Compile Include="JungleBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
