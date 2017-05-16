@@ -33,12 +33,12 @@ namespace JungleBus.Messaging
         /// <summary>
         /// Outbound logger instance
         /// </summary>
-        private static ILog _outboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Recieve");
+        private static ILog _outboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Publish");
 
         /// <summary>
         /// Inbound logger instance
         /// </summary>
-        private static ILog _inboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Publish");
+        private static ILog _inboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Recieve");
 
         /// <summary>
         /// Logs messages received by the bus
@@ -59,7 +59,7 @@ namespace JungleBus.Messaging
         /// <param name="messageType">Message type</param>
         public void OutboundLogMessage(string messageBody, string messageType)
         {
-            _inboundLogger.InfoFormat("Type: {0} Body: {1}", messageType, messageBody);
+            _outboundLogger.InfoFormat("Type: {0} Body: {1}", messageType, messageBody);
         }
     }
 }
