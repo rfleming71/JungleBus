@@ -136,6 +136,7 @@ namespace JungleBus.Aws
         /// Gets metadata common to all messages sent
         /// </summary>
         /// <returns>Metadata values</returns>
+        /// <remarks>ToDo: Move this into a common location, this is identical to the code in the queue send</remarks>
         private Dictionary<string, string> GetCommonMetadata()
         {
             if (_commonMessageMetadata == null)
