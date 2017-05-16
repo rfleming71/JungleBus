@@ -41,6 +41,12 @@ namespace JungleBus.Queue.Messaging
         public string Body { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the message was published to a bus or
+        /// send via direct queue calls
+        /// </summary>
+        public bool Published { get; set; }
+
+        /// <summary>
         /// Gets or sets the deserialized message
         /// </summary>
         /// <remarks>Will be null if parsing failed</remarks>

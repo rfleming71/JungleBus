@@ -116,7 +116,7 @@ namespace JungleBus.Aws.Sqs
             receiveMessageRequest.WaitTimeSeconds = WaitTimeSeconds;
             receiveMessageRequest.MaxNumberOfMessages = MaxNumberOfMessages;
             receiveMessageRequest.AttributeNames = new List<string>() { "ApproximateReceiveCount" };
-            receiveMessageRequest.MessageAttributeNames = new List<string>() { "messageType" };
+            receiveMessageRequest.MessageAttributeNames = new List<string>() { "messageType", "fromSns" };
             receiveMessageRequest.QueueUrl = _queueUrl;
 
             ReceiveMessageResponse receiveMessageResponse = await _simpleQueueService.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
@@ -166,7 +166,8 @@ namespace JungleBus.Aws.Sqs
                 var topic = _simpleNotificationService.Value.FindTopic(topicName);
                 if (topic != null)
                 {
-                    _simpleNotificationService.Value.SubscribeQueue(topic.TopicArn, _simpleQueueService, _queueUrl);
+                    string arn = _simpleNotificationService.Value.SubscribeQueue(topic.TopicArn, _simpleQueueService, _queueUrl);
+                    _simpleNotificationService.Value.SetSubscriptionAttributes(arn, "RawMessageDelivery", "true");
                 }
             }
         }

@@ -60,6 +60,7 @@ namespace JungleBus.Queue.Messaging
                 }
 
                 parsedMessage.Body = message.Body;
+                parsedMessage.Published = message.MessageAttributes.ContainsKey("fromSns");
 
                 parsedMessage.MessageTypeName = message.MessageAttributes["messageType"].StringValue;
                 parsedMessage.MessageType = Type.GetType(parsedMessage.MessageTypeName, false, true);

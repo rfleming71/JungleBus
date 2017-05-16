@@ -55,21 +55,21 @@ namespace ConsoleTestApp
 
         static IRunJungleBus CreateRecieveOnlyBus()
         {
-            return BusBuilder.Create("fleming")
+            return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
                 .SetSqsPollWaitTime(14)
                 .UsingEventHandlersFromEntryAssembly()
-                .SetNumberOfPollingInstances(2)
+                .SetNumberOfPollingInstances(1)
                 .PublishingLocalEventsOnly()
                 .CreateStartableBus();
         }
 
         static IBus CreateSendOnlyBus()
         {
-            return BusBuilder.Create("fleming")
+            return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
@@ -79,7 +79,7 @@ namespace ConsoleTestApp
 
         static IRunJungleBus CreateFullBus()
         {
-            return BusBuilder.Create("fleming")
+            return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
@@ -87,7 +87,7 @@ namespace ConsoleTestApp
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
                 .SetSqsPollWaitTime(14)
                 .UsingEventHandlersFromEntryAssembly()
-                .SetNumberOfPollingInstances(2)
+                .SetNumberOfPollingInstances(1)
                 .CreateStartableBus();
         }
     }
