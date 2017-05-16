@@ -37,7 +37,7 @@ namespace JungleBus.Tests.Messaging
             _messageProcessor = new Mock<IMessageProcessor>(MockBehavior.Strict);
             _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>())).Returns(new MessageProcessingResult() { WasSuccessful = true });
 
-            _messagePump = new MessagePump(_queue.Object, MaxTryCount, _messageProcessor.Object, 1);
+            _messagePump = new MessagePump(_queue.Object, MaxTryCount, _messageProcessor.Object, _messageLogger.Object, 1);
 
             _queue.Setup(x => x.GetMessages(It.IsAny<CancellationToken>())).Returns(Task.FromResult((IEnumerable<TransportMessage>)new[] { _message }))
                 .Callback(() => _messagePump.Stop());

@@ -31,6 +31,7 @@ using System.Transactions;
 using Common.Logging;
 using JungleBus.Aws.Sqs;
 using JungleBus.Interfaces;
+using JungleBus.Messaging;
 using Newtonsoft.Json;
 
 namespace JungleBus
@@ -56,6 +57,11 @@ namespace JungleBus
         private readonly ISqsQueue _queue;
 
         /// <summary>
+        /// Message logger
+        /// </summary>
+        private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
         /// Gets the common message metadata
         /// </summary>
         private Dictionary<string, string> _commonMessageMetadata;
@@ -64,10 +70,12 @@ namespace JungleBus
         /// Initializes a new instance of the <see cref="TransactionalQueue" /> class.
         /// </summary>
         /// <param name="queue">Underlying SQS queue</param>
-        public TransactionalQueue(ISqsQueue queue)
+        /// <param name="messageLogger">Message logger</param>
+        public TransactionalQueue(ISqsQueue queue, IMessageLogger messageLogger)
         {
             _queue = queue;
             _transactionalMessages = new List<KeyValuePair<object, Type>>();
+            _messageLogger = messageLogger;
         }
 
         /// <summary>
@@ -186,6 +194,7 @@ namespace JungleBus
             };
             metadata.AddRange(GetCommonMetadata());
             _queue.AddMessage(messageString, metadata);
+            _messageLogger.OutboundLogMessage(messageString, type.AssemblyQualifiedName);
             Log.TraceFormat("Sending message of type {0}", type);
         }
 

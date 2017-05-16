@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using Amazon;
+using JungleBus.Messaging;
 
 namespace JungleBus.Queue
 {
@@ -66,5 +67,10 @@ namespace JungleBus.Queue
         /// Gets or sets the collection of message fault handlers organized by message type
         /// </summary>
         public Dictionary<Type, HashSet<Type>> FaultHandlers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message logger for the queue
+        /// </summary>
+        public IMessageLogger MessageLogger { get; set; }
     }
 }

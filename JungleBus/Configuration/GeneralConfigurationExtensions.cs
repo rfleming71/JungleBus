@@ -71,7 +71,8 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("ObjectBuilder", "Object builder must be set");
             }
 
-            configuration.ObjectBuilder.RegisterInstance<IMessageSerializer>(new JsonNetSerializer());
+            // ToDo: Currently not being used, should reintroduce the message serializer in the next version
+            // configuration.ObjectBuilder.RegisterInstance<IMessageSerializer>(new JsonNetSerializer());
             return configuration as IBusConfiguration;
         }
 

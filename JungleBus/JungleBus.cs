@@ -68,6 +68,7 @@ namespace JungleBus
 
             if (configuration.InputQueueConfiguration != null)
             {
+                configuration.InputQueueConfiguration.MessageLogger = configuration.MessageLogger;
                 Action<IObjectBuilder> preHandler = x => x.RegisterInstance(CreateSendBus());
                 _localQueue = new JungleQueue(configuration.InputQueueConfiguration, configuration.ObjectBuilder, preHandler);
                 _localQueue.Subscribe(configuration.InputQueueConfiguration.Handlers.Keys.Select(x => configuration.SubscriptionFormatter(x)));

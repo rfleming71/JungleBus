@@ -29,6 +29,7 @@ using Common.Logging;
 using JungleBus.Aws.Sqs;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.IoC;
+using JungleBus.Messaging;
 using JungleBus.Queue.Messaging;
 
 namespace JungleBus.Queue
@@ -59,6 +60,11 @@ namespace JungleBus.Queue
         private readonly List<Task> _messagePumpTasks;
 
         /// <summary>
+        /// Message Logger
+        /// </summary>
+        private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="JungleQueue" /> class.
         /// </summary>
         /// <param name="configuration">Configuration object</param>
@@ -66,6 +72,7 @@ namespace JungleBus.Queue
         /// <param name="preHandler">Function called before the handler is invoked</param>
         public JungleQueue(QueueConfiguration configuration, IObjectBuilder objectBuilder, Action<IObjectBuilder> preHandler = null)
         {
+            _messageLogger = configuration.MessageLogger;
             Action<IObjectBuilder> queuePreHandler = x =>
             {
                 x.RegisterInstance(CreateQueue());
@@ -83,7 +90,7 @@ namespace JungleBus.Queue
                 _messagePumpTasks = new List<Task>();
                 for (int x = 0; x < configuration.NumberOfPollingInstances; ++x)
                 {
-                    MessagePump pump = new MessagePump(_queue, configuration.RetryCount, messageProcessor, x + 1);
+                    MessagePump pump = new MessagePump(_queue, configuration.RetryCount, messageProcessor, _messageLogger, x + 1);
                     _messagePumps.Add(pump);
                     _messagePumpTasks.Add(new Task(() => pump.Run()));
                 }
@@ -96,7 +103,7 @@ namespace JungleBus.Queue
         /// <returns>Instance of the queue</returns>
         public IQueue CreateQueue()
         {
-            return new TransactionalQueue(_queue);
+            return new TransactionalQueue(_queue, _messageLogger);
         }
 
         /// <summary>

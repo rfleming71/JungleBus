@@ -28,6 +28,7 @@ using System.Threading;
 using Common.Logging;
 using JungleBus.Aws.Sqs;
 using JungleBus.Interfaces;
+using JungleBus.Messaging;
 
 namespace JungleBus.Queue.Messaging
 {
@@ -57,6 +58,11 @@ namespace JungleBus.Queue.Messaging
         private readonly int _messageRetryCount;
 
         /// <summary>
+        /// Message logger
+        /// </summary>
+        private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
         /// Token used to control when to stop the pump
         /// </summary>
         private CancellationTokenSource _cancellationToken;
@@ -67,13 +73,15 @@ namespace JungleBus.Queue.Messaging
         /// <param name="queue">Queue to read messages from</param>
         /// <param name="messageRetryCount">Number of times to retry a message</param>
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
+        /// <param name="messageLogger">Instance of the message logger</param>
         /// <param name="id">Id of the message pump</param>
-        public MessagePump(ISqsQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, int id)
+        public MessagePump(ISqsQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IMessageLogger messageLogger, int id)
         {
             _queue = queue;
             _messageRetryCount = messageRetryCount;
             _messageProcessor = messageProcessor;
             _cancellationToken = new CancellationTokenSource();
+            _messageLogger = messageLogger;
         }
 
         /// <summary>
@@ -97,6 +105,7 @@ namespace JungleBus.Queue.Messaging
                     foreach (TransportMessage message in recievedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
+                        _messageLogger.InboundLogMessage(message.Body, message.MessageTypeName, message.Id, message.AttemptNumber);
                         MessageProcessingResult result;
                         if (message.MessageParsingSucceeded)
                         {
