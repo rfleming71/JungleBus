@@ -67,8 +67,6 @@ namespace JungleBus.Queue.Messaging
         /// <param name="queue">Queue to read messages from</param>
         /// <param name="messageRetryCount">Number of times to retry a message</param>
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
-        /// <param name="messageLogger">Instance of the message logger</param>
-        /// <param name="bus">Instance of the bus to pass to the event handlers</param>
         /// <param name="id">Id of the message pump</param>
         public MessagePump(ISqsQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, int id)
         {

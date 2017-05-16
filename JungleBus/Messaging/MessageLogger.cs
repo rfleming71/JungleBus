@@ -46,7 +46,7 @@ namespace JungleBus.Messaging
         /// <param name="messageBody">Message body</param>
         /// <param name="messageType">Message type</param>
         /// <param name="messageId">Id of the message</param>
-        /// <param name="attemptNumber">How many times this message has been recieved</param>
+        /// <param name="attemptNumber">How many times this message has been received</param>
         public void InboundLogMessage(string messageBody, string messageType, string messageId, int attemptNumber)
         {
             _inboundLogger.InfoFormat("Message Id: {0} Type: {1} Body: {2} Attempt: {3}", messageId, messageType, messageBody, attemptNumber);

@@ -41,6 +41,7 @@ namespace JungleBus.Configuration
         /// Configure the the bus to use structure map to build the handlers
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
+        /// <param name="objectBuilder">Object Builder to use</param>
         /// <returns>Modified configuration</returns>
         public static IConfigureMessageSerializer WithObjectBuilder(this IConfigureObjectBuilder configuration, IObjectBuilder objectBuilder)
         {

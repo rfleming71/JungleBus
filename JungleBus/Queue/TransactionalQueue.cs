@@ -35,6 +35,9 @@ using Newtonsoft.Json;
 
 namespace JungleBus
 {
+    /// <summary>
+    /// Queue class that supports transactions
+    /// </summary>
     public class TransactionalQueue : IQueue, IEnlistmentNotification
     {
         /// <summary>
@@ -102,7 +105,11 @@ namespace JungleBus
             Send(message);
         }
 
-        public void Commit(Enlistment enlistment)
+        /// <summary>
+        /// Notifies an enlisted object that a transaction is being committed.
+        /// </summary>
+        /// <param name="enlistment">An System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
+        void IEnlistmentNotification.Commit(Enlistment enlistment)
         {
             Log.Trace("Committing transaction");
 
@@ -116,19 +123,52 @@ namespace JungleBus
             Log.Trace("Committed transaction");
         }
 
-        public void InDoubt(Enlistment enlistment)
+        /// <summary>
+        /// Notifies an enlisted object that the status of a transaction is in doubt.
+        /// </summary>
+        /// <param name="enlistment">An System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
+        void IEnlistmentNotification.InDoubt(Enlistment enlistment)
         {
         }
 
-        public void Prepare(PreparingEnlistment preparingEnlistment)
+        /// <summary>
+        /// Notifies an enlisted object that a transaction is being prepared for commitment.
+        /// </summary>
+        /// <param name="preparingEnlistment">A System.Transactions.PreparingEnlistment object used to send a response to the transaction manager</param>
+        void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
         {
             preparingEnlistment.Prepared();
         }
 
-        public void Rollback(Enlistment enlistment)
+        /// <summary>
+        /// Notifies an enlisted object that a transaction is being rolled back (aborted).
+        /// </summary>
+        /// <param name="enlistment">A System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
+        void IEnlistmentNotification.Rollback(Enlistment enlistment)
         {
             Log.Trace("Transaction rolled back");
             _transactionalMessages.Clear();
+        }
+
+        /// <summary>
+        /// Gets the local machine IP Address
+        /// </summary>
+        /// <returns>IP Address</returns>
+        private static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            if (host != null)
+            {
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return ip.ToString();
+                    }
+                }
+            }
+
+            return "0.0.0.0";
         }
 
         /// <summary>
@@ -149,6 +189,10 @@ namespace JungleBus
             Log.TraceFormat("Sending message of type {0}", type);
         }
 
+        /// <summary>
+        /// Gets common metadata to all sent messages
+        /// </summary>
+        /// <returns>Message metadata</returns>
         private IEnumerable<KeyValuePair<string, string>> GetCommonMetadata()
         {
             if (_commonMessageMetadata == null)
@@ -165,6 +209,9 @@ namespace JungleBus
             return _commonMessageMetadata;
         }
 
+        /// <summary>
+        /// Adds the sender version number to the common metadata
+        /// </summary>
         private void AddSenderVersion()
         {
             Assembly entryAssembly = Assembly.GetEntryAssembly();
@@ -172,23 +219,6 @@ namespace JungleBus
             {
                 _commonMessageMetadata["SenderVersion"] = entryAssembly.GetName().Version.ToString(4);
             }
-        }
-
-        private static string GetLocalIPAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            if (host != null)
-            {
-                foreach (var ip in host.AddressList)
-                {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        return ip.ToString();
-                    }
-                }
-            }
-
-            return "0.0.0.0";
         }
     }
 }

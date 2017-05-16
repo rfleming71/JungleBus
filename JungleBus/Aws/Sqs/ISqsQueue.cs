@@ -29,9 +29,11 @@ using JungleBus.Queue.Messaging;
 
 namespace JungleBus.Aws.Sqs
 {
+    /// <summary>
+    /// Amazon SQS Message queue
+    /// </summary>
     public interface ISqsQueue : IDisposable
     {
-
         /// <summary>
         /// Gets or sets the number of seconds to long poll for
         /// </summary>
@@ -59,10 +61,11 @@ namespace JungleBus.Aws.Sqs
         /// Adds the message to the queue
         /// </summary>
         /// <param name="message">Message to add to the queue</param>
+        /// <param name="metadata">Message metadata</param>
         void AddMessage(string message, IEnumerable<KeyValuePair<string, string>> metadata);
 
         /// <summary>
-        /// Subscribe the queue to the given sns topics
+        /// Subscribe the queue to the given SNS topics
         /// </summary>
         /// <param name="snsTopics">Message topics to subscribe to</param>
         void Subscribe(IEnumerable<string> snsTopics);

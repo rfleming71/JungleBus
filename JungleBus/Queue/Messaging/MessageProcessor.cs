@@ -66,9 +66,10 @@ namespace JungleBus.Queue.Messaging
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageProcessor" /> class.
         /// </summary>
-        /// <param name="objectBuilder">Use to construct the message handlers</param>
         /// <param name="handlers">Collection of message handlers organized by message type</param>
         /// <param name="faultHandlers">Collection of message fault handlers organized by message type</param>
+        /// <param name="objectBuilder">Use to construct the message handlers</param>
+        /// <param name="preHandler">Function called before the handler is invoked</param>
         public MessageProcessor(Dictionary<Type, HashSet<Type>> handlers, Dictionary<Type, HashSet<Type>> faultHandlers, IObjectBuilder objectBuilder, Action<IObjectBuilder> preHandler = null)
         {
             _handlerTypes = handlers;
@@ -81,7 +82,6 @@ namespace JungleBus.Queue.Messaging
         /// Process the given message
         /// </summary>
         /// <param name="message">Transport message to be dispatched to the event handlers</param>
-        /// <param name="queueInstance">Instance of the send queue to inject into the event handlers</param>
         /// <returns>True is all event handlers processed successfully</returns>
         public MessageProcessingResult ProcessMessage(TransportMessage message)
         {
@@ -109,6 +109,7 @@ namespace JungleBus.Queue.Messaging
                                 Log.TraceFormat("Running preHandler");
                                 _preHandler(childBuilder);
                             }
+
                             Log.TraceFormat("Running handler {0}", handlerType.Name);
                             try
                             {
@@ -151,7 +152,6 @@ namespace JungleBus.Queue.Messaging
         /// Processes inbound message that have faulted more than the retry limit
         /// </summary>
         /// <param name="message">Message to process</param>
-        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
         /// <param name="ex">Exception caused by the message</param>
         public void ProcessFaultedMessage(TransportMessage message, Exception ex)
         {
@@ -182,7 +182,6 @@ namespace JungleBus.Queue.Messaging
         /// Calls the fault handler on the message object
         /// </summary>
         /// <param name="message">Message to process</param>
-        /// <param name="busInstance">Instance of the bus to pass to event handlers</param>
         /// <param name="messageException">Exception caused by the message</param>
         private void ProcessFaultedMessageHandlers(object message, Exception messageException)
         {
@@ -193,7 +192,6 @@ namespace JungleBus.Queue.Messaging
                 var handlerMethod = typeof(IHandleMessageFaults<>).MakeGenericType(messageType).GetMethod("Handle");
                 foreach (Type handlerType in _faultHandlers[messageType])
                 {
-
                     using (IObjectBuilder childBuilder = _objectBuilder.GetNestedBuilder())
                     {
                         childBuilder.RegisterInstance(LogManager.GetLogger(handlerType));
@@ -202,6 +200,7 @@ namespace JungleBus.Queue.Messaging
                             Log.TraceFormat("Running preHandler");
                             _preHandler(childBuilder);
                         }
+
                         Log.TraceFormat("Running handler {0}", handlerType.Name);
                         try
                         {

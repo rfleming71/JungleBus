@@ -56,6 +56,10 @@ namespace JungleBus.Configuration
         /// Gets or sets the function for formatting subscription names
         /// </summary>
         Func<Type, string> SubscriptionFormatter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the input queue configuration
+        /// </summary>
         Queue.QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

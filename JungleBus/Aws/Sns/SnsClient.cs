@@ -84,6 +84,7 @@ namespace JungleBus.Aws.Sns
         /// </summary>
         /// <param name="message">Serialized Message</param>
         /// <param name="type">Payload type</param>
+        /// <param name="metadata">Message metadata</param>
         public void Publish(string message, Type type, Dictionary<string, string> metadata)
         {
             string topicName = _topicFormatter(type);

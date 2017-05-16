@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessor.cs">
+﻿// <copyright file="IMessageStatistics.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -41,7 +41,7 @@ namespace JungleBus.Interfaces.Statistics
         TimeSpan HandlerRunTime { get; }
 
         /// <summary>
-        /// Get the number of times this message has been tried before this
+        /// Gets the number of times this message has been tried before this
         /// attempt
         /// </summary>
         int PreviousRetryCount { get; }

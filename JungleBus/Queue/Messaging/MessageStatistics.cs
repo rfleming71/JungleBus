@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessor.cs">
+﻿// <copyright file="MessageStatistics.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -32,34 +32,34 @@ namespace JungleBus.Queue.Messaging
     internal class MessageStatistics : IMessageStatistics
     {
         /// <summary>
-        /// Gets a value indicating whether this the final attempt to process
+        /// Gets or sets a value indicating whether this the final attempt to process
         /// this message
         /// </summary>
         public bool FinalAttempt { get; set; }
 
         /// <summary>
-        /// Gets the run time of the message 
+        /// Gets or sets the run time of the message 
         /// </summary>
         public TimeSpan HandlerRunTime { get; set; }
 
         /// <summary>
-        /// Gets the number of bytes in the message
+        /// Gets or sets the number of bytes in the message
         /// </summary>
         public int MessageLength { get; set; }
 
         /// <summary>
-        /// Gets the type of the message
+        /// Gets or sets the type of the message
         /// </summary>
         public string MessageType { get; set; }
 
         /// <summary>
-        /// Get the number of times this message has been tried before this
+        /// Gets or sets the number of times this message has been tried before this
         /// attempt
         /// </summary>
         public int PreviousRetryCount { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this message was successful
+        /// Gets or sets a value indicating whether this message was successful
         /// </summary>
         public bool Success { get; set; }
     }

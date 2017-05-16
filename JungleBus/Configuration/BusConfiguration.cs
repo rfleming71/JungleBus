@@ -58,8 +58,14 @@ namespace JungleBus.Configuration
         /// </summary>
         public IMessageLogger MessageLogger { get; set; }
 
+        /// <summary>
+        /// Gets or sets the function for formatting topic names
+        /// </summary>
         public Func<Type, string> SubscriptionFormatter { get; set; }
 
+        /// <summary>
+        /// Gets or sets the input queue configuration
+        /// </summary>
         public Queue.QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

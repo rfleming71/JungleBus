@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessor.cs">
+﻿// <copyright file="IWantMessageStatistics.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming

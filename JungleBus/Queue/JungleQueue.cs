@@ -99,7 +99,7 @@ namespace JungleBus.Queue
         }
 
         /// <summary>
-        /// Subscribe the queue to the given sns topics
+        /// Subscribe the queue to the given SNS topics
         /// </summary>
         /// <param name="snsTopics">Message topics to subscribe to</param>
         public void Subscribe(IEnumerable<string> snsTopics)

@@ -26,9 +26,11 @@ using System;
 
 namespace JungleBus.Interfaces
 {
+    /// <summary>
+    /// Transaction queue
+    /// </summary>
     public interface IQueue
     {
-
         /// <summary>
         /// Send a message to the queue
         /// </summary>

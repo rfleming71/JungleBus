@@ -111,6 +111,31 @@ namespace JungleBus.Aws
             _snsClient.SetupMessagesForPublishing(messageTypes);
         }
 
+        /// <summary>
+        /// Gets the local machine's IP Address
+        /// </summary>
+        /// <returns>IP Address</returns>
+        private static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            if (host != null)
+            {
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return ip.ToString();
+                    }
+                }
+            }
+
+            return "0.0.0.0";
+        }
+
+        /// <summary>
+        /// Gets metadata common to all messages sent
+        /// </summary>
+        /// <returns>Metadata values</returns>
         private Dictionary<string, string> GetCommonMetadata()
         {
             if (_commonMessageMetadata == null)
@@ -127,6 +152,9 @@ namespace JungleBus.Aws
             return _commonMessageMetadata;
         }
 
+        /// <summary>
+        /// Adds the sender application version to the common metadata
+        /// </summary>
         private void AddSenderVersion()
         {
             Assembly entryAssembly = Assembly.GetEntryAssembly();
@@ -134,23 +162,6 @@ namespace JungleBus.Aws
             {
                 _commonMessageMetadata["SenderVersion"] = entryAssembly.GetName().Version.ToString(4);
             }
-        }
-
-        private static string GetLocalIPAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            if (host != null)
-            {
-                foreach (var ip in host.AddressList)
-                {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        return ip.ToString();
-                    }
-                }
-            }
-
-            return "0.0.0.0";
         }
     }
 }

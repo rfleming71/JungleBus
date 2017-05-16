@@ -61,7 +61,6 @@ namespace JungleBus
         /// Initializes a new instance of the <see cref="TransactionalBus" /> class.
         /// </summary>
         /// <param name="messagePublisher">How to publish messages</param>
-        /// <param name="messageSerializer">How to serialize the outbound messages</param>
         /// <param name="messageQueue">Local message queue</param>
         public TransactionalBus(IMessagePublisher messagePublisher, IQueue messageQueue)
         {

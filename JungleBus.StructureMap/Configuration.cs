@@ -1,4 +1,4 @@
-﻿// <copyright file="GeneralConfigurationExtensions.cs">
+﻿// <copyright file="Configuration.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -28,6 +28,9 @@ using StructureMap;
 
 namespace JungleBus.StructureMap
 {
+    /// <summary>
+    /// Extension methods for configuration the object builder
+    /// </summary>
     public static class Configuration
     {
         /// <summary>

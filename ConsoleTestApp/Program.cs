@@ -6,7 +6,6 @@ using JungleBus.Interfaces.Statistics;
 using JungleBus.StructureMap;
 using Messages;
 using StructureMap;
-using System.Collections.Generic;
 
 namespace ConsoleTestApp
 {
