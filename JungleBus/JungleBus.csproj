@@ -75,8 +75,6 @@
     <Compile Include="Configuration\ReceiveConfigurationExtensions.cs" />
     <Compile Include="Configuration\IConfigureEventReceiving.cs" />
     <Compile Include="Configuration\IConfigureEventPublishing.cs" />
-    <Compile Include="Exceptions\JungleBusConfigurationException.cs" />
-    <Compile Include="Exceptions\JungleBusException.cs" />
     <Compile Include="Messaging\IMessageLogger.cs" />
     <Compile Include="Messaging\IMessagePublisher.cs" />
     <Compile Include="Messaging\NoOpMessageLogger.cs" />

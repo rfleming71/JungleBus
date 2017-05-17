@@ -28,7 +28,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using Amazon;
 using JungleBus.Aws.Sns;
-using JungleBus.Exceptions;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;

@@ -1,9 +1,6 @@
-﻿using System;
-using JungleBus.Configuration;
-using JungleBus.Exceptions;
+﻿using JungleBus.Configuration;
 using JungleBus.Interfaces.Configuration;
-using JungleBus.Interfaces.Serialization;
-using JungleBus.Serialization;
+using JungleBus.Interfaces.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JungleBus.Tests.Configuration

@@ -22,13 +22,11 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using JungleBus.Exceptions;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.Configuration;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Interfaces.IoC;
-using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
-using JungleBus.Serialization;
 
 namespace JungleBus.Configuration
 {

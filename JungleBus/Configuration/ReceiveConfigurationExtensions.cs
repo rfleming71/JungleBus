@@ -26,8 +26,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Amazon;
-using JungleBus.Exceptions;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Interfaces.IoC;
 using JungleBus.Queue;
 
