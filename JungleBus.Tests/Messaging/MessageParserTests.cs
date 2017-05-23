@@ -39,6 +39,58 @@ namespace JungleBus.Tests.Messaging
         [TestMethod]
         public void MessageParserTests_FromSns_success()
         {
+            string message = @"{
+                ""Type"" : ""Notification"",
+  ""MessageId"" : ""4f213ec0-a735-5359-bd02-6f5ecb8feeab"",
+  ""TopicArn"" : ""arn:aws:sns:us-east-1:1234:JB_topic_arn"",
+  ""Message"" : ""{\""Id\"":712738,\""Price\"":1.1}"",
+  ""Timestamp"" : ""2017-05-23T16:59:38.893Z"",
+  ""SignatureVersion"" : ""1"",
+  ""Signature"" : """",
+  ""SigningCertURL"" : ""https://google.com/"",
+  ""UnsubscribeURL"" : ""https://google.com/"",
+  ""MessageAttributes"" : {
+                    ""BusVersion"" : { ""Type"":""String"",""Value"":""2.1.0.0""},
+    ""SenderIpAddress"" : { ""Type"":""String"",""Value"":""127.0.0.1""},
+    ""messageType"" : { ""Type"":""String"",""Value"":""" + typeof(TestMessage).AssemblyQualifiedName + @"""},
+    ""SenderVersion"" : { ""Type"":""String"",""Value"":""1.2.0.0""},
+    ""fromSns"" : { ""Type"":""String"",""Value"":""True""}
+                }
+            }";
+            _messageAttributes.Clear();
+            Message sourceMessage = new Message() { ReceiptHandle = "12345", Body = message, MessageAttributes = _messageAttributes };
+            TransportMessage transportMessage = _parser.ParseMessage(sourceMessage);
+            Assert.IsNotNull(transportMessage);
+            Assert.IsTrue(transportMessage.MessageParsingSucceeded);
+            Assert.IsTrue(transportMessage.Published);
+            Assert.IsNotNull(transportMessage.Message);
+            Assert.AreEqual(712738, ((TestMessage)transportMessage.Message).ID);
+            Assert.AreEqual(1.1, ((TestMessage)transportMessage.Message).Price);
+            Assert.AreEqual(typeof(TestMessage), transportMessage.MessageType);
+            Assert.AreEqual(typeof(TestMessage).AssemblyQualifiedName, transportMessage.MessageTypeName);
+            Assert.AreEqual("12345", transportMessage.ReceiptHandle);
+            Assert.AreEqual(@"{""Id"":712738,""Price"":1.1}", transportMessage.Body);
+        }
+
+        [TestMethod]
+        public void MessageParserTests_InvalidMessageFormat_success()
+        {
+            _messageAttributes.Clear();
+            Message sourceMessage = new Message() { ReceiptHandle = "12345", Body = "{}", MessageAttributes = _messageAttributes };
+            TransportMessage transportMessage = _parser.ParseMessage(sourceMessage);
+            Assert.IsNotNull(transportMessage);
+            Assert.IsFalse(transportMessage.MessageParsingSucceeded);
+            Assert.IsFalse(transportMessage.Published);
+            Assert.IsNull(transportMessage.Message);
+            Assert.AreEqual(null, transportMessage.MessageType);
+            Assert.AreEqual(null, transportMessage.MessageTypeName);
+            Assert.AreEqual("12345", transportMessage.ReceiptHandle);
+            Assert.AreEqual("{}", transportMessage.Body);
+        }
+
+        [TestMethod]
+        public void MessageParserTests_FromSnsEnvelope_success()
+        {
             _messageAttributes["fromSns"] = new MessageAttributeValue();
             Message sourceMessage = new Message() { ReceiptHandle = "12345", Body = "{ }", MessageAttributes = _messageAttributes };
             TransportMessage transportMessage = _parser.ParseMessage(sourceMessage);
