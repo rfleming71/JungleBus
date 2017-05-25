@@ -86,7 +86,7 @@ namespace JungleBus.Aws.Sqs
             }
 
             MessageParser = new MessageParser();
-            MaxNumberOfMessages = 10;
+            MaxNumberOfMessages = 1;
         }
 
         /// <summary>

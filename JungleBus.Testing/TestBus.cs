@@ -39,7 +39,7 @@ namespace JungleBus.Testing
         private Dictionary<Type, List<object>> _publishedMessages = new Dictionary<Type, List<object>>();
 
         /// <summary>
-        /// Collection of publish local messages
+        /// Collection of locally published messages
         /// </summary>
         private Dictionary<Type, List<object>> _publishedLocalMessages = new Dictionary<Type, List<object>>();
 

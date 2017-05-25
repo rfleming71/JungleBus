@@ -11,7 +11,7 @@
     <releaseNotes>Initial Release for StructureMap support</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <dependencies>
-      <dependency id="JungleBus.Interfaces" version="[2.0,3.0)" />
+      <dependency id="JungleBus.Interfaces" version="[2.0,4.0)" />
     </dependencies>
   </metadata>
   <files>

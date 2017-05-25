@@ -269,7 +269,7 @@ namespace JungleBus.Tests.Messaging
 
         class TestStatHandler1 : IWantMessageStatistics
         {
-            public void RecieveStatisitics(IMessageStatistics statistics)
+            public void ReceiveStatisitics(IMessageStatistics statistics)
             {
                 ++_testStatHandler1Called;
             }
@@ -277,7 +277,7 @@ namespace JungleBus.Tests.Messaging
 
         class TestStatHandler2 : IWantMessageStatistics
         {
-            public void RecieveStatisitics(IMessageStatistics statistics)
+            public void ReceiveStatisitics(IMessageStatistics statistics)
             {
                 ++_testStatHandler2Called;
             }

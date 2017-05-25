@@ -33,6 +33,6 @@ namespace JungleBus.Interfaces.Statistics
         /// Called when a message completes processing
         /// </summary>
         /// <param name="statistics">Message Statistics</param>
-        void RecieveStatisitics(IMessageStatistics statistics);
+        void ReceiveStatisitics(IMessageStatistics statistics);
     }
 }

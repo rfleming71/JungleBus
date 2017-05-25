@@ -2,13 +2,13 @@
 <package >
   <metadata>
     <id>JungleBus.Interfaces</id>
-    <version>2.1.2</version>
+    <version>3.0.0</version>
     <authors>Ryan Fleming</authors>
     <owners>Ryan Fleming</owners>
     <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple service bus built on top of Amazon Web Services</description>
-    <releaseNotes>Adding message metadata</releaseNotes>
+    <releaseNotes>Adding support to the queue without the bus</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>EventBus Bus AWS Amazon-web-services SQS SNS</tags>
     <dependencies>

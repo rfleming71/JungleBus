@@ -100,9 +100,9 @@ namespace JungleBus.Queue.Messaging
                 Log.TraceFormat("[{0}] Starting receiving call", Id);
                 try
                 {
-                    IEnumerable<TransportMessage> recievedMessages = await _queue.GetMessages(_cancellationToken.Token);
-                    Log.TraceFormat("[{1}] Received {0} messages", recievedMessages.Count(), Id);
-                    foreach (TransportMessage message in recievedMessages)
+                    IEnumerable<TransportMessage> ReceivedMessages = await _queue.GetMessages(_cancellationToken.Token);
+                    Log.TraceFormat("[{1}] Received {0} messages", ReceivedMessages.Count(), Id);
+                    foreach (TransportMessage message in ReceivedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
                         _messageLogger.InboundLogMessage(message.Body, message.MessageTypeName, message.Id, message.AttemptNumber);

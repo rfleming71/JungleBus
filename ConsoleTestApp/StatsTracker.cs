@@ -5,7 +5,7 @@ namespace ConsoleTestApp
 {
     class StatsTracker : IWantMessageStatistics
     {
-        public void RecieveStatisitics(IMessageStatistics statistics)
+        public void ReceiveStatisitics(IMessageStatistics statistics)
         {
             Console.WriteLine("Type: {0} - Successful: {1} - Runtime: {2}", statistics.MessageType, statistics.Success, statistics.HandlerRunTime.TotalMilliseconds);
         }

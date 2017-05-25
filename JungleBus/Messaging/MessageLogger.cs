@@ -38,7 +38,7 @@ namespace JungleBus.Messaging
         /// <summary>
         /// Inbound logger instance
         /// </summary>
-        private static ILog _inboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Recieve");
+        private static ILog _inboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Receive");
 
         /// <summary>
         /// Logs messages received by the bus

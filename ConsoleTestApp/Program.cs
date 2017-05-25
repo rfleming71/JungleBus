@@ -31,7 +31,7 @@ namespace ConsoleTestApp
             }
             else
             {
-                bus = CreateRecieveOnlyBus();
+                bus = CreateReceiveOnlyBus();
                 sendBus = CreateSendOnlyBus();
             }
 
@@ -52,7 +52,7 @@ namespace ConsoleTestApp
             bus.StopReceiving();
         }
 
-        static IRunJungleBus CreateRecieveOnlyBus()
+        static IRunJungleBus CreateReceiveOnlyBus()
         {
             return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)

@@ -168,12 +168,12 @@ namespace JungleBus.Queue.Messaging
         /// <param name="statistics">Message statistics</param>
         public void ProcessMessageStatistics(IMessageStatistics statistics)
         {
-            var recievers = _objectBuilder.GetValues<IWantMessageStatistics>();
-            if (recievers != null)
+            var Receivers = _objectBuilder.GetValues<IWantMessageStatistics>();
+            if (Receivers != null)
             {
-                foreach (IWantMessageStatistics reciever in recievers)
+                foreach (IWantMessageStatistics Receiver in Receivers)
                 {
-                    reciever.RecieveStatisitics(statistics);
+                    Receiver.ReceiveStatisitics(statistics);
                 }
             }
         }

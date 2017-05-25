@@ -147,6 +147,7 @@ namespace JungleBus
         /// <param name="enlistment">An System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
         void IEnlistmentNotification.InDoubt(Enlistment enlistment)
         {
+            enlistment.Done();
         }
 
         /// <summary>
@@ -166,6 +167,7 @@ namespace JungleBus
         {
             Log.Trace("Transaction rolled back");
             _transactionalPublishMessages.Clear();
+            enlistment.Done();
         }
 
         /// <summary>
