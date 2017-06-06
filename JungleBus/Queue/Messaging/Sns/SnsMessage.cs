@@ -23,7 +23,7 @@
 // </copyright>
 using System.Collections.Generic;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging.Sns
 {
     /// <summary>
     /// DTO for decoding SNS messages

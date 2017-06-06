@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging.Sns
 {
     /// <summary>
     /// DTO for decoding SNS message attributes

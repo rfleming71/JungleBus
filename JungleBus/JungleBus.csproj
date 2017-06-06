@@ -92,8 +92,8 @@
     <Compile Include="Queue\TransactionalQueue.cs" />
     <Compile Include="TransactionalBus.cs" />
     <Compile Include="Aws\Sns\SnsClient.cs" />
-    <Compile Include="Messaging\MessageAttribute.cs" />
-    <Compile Include="Messaging\SnsMessage.cs" />
+    <Compile Include="Queue\Messaging\Sns\MessageAttribute.cs" />
+    <Compile Include="Queue\Messaging\Sns\SnsMessage.cs" />
     <Compile Include="Configuration\BusBuilder.cs" />
     <Compile Include="Configuration\BusConfiguration.cs" />
     <Compile Include="Configuration\GeneralConfigurationExtensions.cs" />

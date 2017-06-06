@@ -62,7 +62,26 @@ namespace JungleBus.Queue.Messaging
                 parsedMessage.Body = message.Body;
                 parsedMessage.Published = message.MessageAttributes.ContainsKey("fromSns");
 
-                parsedMessage.MessageTypeName = message.MessageAttributes["messageType"].StringValue;
+                if (message.MessageAttributes.ContainsKey("messageType"))
+                {
+                    parsedMessage.MessageTypeName = message.MessageAttributes["messageType"].StringValue;
+                }
+                else
+                {
+                    Sns.SnsMessage snsMessage = JsonConvert.DeserializeObject<Sns.SnsMessage>(message.Body);
+                    if (snsMessage.MessageAttributes == null || !snsMessage.MessageAttributes.ContainsKey("messageType"))
+                    {
+                        parsedMessage.MessageParsingSucceeded = false;
+                        parsedMessage.Exception = new JungleBusException("Invalid message format");
+                    }
+                    else
+                    {
+                        parsedMessage.Body = snsMessage.Message;
+                        parsedMessage.Published = true;
+                        parsedMessage.MessageTypeName = snsMessage.MessageAttributes["messageType"].Value;
+                    }
+                }
+
                 parsedMessage.MessageType = Type.GetType(parsedMessage.MessageTypeName, false, true);
                 if (parsedMessage.MessageType == null)
                 {
