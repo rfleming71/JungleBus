@@ -33,12 +33,12 @@ namespace JungleBus.Messaging
         /// <summary>
         /// Outbound logger instance
         /// </summary>
-        private static ILog _outboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Recieve");
+        private static ILog _outboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Publish");
 
         /// <summary>
         /// Inbound logger instance
         /// </summary>
-        private static ILog _inboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Publish");
+        private static ILog _inboundLogger = LogManager.GetLogger("JungleBus.MessageLogger.Receive");
 
         /// <summary>
         /// Logs messages received by the bus
@@ -46,7 +46,7 @@ namespace JungleBus.Messaging
         /// <param name="messageBody">Message body</param>
         /// <param name="messageType">Message type</param>
         /// <param name="messageId">Id of the message</param>
-        /// <param name="attemptNumber">How many times this message has been recieved</param>
+        /// <param name="attemptNumber">How many times this message has been received</param>
         public void InboundLogMessage(string messageBody, string messageType, string messageId, int attemptNumber)
         {
             _inboundLogger.InfoFormat("Message Id: {0} Type: {1} Body: {2} Attempt: {3}", messageId, messageType, messageBody, attemptNumber);
@@ -59,7 +59,7 @@ namespace JungleBus.Messaging
         /// <param name="messageType">Message type</param>
         public void OutboundLogMessage(string messageBody, string messageType)
         {
-            _inboundLogger.InfoFormat("Type: {0} Body: {1}", messageType, messageBody);
+            _outboundLogger.InfoFormat("Type: {0} Body: {1}", messageType, messageBody);
         }
     }
 }

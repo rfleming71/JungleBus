@@ -23,10 +23,10 @@
 // </copyright>
 using System;
 using Amazon.SQS.Model;
-using JungleBus.Exceptions;
-using JungleBus.Interfaces.Serialization;
+using JungleBus.Interfaces.Exceptions;
+using Newtonsoft.Json;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
     /// Parses out SNS messages from the input queue
@@ -34,17 +34,10 @@ namespace JungleBus.Messaging
     internal class MessageParser : IMessageParser
     {
         /// <summary>
-        /// Instance of the message serializer
-        /// </summary>
-        private readonly IMessageSerializer _messageSerializer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MessageParser" /> class.
         /// </summary>
-        /// <param name="serializer">Instance of the message serializer</param>
-        public MessageParser(IMessageSerializer serializer)
+        public MessageParser()
         {
-            _messageSerializer = serializer;
         }
 
         /// <summary>
@@ -66,10 +59,10 @@ namespace JungleBus.Messaging
                     parsedMessage.AttemptNumber = int.Parse(message.Attributes["ApproximateReceiveCount"]);
                 }
 
-                SnsMessage snsMessage = _messageSerializer.Deserialize(message.Body, typeof(SnsMessage)) as SnsMessage;
-                parsedMessage.Body = snsMessage.Message;
+                parsedMessage.Body = message.Body;
+                parsedMessage.Published = message.MessageAttributes.ContainsKey("fromSns");
 
-                parsedMessage.MessageTypeName = snsMessage.MessageAttributes["messageType"].Value;
+                parsedMessage.MessageTypeName = message.MessageAttributes["messageType"].StringValue;
                 parsedMessage.MessageType = Type.GetType(parsedMessage.MessageTypeName, false, true);
                 if (parsedMessage.MessageType == null)
                 {
@@ -78,7 +71,7 @@ namespace JungleBus.Messaging
                 }
                 else
                 {
-                    parsedMessage.Message = _messageSerializer.Deserialize(parsedMessage.Body, parsedMessage.MessageType);
+                    parsedMessage.Message = JsonConvert.DeserializeObject(parsedMessage.Body, parsedMessage.MessageType);
                     parsedMessage.MessageParsingSucceeded = true;
                 }
             }

@@ -43,6 +43,7 @@ namespace JungleBus.Configuration
         /// <summary>
         /// Create the default bus configuration
         /// </summary>
+        /// <param name="busName">Name of the bus to create</param>
         /// <returns>Default bus configuration</returns>
         public static IConfigureObjectBuilder Create(string busName)
         {
@@ -57,6 +58,11 @@ namespace JungleBus.Configuration
             return configuration as IConfigureObjectBuilder;
         }
 
+        /// <summary>
+        /// Creates the default topic name formatter
+        /// </summary>
+        /// <param name="configuration">Bus configuration</param>
+        /// <returns>Topic Formatter</returns>
         private static Func<Type, string> GetDefaultFormatter(IBusConfiguration configuration)
         {
             return (Type messageType) =>

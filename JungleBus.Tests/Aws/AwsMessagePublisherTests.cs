@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using JungleBus.Aws;
 using JungleBus.Aws.Sns;
-using JungleBus.Exceptions;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Newtonsoft.Json;
 
 namespace JungleBus.Tests.Aws
 {
@@ -61,25 +60,6 @@ namespace JungleBus.Tests.Aws
             {
                 Assert.AreEqual("Public publishing is disabled", ex.Message);
             }
-        }
-
-        [TestMethod]
-        public void AwsMessagePublisherTests_Send()
-        {
-            Mock<IMessageQueue> mockQueue = new Mock<IMessageQueue>(MockBehavior.Strict);
-            string sentMessage = null;
-            mockQueue.Setup(x => x.AddMessage(It.IsAny<string>())).Callback<string>(x => sentMessage = x);
-
-            AwsMessagePublisher publisher = new AwsMessagePublisher(_mockLogger.Object);
-            publisher.Send("message body", typeof(TestMessage), mockQueue.Object);
-            mockQueue.Verify(x => x.AddMessage(It.IsAny<string>()), Times.Once());
-            Assert.IsNotNull(sentMessage);
-            SnsMessage message = JsonConvert.DeserializeObject<SnsMessage>(sentMessage);
-            Assert.IsNotNull(message);
-            Assert.AreEqual("message body", message.Message);
-            Assert.AreEqual("String", message.MessageAttributes["messageType"].Type);
-            Assert.AreEqual("JungleBus.Tests.TestMessage, JungleBus.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", message.MessageAttributes["messageType"].Value);
-            _mockLogger.Verify(x => x.OutboundLogMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
     }
 }

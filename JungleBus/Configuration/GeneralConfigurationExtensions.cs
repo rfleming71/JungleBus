@@ -22,13 +22,11 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using JungleBus.Exceptions;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.Configuration;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Interfaces.IoC;
-using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
-using JungleBus.Serialization;
 
 namespace JungleBus.Configuration
 {
@@ -41,6 +39,7 @@ namespace JungleBus.Configuration
         /// Configure the the bus to use structure map to build the handlers
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
+        /// <param name="objectBuilder">Object Builder to use</param>
         /// <returns>Modified configuration</returns>
         public static IConfigureMessageSerializer WithObjectBuilder(this IConfigureObjectBuilder configuration, IObjectBuilder objectBuilder)
         {
@@ -70,7 +69,8 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("ObjectBuilder", "Object builder must be set");
             }
 
-            configuration.ObjectBuilder.RegisterInstance<IMessageSerializer>(new JsonNetSerializer());
+            // ToDo: Currently not being used, should reintroduce the message serializer in the next version
+            // configuration.ObjectBuilder.RegisterInstance<IMessageSerializer>(new JsonNetSerializer());
             return configuration as IBusConfiguration;
         }
 
@@ -99,15 +99,9 @@ namespace JungleBus.Configuration
         {
             configuration.RunGeneralConfigurationValidation();
 
-            if (configuration.Receive == null)
+            if (configuration.InputQueueConfiguration == null)
             {
                 throw new JungleBusConfigurationException("Receive", "Receive has not been configured for this bus");
-            }
-
-            if (configuration.Receive != null)
-            {
-                configuration.ObjectBuilder.RegisterType(typeof(IMessageParser), typeof(MessageParser));
-                configuration.Receive.InputQueue.MessageParser = configuration.ObjectBuilder.GetValue<IMessageParser>();
             }
 
             JungleBus jungleBus = new JungleBus(configuration);

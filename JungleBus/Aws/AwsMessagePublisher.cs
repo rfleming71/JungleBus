@@ -28,7 +28,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using Amazon;
 using JungleBus.Aws.Sns;
-using JungleBus.Exceptions;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
 using JungleBus.Serialization;
@@ -98,34 +98,6 @@ namespace JungleBus.Aws
         }
 
         /// <summary>
-        /// Sends a message to the given queue
-        /// </summary>
-        /// <param name="messageString">Message to publish</param>
-        /// <param name="type">Type of message to send</param>
-        /// <param name="localMessageQueue">Queue to send to</param>
-        public void Send(string messageString, Type type, IMessageQueue localMessageQueue)
-        {
-            string messageType = type.AssemblyQualifiedName;
-            SnsMessage fakeMessage = new SnsMessage()
-            {
-                Message = messageString,
-                MessageAttributes = new Dictionary<string, MessageAttribute>()
-                {
-                    { "messageType", new MessageAttribute() { Type = "String", Value = messageType } },
-                },
-            };
-            
-            foreach (var entry in GetCommonMetadata())
-            {
-                fakeMessage.MessageAttributes.Add(entry.Key, new MessageAttribute() { Type = "String", Value = entry.Value });
-            }
-
-            string messageBody = _messageSerializer.Serialize(fakeMessage);
-            localMessageQueue.AddMessage(messageBody);
-            _messageLogger.OutboundLogMessage(messageBody, messageType);
-        }
-
-        /// <summary>
         /// Setups the bus for publishing the given message types
         /// </summary>
         /// <param name="messageTypes">Message types</param>
@@ -139,6 +111,32 @@ namespace JungleBus.Aws
             _snsClient.SetupMessagesForPublishing(messageTypes);
         }
 
+        /// <summary>
+        /// Gets the local machine's IP Address
+        /// </summary>
+        /// <returns>IP Address</returns>
+        private static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            if (host != null)
+            {
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return ip.ToString();
+                    }
+                }
+            }
+
+            return "0.0.0.0";
+        }
+
+        /// <summary>
+        /// Gets metadata common to all messages sent
+        /// </summary>
+        /// <returns>Metadata values</returns>
+        /// <remarks>ToDo: Move this into a common location, this is identical to the code in the queue send</remarks>
         private Dictionary<string, string> GetCommonMetadata()
         {
             if (_commonMessageMetadata == null)
@@ -155,6 +153,9 @@ namespace JungleBus.Aws
             return _commonMessageMetadata;
         }
 
+        /// <summary>
+        /// Adds the sender application version to the common metadata
+        /// </summary>
         private void AddSenderVersion()
         {
             Assembly entryAssembly = Assembly.GetEntryAssembly();
@@ -162,23 +163,6 @@ namespace JungleBus.Aws
             {
                 _commonMessageMetadata["SenderVersion"] = entryAssembly.GetName().Version.ToString(4);
             }
-        }
-
-        private static string GetLocalIPAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            if (host != null)
-            {
-                foreach (var ip in host.AddressList)
-                {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        return ip.ToString();
-                    }
-                }
-            }
-
-            return "0.0.0.0";
         }
     }
 }

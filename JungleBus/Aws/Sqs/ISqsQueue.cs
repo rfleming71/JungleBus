@@ -1,7 +1,7 @@
-﻿// <copyright file="IMessageQueue.cs">
+﻿// <copyright file="ISqsQueue.cs">
 //     The MIT License (MIT)
 //
-// Copyright(c) 2016 Ryan Fleming
+// Copyright(c) 2017 Ryan Fleming
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,20 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JungleBus.Queue.Messaging;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Aws.Sqs
 {
     /// <summary>
-    /// Client for talking to queues
+    /// Amazon SQS Message queue
     /// </summary>
-    public interface IMessageQueue
+    public interface ISqsQueue : IDisposable
     {
+        /// <summary>
+        /// Gets or sets the number of seconds to long poll for
+        /// </summary>
+        int WaitTimeSeconds { get; set; }
+
         /// <summary>
         /// Gets or sets the message parser for inbound messages
         /// </summary>
@@ -52,16 +58,16 @@ namespace JungleBus.Messaging
         void RemoveMessage(TransportMessage message);
 
         /// <summary>
-        /// Subscribe the queue to the given message types
-        /// </summary>
-        /// <param name="messageTypes">Message to subscribe to</param>
-        /// <param name="subscriptionNameBuilder">Function to format the type into a name for the queue to subscribe to</param>
-        void Subscribe(IEnumerable<Type> messageTypes, Func<Type, string> subscriptionNameBuilder);
-
-        /// <summary>
         /// Adds the message to the queue
         /// </summary>
         /// <param name="message">Message to add to the queue</param>
-        void AddMessage(string message);
+        /// <param name="metadata">Message metadata</param>
+        void AddMessage(string message, IEnumerable<KeyValuePair<string, string>> metadata);
+
+        /// <summary>
+        /// Subscribe the queue to the given SNS topics
+        /// </summary>
+        /// <param name="snsTopics">Message topics to subscribe to</param>
+        void Subscribe(IEnumerable<string> snsTopics);
     }
 }

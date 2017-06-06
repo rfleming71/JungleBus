@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using JungleBus.Aws.Sqs;
 using JungleBus.Interfaces;
 using JungleBus.Messaging;
+using JungleBus.Queue.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -13,7 +15,7 @@ namespace JungleBus.Tests.Messaging
     public class MessagePumpTests
     {
         private MessagePump _messagePump;
-        private Mock<IMessageQueue> _queue;
+        private Mock<ISqsQueue> _queue;
         private Mock<IMessageProcessor> _messageProcessor;
         private Mock<IBus> _bus;
         private Mock<IMessageLogger> _messageLogger;
@@ -31,11 +33,11 @@ namespace JungleBus.Tests.Messaging
                 Message = "new message",
             };
             _bus = new Mock<IBus>(MockBehavior.Strict);
-            _queue = new Mock<IMessageQueue>(MockBehavior.Strict);
+            _queue = new Mock<ISqsQueue>(MockBehavior.Strict);
             _messageProcessor = new Mock<IMessageProcessor>(MockBehavior.Strict);
-            _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = true });
+            _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>())).Returns(new MessageProcessingResult() { WasSuccessful = true });
 
-            _messagePump = new MessagePump(_queue.Object, MaxTryCount, _messageProcessor.Object, _messageLogger.Object, _bus.Object, 1);
+            _messagePump = new MessagePump(_queue.Object, MaxTryCount, _messageProcessor.Object, _messageLogger.Object, 1);
 
             _queue.Setup(x => x.GetMessages(It.IsAny<CancellationToken>())).Returns(Task.FromResult((IEnumerable<TransportMessage>)new[] { _message }))
                 .Callback(() => _messagePump.Stop());
@@ -47,7 +49,7 @@ namespace JungleBus.Tests.Messaging
             _messagePump.Run();
             _queue.Verify(x => x.GetMessages(It.IsAny<CancellationToken>()), Times.Once());
             _queue.Verify(x => x.RemoveMessage(It.Is<TransportMessage>(t => t.ReceiptHandle == "123")), Times.Once());
-            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>()), Times.Once());
+            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>()), Times.Once());
         }
 
         [TestMethod]
@@ -57,31 +59,31 @@ namespace JungleBus.Tests.Messaging
             _messagePump.Run();
             _queue.Verify(x => x.GetMessages(It.IsAny<CancellationToken>()), Times.Once());
             _queue.Verify(x => x.RemoveMessage(It.IsAny<TransportMessage>()), Times.Never());
-            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>()), Times.Never());
+            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>()), Times.Never());
         }
 
         [TestMethod]
         public void MessagePumpTests_SinglePass_processing_failure()
         {
             _message.AttemptNumber = 1;
-            _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = false });
+            _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>())).Returns(new MessageProcessingResult() { WasSuccessful = false });
             _messagePump.Run();
             _queue.Verify(x => x.GetMessages(It.IsAny<CancellationToken>()), Times.Once());
             _queue.Verify(x => x.RemoveMessage(It.IsAny<TransportMessage>()), Times.Never());
-            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>()), Times.Once());
-            _messageProcessor.Verify(x => x.ProcessFaultedMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>(), It.IsAny<Exception>()), Times.Never());
+            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>()), Times.Once());
+            _messageProcessor.Verify(x => x.ProcessFaultedMessage(It.IsAny<TransportMessage>(), It.IsAny<Exception>()), Times.Never());
         }
 
         [TestMethod]
         public void MessagePumpTests_SinglePass_FinalPass_processing_failure()
         {
             _message.AttemptNumber = MaxTryCount;
-            _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>())).Returns(new MessageProcessingResult() { WasSuccessful = false, Exception = new Exception()});
+            _messageProcessor.Setup(x => x.ProcessMessage(It.IsAny<TransportMessage>())).Returns(new MessageProcessingResult() { WasSuccessful = false, Exception = new Exception()});
             _messagePump.Run();
             _queue.Verify(x => x.GetMessages(It.IsAny<CancellationToken>()), Times.Once());
             _queue.Verify(x => x.RemoveMessage(It.IsAny<TransportMessage>()), Times.Never());
-            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>()), Times.Once());
-            _messageProcessor.Verify(x => x.ProcessFaultedMessage(It.IsAny<TransportMessage>(), It.IsAny<IBus>(), It.IsAny<Exception>()), Times.Once());
+            _messageProcessor.Verify(x => x.ProcessMessage(It.IsAny<TransportMessage>()), Times.Once());
+            _messageProcessor.Verify(x => x.ProcessFaultedMessage(It.IsAny<TransportMessage>(), It.IsAny<Exception>()), Times.Once());
         }
     }
 }

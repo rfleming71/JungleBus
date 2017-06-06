@@ -36,6 +36,7 @@ namespace JungleBus.Aws.Sns
         /// </summary>
         /// <param name="message">Serialized Message</param>
         /// <param name="type">Payload type</param>
+        /// <param name="metadata">Message Metadata</param>
         void Publish(string message, Type type, Dictionary<string, string> metadata);
 
         /// <summary>

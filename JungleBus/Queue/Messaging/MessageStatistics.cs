@@ -1,4 +1,4 @@
-﻿// <copyright file="TransportMessage.cs">
+﻿// <copyright file="MessageStatistics.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,58 +22,45 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
-    /// Object for holding parsed message information
+    /// Contains statistics about the completed message
     /// </summary>
-    public class TransportMessage
+    internal class MessageStatistics : IMessageStatistics
     {
         /// <summary>
-        /// Gets or sets the message id
+        /// Gets or sets a value indicating whether this the final attempt to process
+        /// this message
         /// </summary>
-        public string Id { get; set; }
+        public bool FinalAttempt { get; set; }
 
         /// <summary>
-        /// Gets or sets the body value
+        /// Gets or sets the run time of the message 
         /// </summary>
-        public string Body { get; set; }
+        public TimeSpan HandlerRunTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the deserialized message
+        /// Gets or sets the number of bytes in the message
         /// </summary>
-        /// <remarks>Will be null if parsing failed</remarks>
-        public object Message { get; set; }
+        public int MessageLength { get; set; }
 
         /// <summary>
-        /// Gets or sets the type name passed via the message
+        /// Gets or sets the type of the message
         /// </summary>
-        public string MessageTypeName { get; set; }
+        public string MessageType { get; set; }
 
         /// <summary>
-        /// Gets or sets the type name passed via the message
+        /// Gets or sets the number of times this message has been tried before this
+        /// attempt
         /// </summary>
-        public Type MessageType { get; set; }
+        public int PreviousRetryCount { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the message parsing succeeded
+        /// Gets or sets a value indicating whether this message was successful
         /// </summary>
-        public bool MessageParsingSucceeded { get; set; }
-
-        /// <summary>
-        /// Gets or sets the exception that was raised during the message parsing
-        /// </summary>
-        public Exception Exception { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message handle
-        /// </summary>
-        public string ReceiptHandle { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of times this message has already been processed
-        /// </summary>
-        public int AttemptNumber { get; set; }
+        public bool Success { get; set; }
     }
 }

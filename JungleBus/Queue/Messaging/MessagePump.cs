@@ -26,9 +26,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Common.Logging;
+using JungleBus.Aws.Sqs;
 using JungleBus.Interfaces;
+using JungleBus.Messaging;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
     /// Responsible for polling SQS queue and dispatching the events
@@ -48,12 +50,7 @@ namespace JungleBus.Messaging
         /// <summary>
         /// Queue to read messages from
         /// </summary>
-        private readonly IMessageQueue _queue;
-
-        /// <summary>
-        /// Instance of the bus to pass to the event handlers
-        /// </summary>
-        private readonly IBus _bus;
+        private readonly ISqsQueue _queue;
 
         /// <summary>
         /// Number of times to retry a message
@@ -77,15 +74,13 @@ namespace JungleBus.Messaging
         /// <param name="messageRetryCount">Number of times to retry a message</param>
         /// <param name="messageProcessor">Class for calling out to event handlers</param>
         /// <param name="messageLogger">Instance of the message logger</param>
-        /// <param name="bus">Instance of the bus to pass to the event handlers</param>
         /// <param name="id">Id of the message pump</param>
-        public MessagePump(IMessageQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IMessageLogger messageLogger, IBus bus, int id)
+        public MessagePump(ISqsQueue queue, int messageRetryCount, IMessageProcessor messageProcessor, IMessageLogger messageLogger, int id)
         {
             _queue = queue;
             _messageRetryCount = messageRetryCount;
             _messageProcessor = messageProcessor;
             _cancellationToken = new CancellationTokenSource();
-            _bus = bus;
             _messageLogger = messageLogger;
         }
 
@@ -105,9 +100,9 @@ namespace JungleBus.Messaging
                 Log.TraceFormat("[{0}] Starting receiving call", Id);
                 try
                 {
-                    IEnumerable<TransportMessage> recievedMessages = await _queue.GetMessages(_cancellationToken.Token);
-                    Log.TraceFormat("[{1}] Received {0} messages", recievedMessages.Count(), Id);
-                    foreach (TransportMessage message in recievedMessages)
+                    IEnumerable<TransportMessage> ReceivedMessages = await _queue.GetMessages(_cancellationToken.Token);
+                    Log.TraceFormat("[{1}] Received {0} messages", ReceivedMessages.Count(), Id);
+                    foreach (TransportMessage message in ReceivedMessages)
                     {
                         Log.InfoFormat("[{1}] Received message of type '{0}'", message.MessageTypeName, Id);
                         _messageLogger.InboundLogMessage(message.Body, message.MessageTypeName, message.Id, message.AttemptNumber);
@@ -115,7 +110,7 @@ namespace JungleBus.Messaging
                         if (message.MessageParsingSucceeded)
                         {
                             Log.TraceFormat("[{0}] Processing message", Id);
-                            result = _messageProcessor.ProcessMessage(message, _bus);
+                            result = _messageProcessor.ProcessMessage(message);
                             Log.TraceFormat("[{0}] Processed message - Error: {1}", Id, !result.WasSuccessful);
                         }
                         else
@@ -132,7 +127,7 @@ namespace JungleBus.Messaging
                         else if (message.AttemptNumber == _messageRetryCount)
                         {
                             Log.InfoFormat("[{0}] Message faulted ", Id);
-                            _messageProcessor.ProcessFaultedMessage(message, _bus, result.Exception);
+                            _messageProcessor.ProcessFaultedMessage(message, result.Exception);
                         }
 
                         MessageStatistics stats = new MessageStatistics()

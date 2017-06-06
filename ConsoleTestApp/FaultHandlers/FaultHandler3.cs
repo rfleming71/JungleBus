@@ -2,6 +2,7 @@
 using Common.Logging;
 using JungleBus.Interfaces;
 using JungleBus.Messaging;
+using JungleBus.Queue.Messaging;
 
 namespace ConsoleTestApp.FaultHandlers
 {

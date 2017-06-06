@@ -31,7 +31,7 @@ namespace ConsoleTestApp
             }
             else
             {
-                bus = CreateRecieveOnlyBus();
+                bus = CreateReceiveOnlyBus();
                 sendBus = CreateSendOnlyBus();
             }
 
@@ -39,36 +39,36 @@ namespace ConsoleTestApp
 
             do
             {
+                Console.WriteLine("Press any key to send a message");
                 sendBus.Publish<TestMessage>(x =>
                 {
                     x.ID = 123;
                     x.Modified = DateTime.Now;
                     x.Name = Guid.NewGuid().ToString();
                 });
-                Console.WriteLine("Press any key to send a message");
             }
             while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
             bus.StopReceiving();
         }
 
-        static IRunJungleBus CreateRecieveOnlyBus()
+        static IRunJungleBus CreateReceiveOnlyBus()
         {
-            return BusBuilder.Create()
+            return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
                 .SetSqsPollWaitTime(14)
                 .UsingEventHandlersFromEntryAssembly()
-                .SetNumberOfPollingInstances(2)
+                .SetNumberOfPollingInstances(1)
                 .PublishingLocalEventsOnly()
                 .CreateStartableBus();
         }
 
         static IBus CreateSendOnlyBus()
         {
-            return BusBuilder.Create()
+            return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
@@ -78,7 +78,7 @@ namespace ConsoleTestApp
 
         static IRunJungleBus CreateFullBus()
         {
-            return BusBuilder.Create("dev")
+            return BusBuilder.Create("jb")
                 .WithStructureMapObjectBuilder(_container)
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
@@ -86,7 +86,7 @@ namespace ConsoleTestApp
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
                 .SetSqsPollWaitTime(14)
                 .UsingEventHandlersFromEntryAssembly()
-                .SetNumberOfPollingInstances(2)
+                .SetNumberOfPollingInstances(1)
                 .CreateStartableBus();
         }
     }

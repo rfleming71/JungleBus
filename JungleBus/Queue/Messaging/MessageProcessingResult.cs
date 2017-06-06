@@ -23,7 +23,7 @@
 // </copyright>
 using System;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
     /// Result returns from the message processor when processing a message

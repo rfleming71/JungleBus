@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageProcessor.cs">
+﻿// <copyright file="IMessageProcessor.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -24,43 +24,31 @@
 using System;
 using JungleBus.Interfaces.Statistics;
 
-namespace JungleBus.Messaging
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
-    /// Contains statistics about the completed message
+    /// Processes inbound messages and call the event handlers
     /// </summary>
-    internal class MessageStatistics : IMessageStatistics
+    public interface IMessageProcessor
     {
         /// <summary>
-        /// Gets a value indicating whether this the final attempt to process
-        /// this message
+        /// Processes inbound message and call the event handlers
         /// </summary>
-        public bool FinalAttempt { get; set; }
+        /// <param name="message">Message to process</param>
+        /// <returns>True is all event handles succeeded</returns>
+        MessageProcessingResult ProcessMessage(TransportMessage message);
 
         /// <summary>
-        /// Gets the run time of the message 
+        /// Processes inbound message that have faulted more than the retry limit
         /// </summary>
-        public TimeSpan HandlerRunTime { get; set; }
+        /// <param name="message">Message to process</param>
+        /// <param name="ex">Exception thrown by the message</param>
+        void ProcessFaultedMessage(TransportMessage message, Exception ex);
 
         /// <summary>
-        /// Gets the number of bytes in the message
+        /// Processes inbound message statistics
         /// </summary>
-        public int MessageLength { get; set; }
-
-        /// <summary>
-        /// Gets the type of the message
-        /// </summary>
-        public string MessageType { get; set; }
-
-        /// <summary>
-        /// Get the number of times this message has been tried before this
-        /// attempt
-        /// </summary>
-        public int PreviousRetryCount { get; set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this message was successful
-        /// </summary>
-        public bool Success { get; set; }
+        /// <param name="statistics">Message statistics</param>
+        void ProcessMessageStatistics(IMessageStatistics statistics);
     }
 }

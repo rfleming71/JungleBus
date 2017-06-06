@@ -49,6 +49,7 @@
     <Compile Include="IHandleMessageFaults.cs" />
     <Compile Include="IHandleMessage.cs" />
     <Compile Include="IoC\IObjectBuilder.cs" />
+    <Compile Include="IQueue.cs" />
     <Compile Include="IRunJungleBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\IMessageSerializer.cs" />

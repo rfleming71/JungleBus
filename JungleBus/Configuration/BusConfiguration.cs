@@ -44,11 +44,6 @@ namespace JungleBus.Configuration
         public string BusName { get; set; }
 
         /// <summary>
-        /// Gets or sets the inbound message settings
-        /// </summary>
-        public ReceiveConfiguration Receive { get; set; }
-
-        /// <summary>
         /// Gets or sets the outbound message settings
         /// </summary>
         public SendConfiguration Send { get; set; }
@@ -58,6 +53,14 @@ namespace JungleBus.Configuration
         /// </summary>
         public IMessageLogger MessageLogger { get; set; }
 
+        /// <summary>
+        /// Gets or sets the function for formatting topic names
+        /// </summary>
         public Func<Type, string> SubscriptionFormatter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the input queue configuration
+        /// </summary>
+        public Queue.QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

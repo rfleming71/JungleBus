@@ -17,7 +17,7 @@ namespace ConsoleTestApp.FaultHandlers
 
         public void Handle(TestMessage message, Exception ex)
         {
-            _log.Info("Starting message fault Handler 1");
+            _log.Info("Starting message fault Handler 2");
         }
     }
 }

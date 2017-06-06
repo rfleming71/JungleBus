@@ -43,11 +43,6 @@ namespace JungleBus.Configuration
         string BusName { get; set; }
 
         /// <summary>
-        /// Gets or sets the inbound message settings
-        /// </summary>
-        ReceiveConfiguration Receive { get; set; }
-
-        /// <summary>
         /// Gets or sets the outbound message settings
         /// </summary>
         SendConfiguration Send { get; set; }
@@ -61,5 +56,10 @@ namespace JungleBus.Configuration
         /// Gets or sets the function for formatting subscription names
         /// </summary>
         Func<Type, string> SubscriptionFormatter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the input queue configuration
+        /// </summary>
+        Queue.QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

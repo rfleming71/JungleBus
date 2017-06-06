@@ -27,7 +27,7 @@ using System.Linq;
 using Amazon;
 using JungleBus.Aws;
 using JungleBus.Aws.Sns;
-using JungleBus.Exceptions;
+using JungleBus.Interfaces.Exceptions;
 
 namespace JungleBus.Configuration
 {

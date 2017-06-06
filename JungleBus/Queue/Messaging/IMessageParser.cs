@@ -1,4 +1,4 @@
-﻿// <copyright file="JungleBusConfigurationException.cs">
+﻿// <copyright file="IMessageParser.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -21,21 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace JungleBus.Exceptions
+using Amazon.SQS.Model;
+
+namespace JungleBus.Queue.Messaging
 {
     /// <summary>
-    /// An issue with the configuration as occurred
+    /// Parses out messages from the input queue
     /// </summary>
-    public class JungleBusConfigurationException : JungleBusException
+    public interface IMessageParser
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JungleBusConfigurationException" /> class.
+        /// Parse the Amazon SQS message
         /// </summary>
-        /// <param name="configurationSetting">Setting that caused the exception</param>
-        /// <param name="message">Error message</param>
-        public JungleBusConfigurationException(string configurationSetting, string message)
-            : base(string.Format("Setting: {0} Message: {1}", configurationSetting, message))
-        {
-        }
+        /// <param name="message">Message to parse</param>
+        /// <returns>Parsed message</returns>
+        TransportMessage ParseMessage(Message message);
     }
 }

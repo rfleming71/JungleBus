@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Common.Logging;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.IoC;
+using JungleBus.Interfaces.Statistics;
 using JungleBus.Messaging;
+using JungleBus.Queue.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -22,6 +24,8 @@ namespace JungleBus.Tests.Messaging
         private static int _testFaultHandler1Called;
         private static int _testFaultHandler2Called;
         private static int _testFaultHandler3Called;
+        private static int _testStatHandler1Called;
+        private static int _testStatHandler2Called;
         private static int _transportMessageFaultHandler;
         private TransportMessage _message;
 
@@ -35,6 +39,8 @@ namespace JungleBus.Tests.Messaging
             _testFaultHandler2Called = 0;
             _testFaultHandler3Called = 0;
             _transportMessageFaultHandler = 0;
+            _testStatHandler1Called = 0;
+            _testStatHandler2Called = 0;
             _typeMapping = new Dictionary<Type, HashSet<Type>>()
             {
                 { typeof(TestMessage), new HashSet<Type>() { typeof(TestHandler), typeof(TestHandler2) } },
@@ -52,15 +58,16 @@ namespace JungleBus.Tests.Messaging
             _objectBuilder.Setup(x => x.Dispose());
             _objectBuilder.Setup(x => x.RegisterInstance<ILog>(It.IsAny<ILog>()));
             _objectBuilder.Setup(x => x.GetValue(It.IsAny<Type>())).Returns<Type>(x => Activator.CreateInstance(x));
+            _objectBuilder.Setup(x => x.GetValues<IWantMessageStatistics>()).Returns(new IWantMessageStatistics[] { new TestStatHandler1(), new TestStatHandler2() });
 
-            _processor = new MessageProcessor(_objectBuilder.Object, _typeMapping, _faultHandlers);
+            _processor = new MessageProcessor(_typeMapping, _faultHandlers, _objectBuilder.Object);
             _message = new TransportMessage() { MessageType = typeof(TestMessage), Message = new TestMessage(), MessageParsingSucceeded = true, };
         }
 
         [TestMethod]
         public void MessageProcessorTests_process()
         {
-            MessageProcessingResult result = _processor.ProcessMessage(_message, null);
+            MessageProcessingResult result = _processor.ProcessMessage(_message);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(1, _testHandler1Called);
             Assert.AreEqual(1, _testHandler2Called);
@@ -68,10 +75,23 @@ namespace JungleBus.Tests.Messaging
         }
 
         [TestMethod]
+        public void MessageProcessorTests_process_with_preHandler()
+        {
+            int preHandlerCallCount = 0;
+            _processor = new MessageProcessor(_typeMapping, _faultHandlers, _objectBuilder.Object, x => preHandlerCallCount++);
+            MessageProcessingResult result = _processor.ProcessMessage(_message);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, _testHandler1Called);
+            Assert.AreEqual(1, _testHandler2Called);
+            Assert.AreEqual(0, _testHandler3Called);
+            Assert.AreEqual(2, preHandlerCallCount);
+        }
+
+        [TestMethod]
         public void MessageProcessorTests_Exception_Thrown_in_Handler()
         {
             _typeMapping[typeof(TestMessage)].Add(typeof(TestHandler3));
-            MessageProcessingResult result = _processor.ProcessMessage(_message, null);
+            MessageProcessingResult result = _processor.ProcessMessage(_message);
             Assert.IsFalse(result.WasSuccessful);
             Assert.AreEqual(1, _testHandler1Called);
             Assert.AreEqual(1, _testHandler2Called);
@@ -82,7 +102,7 @@ namespace JungleBus.Tests.Messaging
         public void MessageProcessorTests_Unknown_message()
         {
             _typeMapping.Remove(typeof(TestMessage));
-            MessageProcessingResult result = _processor.ProcessMessage(_message, null);
+            MessageProcessingResult result = _processor.ProcessMessage(_message);
             Assert.IsFalse(result.WasSuccessful);
             Assert.AreEqual(0, _testHandler1Called);
             Assert.AreEqual(0, _testHandler2Called);
@@ -92,17 +112,29 @@ namespace JungleBus.Tests.Messaging
         [TestMethod]
         public void MessageProcessorTests_process_fault()
         {
-            _processor.ProcessFaultedMessage(_message, null, new Exception("Foo!"));
+            _processor.ProcessFaultedMessage(_message, new Exception("Foo!"));
             Assert.AreEqual(1, _testFaultHandler1Called);
             Assert.AreEqual(1, _testFaultHandler2Called);
             Assert.AreEqual(0, _testFaultHandler3Called);
         }
 
         [TestMethod]
+        public void MessageProcessorTests_process_fault_with_preHandler()
+        {
+            int preHandlerCallCount = 0;
+            _processor = new MessageProcessor(_typeMapping, _faultHandlers, _objectBuilder.Object, x => preHandlerCallCount++);
+            _processor.ProcessFaultedMessage(_message, new Exception("Foo!"));
+            Assert.AreEqual(1, _testFaultHandler1Called);
+            Assert.AreEqual(1, _testFaultHandler2Called);
+            Assert.AreEqual(0, _testFaultHandler3Called);
+            Assert.AreEqual(2, preHandlerCallCount);
+        }
+
+        [TestMethod]
         public void MessageProcessorTests_process_general_and_message_handlers()
         {
             _faultHandlers[typeof(TransportMessage)] = new HashSet<Type>() { typeof(TestFaultHandler) };
-            _processor.ProcessFaultedMessage(_message, null, new Exception("Foo!"));
+            _processor.ProcessFaultedMessage(_message, new Exception("Foo!"));
             Assert.AreEqual(1, _testFaultHandler1Called);
             Assert.AreEqual(1, _testFaultHandler2Called);
             Assert.AreEqual(0, _testFaultHandler3Called);
@@ -114,7 +146,7 @@ namespace JungleBus.Tests.Messaging
         {
             _faultHandlers.Remove(typeof(TestMessage));
             _faultHandlers[typeof(TransportMessage)] = new HashSet<Type>() { typeof(TestFaultHandler) };
-            _processor.ProcessFaultedMessage(_message, null, new Exception("Foo!"));
+            _processor.ProcessFaultedMessage(_message, new Exception("Foo!"));
             Assert.AreEqual(0, _testFaultHandler1Called);
             Assert.AreEqual(0, _testFaultHandler2Called);
             Assert.AreEqual(0, _testFaultHandler3Called);
@@ -126,7 +158,7 @@ namespace JungleBus.Tests.Messaging
         {
             _faultHandlers[typeof(TransportMessage)] = new HashSet<Type>() { typeof(TestFaultHandler) };
             _message.MessageParsingSucceeded = false;
-            _processor.ProcessFaultedMessage(_message, null, new Exception("Foo!"));
+            _processor.ProcessFaultedMessage(_message, new Exception("Foo!"));
             Assert.AreEqual(0, _testFaultHandler1Called);
             Assert.AreEqual(0, _testFaultHandler2Called);
             Assert.AreEqual(0, _testFaultHandler3Called);
@@ -137,10 +169,41 @@ namespace JungleBus.Tests.Messaging
         public void MessageProcessorTests_Exception_Thrown_Fault_Handler()
         {
             _faultHandlers[typeof(TestMessage)].Add(typeof(TestFaultHandler3));
-            _processor.ProcessFaultedMessage(_message, null, new Exception("Foo!"));
+            _processor.ProcessFaultedMessage(_message, new Exception("Foo!"));
             Assert.AreEqual(1, _testFaultHandler1Called);
             Assert.AreEqual(1, _testFaultHandler2Called);
             Assert.AreEqual(1, _testFaultHandler3Called);
+        }
+
+        [TestMethod]
+        public void MessageProcessorTests_Exception_Thrown_IfNull()
+        {
+            try
+            {
+                _processor.ProcessMessage(null);
+                Assert.Fail();
+            }
+            catch
+            {
+
+            }
+        }
+
+        [TestMethod]
+        public void MessageProcessorTests_Process_Message_Stats()
+        {
+            _processor.ProcessMessageStatistics(new MessageStatistics());
+            Assert.AreEqual(1, _testStatHandler1Called);
+            Assert.AreEqual(1, _testStatHandler2Called);
+        }
+
+        [TestMethod]
+        public void MessageProcessorTests_Process_Message_Stats_With_No_Handlers()
+        {
+            _objectBuilder.Setup(x => x.GetValues<IWantMessageStatistics>()).Returns<IEnumerable<IWantMessageStatistics>>(null);
+            _processor.ProcessMessageStatistics(new MessageStatistics());
+            Assert.AreEqual(0, _testStatHandler1Called);
+            Assert.AreEqual(0, _testStatHandler2Called);
         }
 
         #region TEST HANDLERS
@@ -201,6 +264,22 @@ namespace JungleBus.Tests.Messaging
             public void Handle(TransportMessage message, Exception ex)
             {
                 ++_transportMessageFaultHandler;
+            }
+        }
+
+        class TestStatHandler1 : IWantMessageStatistics
+        {
+            public void ReceiveStatisitics(IMessageStatistics statistics)
+            {
+                ++_testStatHandler1Called;
+            }
+        }
+
+        class TestStatHandler2 : IWantMessageStatistics
+        {
+            public void ReceiveStatisitics(IMessageStatistics statistics)
+            {
+                ++_testStatHandler2Called;
             }
         }
 

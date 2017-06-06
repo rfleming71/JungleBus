@@ -26,11 +26,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Amazon;
-using JungleBus.Aws.Sqs;
-using JungleBus.Exceptions;
 using JungleBus.Interfaces;
+using JungleBus.Interfaces.Exceptions;
 using JungleBus.Interfaces.IoC;
-using JungleBus.Messaging;
+using JungleBus.Queue;
 
 namespace JungleBus.Configuration
 {
@@ -63,15 +62,17 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
-            configuration.Receive = configuration.Receive ?? new ReceiveConfiguration();
+            configuration.InputQueueConfiguration = new QueueConfiguration();
 
             if (!string.IsNullOrWhiteSpace(configuration.BusName))
             {
                 sqsName = string.Format("{0}_{1}", configuration.BusName, sqsName);
             }
 
-            configuration.Receive.MessageRetryCount = 5;
-            configuration.Receive.InputQueue = new SqsQueue(region, sqsName, configuration.Receive.MessageRetryCount, new MessageParser(null));
+            configuration.InputQueueConfiguration.QueueName = sqsName;
+            configuration.InputQueueConfiguration.NumberOfPollingInstances = 1;
+            configuration.InputQueueConfiguration.Region = region;
+            configuration.InputQueueConfiguration.RetryCount = 5;
             return configuration as IConfigureEventReceiving;
         }
 
@@ -88,7 +89,7 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("timeInSeconds", "Time in seconds must be between 0 and 14");
             }
 
-            if (configuration.Receive == null)
+            if (configuration.InputQueueConfiguration == null)
             {
                 throw new JungleBusConfigurationException("General", "Input queue needs to be configured before setting the wait timeout");
             }
@@ -98,14 +99,7 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
-            SqsQueue queue = configuration.Receive.InputQueue as SqsQueue;
-            if (queue == null)
-            {
-                throw new InvalidOperationException("Queue is not a SQS queue");
-            }
-
-            queue.WaitTimeSeconds = timeInSeconds;
-
+            configuration.InputQueueConfiguration.SqsPollWaitTime = timeInSeconds;
             return configuration;
         }
 
@@ -127,12 +121,12 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
-            if (configuration.Receive == null)
+            if (configuration.InputQueueConfiguration == null)
             {
                 throw new JungleBusConfigurationException("configuration", "Input queue needs to be configured before setting the number of polling instances");
             }
 
-            configuration.Receive.NumberOfPollingInstances = instances;
+            configuration.InputQueueConfiguration.NumberOfPollingInstances = instances;
             return configuration;
         }
 
@@ -167,14 +161,13 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("ObjectBuilder", "Object builder must be set");
             }
 
-            if (configuration.Receive == null)
+            if (configuration.InputQueueConfiguration == null)
             {
                 throw new JungleBusConfigurationException("Receive", "Input queue needs to be configured before setting event handlers");
             }
 
-            configuration.Receive.Handlers = ScanForTypes(eventHandlers, typeof(IHandleMessage<>), configuration.ObjectBuilder);
-            configuration.Receive.InputQueue.Subscribe(configuration.Receive.Handlers.Keys, configuration.SubscriptionFormatter);
-            configuration.Receive.FaultHandlers = new Dictionary<Type, HashSet<Type>>();
+            configuration.InputQueueConfiguration.Handlers = ScanForTypes(eventHandlers, typeof(IHandleMessage<>), configuration.ObjectBuilder);
+            configuration.InputQueueConfiguration.FaultHandlers = new Dictionary<Type, HashSet<Type>>();
             return configuration;
         }
 
@@ -196,12 +189,12 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("ObjectBuilder", "Object builder must be set");
             }
 
-            if (configuration.Receive == null)
+            if (configuration.InputQueueConfiguration == null)
             {
                 throw new JungleBusConfigurationException("Receive", "Input queue needs to be configured before setting event fault handlers");
             }
 
-            configuration.Receive.FaultHandlers = ScanForTypes(eventFaultHandlers, typeof(IHandleMessageFaults<>), configuration.ObjectBuilder);
+            configuration.InputQueueConfiguration.FaultHandlers = ScanForTypes(eventFaultHandlers, typeof(IHandleMessageFaults<>), configuration.ObjectBuilder);
             return configuration;
         }
 

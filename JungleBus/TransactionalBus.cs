@@ -28,6 +28,7 @@ using Common.Logging;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
+using Newtonsoft.Json;
 
 namespace JungleBus
 {
@@ -47,37 +48,24 @@ namespace JungleBus
         private readonly IMessagePublisher _messagePublisher;
 
         /// <summary>
-        /// How to serialize the outbound messages
-        /// </summary>
-        private readonly IMessageSerializer _messageSerializer;
-
-        /// <summary>
         /// List of messages to public when the transaction completes
         /// </summary>
         private readonly List<KeyValuePair<object, Type>> _transactionalPublishMessages;
 
         /// <summary>
-        /// List of messages to send when the transaction completes
-        /// </summary>
-        private readonly List<KeyValuePair<object, Type>> _transactionalSendMessages;
-
-        /// <summary>
         /// Instance of the local message queue
         /// </summary>
-        private readonly IMessageQueue _localMessageQueue;
+        private readonly IQueue _localMessageQueue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransactionalBus" /> class.
         /// </summary>
         /// <param name="messagePublisher">How to publish messages</param>
-        /// <param name="messageSerializer">How to serialize the outbound messages</param>
         /// <param name="messageQueue">Local message queue</param>
-        public TransactionalBus(IMessagePublisher messagePublisher, IMessageSerializer messageSerializer, IMessageQueue messageQueue)
+        public TransactionalBus(IMessagePublisher messagePublisher, IQueue messageQueue)
         {
             _transactionalPublishMessages = new List<KeyValuePair<object, Type>>();
-            _transactionalSendMessages = new List<KeyValuePair<object, Type>>();
             _messagePublisher = messagePublisher;
-            _messageSerializer = messageSerializer;
             _localMessageQueue = messageQueue;
         }
 
@@ -122,15 +110,7 @@ namespace JungleBus
         /// <param name="message">Message to send</param>
         public void PublishLocal<T>(T message)
         {
-            if (Transaction.Current != null)
-            {
-                Transaction.Current.EnlistVolatile(this, EnlistmentOptions.None);
-                _transactionalSendMessages.Add(new KeyValuePair<object, Type>(message, typeof(T)));
-            }
-            else
-            {
-                InternalSend(message, typeof(T));
-            }
+            _localMessageQueue.Send(message);
         }
 
         /// <summary>
@@ -141,13 +121,7 @@ namespace JungleBus
         public void PublishLocal<T>(Action<T> messageBuilder) 
             where T : new()
         {
-            T message = new T();
-            if (messageBuilder != null)
-            {
-                messageBuilder(message);
-            }
-
-            PublishLocal(message);
+            _localMessageQueue.Send(messageBuilder);
         }
 
         /// <summary>
@@ -161,14 +135,8 @@ namespace JungleBus
             {
                 InternalPublish(message.Key, message.Value);
             }
-            
-            foreach (var message in _transactionalSendMessages)
-            {
-                InternalSend(message.Key, message.Value);
-            }
 
             _transactionalPublishMessages.Clear();
-            _transactionalSendMessages.Clear();
             enlistment.Done();
             Log.Trace("Committed transaction");
         }
@@ -179,6 +147,7 @@ namespace JungleBus
         /// <param name="enlistment">An System.Transactions.Enlistment object used to send a response to the transaction manager.</param>
         void IEnlistmentNotification.InDoubt(Enlistment enlistment)
         {
+            enlistment.Done();
         }
 
         /// <summary>
@@ -198,7 +167,7 @@ namespace JungleBus
         {
             Log.Trace("Transaction rolled back");
             _transactionalPublishMessages.Clear();
-            _transactionalSendMessages.Clear();
+            enlistment.Done();
         }
 
         /// <summary>
@@ -209,22 +178,9 @@ namespace JungleBus
         private void InternalPublish(object message, Type type)
         {
             Log.TraceFormat("Publishing message of type {0}", type);
-            string messageString = _messageSerializer.Serialize(message);
+            string messageString = JsonConvert.SerializeObject(message);
             _messagePublisher.Publish(messageString, type);
             Log.TraceFormat("Published message of type {0}", type);
-        }
-
-        /// <summary>
-        /// Performs the actual sending of a message to the bus
-        /// </summary>
-        /// <param name="message">Message to send</param>
-        /// <param name="type">Type of the message</param>
-        private void InternalSend(object message, Type type)
-        {
-            Log.TraceFormat("Sending message of type {0}", type);
-            string messageString = _messageSerializer.Serialize(message);
-            _messagePublisher.Send(messageString, type, _localMessageQueue);
-            Log.TraceFormat("Sending message of type {0}", type);
         }
     }
 }
