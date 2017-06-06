@@ -38,7 +38,7 @@ namespace JungleBus
     /// <summary>
     /// Main application bus for receiving messages from AWS
     /// </summary>
-    internal class JungleBus : IRunJungleBus
+    internal class JungleBus : IRunJungleBus, IDisposable
     {
         /// <summary>
         /// Logger instance
@@ -111,6 +111,15 @@ namespace JungleBus
         {
             Log.Info("Stopping the queue");
             _localQueue.StopReceiving();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            _localQueue.Dispose();
         }
     }
 }

@@ -152,6 +152,12 @@ namespace JungleBus.Aws.Sqs
                 _simpleQueueService.Dispose();
                 _simpleQueueService = null;
             }
+
+            if (_simpleNotificationService != null && _simpleNotificationService.IsValueCreated)
+            {
+                _simpleNotificationService.Value.Dispose();
+                _simpleNotificationService = null;
+            }
         }
 
         /// <summary>
