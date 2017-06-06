@@ -37,17 +37,12 @@ namespace JungleBus.Queue
     /// <summary>
     /// Main application queue for sending and receiving messages from AWS
     /// </summary>
-    public class JungleQueue
+    public class JungleQueue : IDisposable
     {
         /// <summary>
         /// Logger instance
         /// </summary>
         private static readonly ILog Log = LogManager.GetLogger(typeof(JungleQueue));
-
-        /// <summary>
-        /// SQS queue
-        /// </summary>
-        private readonly ISqsQueue _queue;
 
         /// <summary>
         /// Receive event message pump
@@ -63,6 +58,11 @@ namespace JungleBus.Queue
         /// Message Logger
         /// </summary>
         private readonly IMessageLogger _messageLogger;
+
+        /// <summary>
+        /// SQS queue
+        /// </summary>
+        private ISqsQueue _queue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JungleQueue" /> class.
@@ -140,6 +140,19 @@ namespace JungleBus.Queue
             _messagePumps.ForEach(x => x.Dispose());
             _messagePumps.Clear();
             _messagePumpTasks.Clear();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_queue != null)
+            {
+                _queue.Dispose();
+                _queue = null;
+            }
         }
     }
 }

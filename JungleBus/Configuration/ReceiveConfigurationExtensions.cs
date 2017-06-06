@@ -73,6 +73,8 @@ namespace JungleBus.Configuration
             configuration.InputQueueConfiguration.NumberOfPollingInstances = 1;
             configuration.InputQueueConfiguration.Region = region;
             configuration.InputQueueConfiguration.RetryCount = 5;
+            configuration.InputQueueConfiguration.FaultHandlers = new Dictionary<Type, HashSet<Type>>();
+            configuration.InputQueueConfiguration.Handlers = new Dictionary<Type, HashSet<Type>>();
             return configuration as IConfigureEventReceiving;
         }
 
@@ -100,6 +102,33 @@ namespace JungleBus.Configuration
             }
 
             configuration.InputQueueConfiguration.SqsPollWaitTime = timeInSeconds;
+            return configuration;
+        }
+
+        /// <summary>
+        /// Configure the polling wait time for receive bus
+        /// </summary>
+        /// <param name="configuration">Configuration to modify</param>
+        /// <param name="retryCount">Number of times to attempt to process a message</param>
+        /// <returns>Modified configuration</returns>
+        public static IConfigureEventReceiving SetRetryCount(this IConfigureEventReceiving configuration, int retryCount)
+        {
+            if (retryCount < 1 || retryCount > 1000)
+            {
+                throw new JungleBusConfigurationException("retryCount", "Retry count must be between 1 and 1000");
+            }
+
+            if (configuration.InputQueueConfiguration == null)
+            {
+                throw new JungleBusConfigurationException("General", "Input queue needs to be configured before setting the retry count");
+            }
+
+            if (configuration == null)
+            {
+                throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
+            }
+
+            configuration.InputQueueConfiguration.RetryCount = retryCount;
             return configuration;
         }
 
@@ -167,7 +196,6 @@ namespace JungleBus.Configuration
             }
 
             configuration.InputQueueConfiguration.Handlers = ScanForTypes(eventHandlers, typeof(IHandleMessage<>), configuration.ObjectBuilder);
-            configuration.InputQueueConfiguration.FaultHandlers = new Dictionary<Type, HashSet<Type>>();
             return configuration;
         }
 
