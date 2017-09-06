@@ -1,4 +1,4 @@
-﻿// <copyright file="MessageAttribute.cs">
+﻿// <copyright file="IMessagePublisher.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -21,21 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace JungleBus.Queue.Messaging.Sns
+using System;
+using System.Collections.Generic;
+
+namespace JungleBus.Messaging
 {
     /// <summary>
-    /// DTO for decoding SNS message attributes
+    /// Controls the actual bus
     /// </summary>
-    internal class MessageAttribute
+    public interface IMessagePublisher
     {
         /// <summary>
-        /// Gets or sets the value type
+        /// Setups the bus for publishing the given message types
         /// </summary>
-        public string Type { get; set; }
+        /// <param name="messageTypes">Message types</param>
+        void SetupMessagesForPublishing(IEnumerable<Type> messageTypes);
 
         /// <summary>
-        /// Gets or sets the value
+        /// Publishes the serialized message
         /// </summary>
-        public string Value { get; set; }
+        /// <param name="message">Serialized Message</param>
+        /// <param name="type">Payload type</param>
+        void Publish(string message, Type type);
+
+        /// <summary>
+        /// Subscribes the given queue to the messages
+        /// </summary>
+        /// <param name="queueName">Queue name</param>
+        /// <param name="messageTypes">Message queues</param>
+        void Subscribe(string queueName, IEnumerable<Type> messageTypes);
     }
 }

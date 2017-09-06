@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JungleBus</RootNamespace>
     <AssemblyName>JungleBus</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -31,29 +31,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.Core.3.1.0.0\lib\net45\AWSSDK.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.Core.3.3.17\lib\net45\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.SimpleNotificationService, Version=3.1.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.SimpleNotificationService.3.1.0.0\lib\net45\AWSSDK.SimpleNotificationService.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="AWSSDK.SimpleNotificationService, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.SimpleNotificationService.3.3.0\lib\net45\AWSSDK.SimpleNotificationService.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.SQS, Version=3.1.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.SQS.3.1.0.0\lib\net45\AWSSDK.SQS.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="AWSSDK.SQS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.SQS.3.3.2.7\lib\net45\AWSSDK.SQS.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Common.Logging, Version=3.4.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.4.0\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Common.Logging.Core, Version=3.4.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.4.0\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="JungleQueue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JungleQueue.1.0.0\lib\net452\JungleQueue.dll</HintPath>
+    </Reference>
+    <Reference Include="JungleQueue.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JungleQueue.Interfaces.1.0.0\lib\net452\JungleQueue.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,39 +68,20 @@
   <ItemGroup>
     <Compile Include="Aws\AwsMessagePublisher.cs" />
     <Compile Include="Aws\Sns\ISnsClient.cs" />
-    <Compile Include="Aws\Sqs\ISqsQueue.cs" />
-    <Compile Include="Aws\Sqs\SqsQueue.cs" />
     <Compile Include="Configuration\IBusConfiguration.cs" />
     <Compile Include="Configuration\SendConfigurationExtensions.cs" />
     <Compile Include="Configuration\ReceiveConfigurationExtensions.cs" />
     <Compile Include="Configuration\IConfigureEventReceiving.cs" />
     <Compile Include="Configuration\IConfigureEventPublishing.cs" />
-    <Compile Include="Messaging\IMessageLogger.cs" />
-    <Compile Include="Messaging\IMessagePublisher.cs" />
-    <Compile Include="Messaging\NoOpMessageLogger.cs" />
-    <Compile Include="Messaging\MessageLogger.cs" />
-    <Compile Include="Queue\JungleQueue.cs" />
-    <Compile Include="Queue\Messaging\IMessageParser.cs" />
-    <Compile Include="Queue\Messaging\IMessageProcessor.cs" />
-    <Compile Include="Queue\Messaging\MessageParser.cs" />
-    <Compile Include="Queue\Messaging\MessageProcessingResult.cs" />
-    <Compile Include="Queue\Messaging\MessageProcessor.cs" />
-    <Compile Include="Queue\Messaging\MessagePump.cs" />
-    <Compile Include="Queue\Messaging\MessageStatistics.cs" />
-    <Compile Include="Queue\Messaging\TransportMessage.cs" />
-    <Compile Include="Queue\QueueConfiguration.cs" />
-    <Compile Include="Queue\TransactionalQueue.cs" />
+    <Compile Include="IMessagePublisher.cs" />
     <Compile Include="TransactionalBus.cs" />
     <Compile Include="Aws\Sns\SnsClient.cs" />
-    <Compile Include="Queue\Messaging\Sns\MessageAttribute.cs" />
-    <Compile Include="Queue\Messaging\Sns\SnsMessage.cs" />
     <Compile Include="Configuration\BusBuilder.cs" />
     <Compile Include="Configuration\BusConfiguration.cs" />
     <Compile Include="Configuration\GeneralConfigurationExtensions.cs" />
     <Compile Include="Configuration\SendConfiguration.cs" />
     <Compile Include="JungleBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\JsonNetSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -111,6 +92,10 @@
       <Project>{09cf3161-d0c9-4390-b66b-b6bf5ad17514}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\AWSSDK.SimpleNotificationService.3.3.0\analyzers\dotnet\cs\AWSSDK.SimpleNotificationService.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.SQS.3.3.2.7\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

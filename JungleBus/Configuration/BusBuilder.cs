@@ -49,7 +49,7 @@ namespace JungleBus.Configuration
         {
             IBusConfiguration configuration = new BusConfiguration()
             {
-                MessageLogger = new Messaging.NoOpMessageLogger(),
+                MessageLogger = new JungleQueue.Messaging.NoOpMessageLogger(),
                 BusName = busName,
             };
 

@@ -24,8 +24,10 @@
 using System;
 using System.Collections.Generic;
 using Amazon;
+using Amazon.SQS;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using JungleQueue.Interfaces.Exceptions;
 
 namespace JungleBus.Aws.Sns
 {
@@ -48,6 +50,11 @@ namespace JungleBus.Aws.Sns
         /// Connection to SNS
         /// </summary>
         private IAmazonSimpleNotificationService _sns;
+        
+        /// <summary>
+        /// Connection to SQS
+        /// </summary>
+        private readonly IAmazonSQS _simpleQueueService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SnsClient" /> class.
@@ -62,6 +69,7 @@ namespace JungleBus.Aws.Sns
             }
 
             _sns = new AmazonSimpleNotificationServiceClient(endpoint);
+            _simpleQueueService = new AmazonSQSClient(endpoint);
             _topicArns = new Dictionary<string, string>();
             _topicFormatter = topicFormatter;
         }
@@ -113,6 +121,28 @@ namespace JungleBus.Aws.Sns
             }
 
             _sns.Publish(request);
+        }
+
+        /// <summary>
+        /// Subscribes the given queue to the message type
+        /// </summary>
+        /// <param name="queueName">Queue Name</param>
+        /// <param name="messageType">Message type</param>
+        public void Subscribe(string queueName, Type messageType)
+        {
+            string topicName = _topicFormatter(messageType);
+            var queueUrlResponse = _simpleQueueService.GetQueueUrl(queueName);
+            if (string.IsNullOrWhiteSpace(queueUrlResponse.QueueUrl))
+            {
+                throw new JungleException(string.Format("Unable to subscribe {0} to {1}: Unknown queue name", queueName, messageType.FullName));
+            }
+
+            var topic = _sns.FindTopic(topicName);
+            if (topic != null)
+            {
+                string arn = _sns.SubscribeQueue(topic.TopicArn, _simpleQueueService, queueUrlResponse.QueueUrl);
+                _sns.SetSubscriptionAttributes(arn, "RawMessageDelivery", "true");
+            }
         }
 
         /// <summary>

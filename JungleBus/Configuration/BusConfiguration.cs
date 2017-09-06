@@ -23,8 +23,10 @@
 // </copyright>
 using System;
 using JungleBus.Interfaces.Configuration;
-using JungleBus.Interfaces.IoC;
+using JungleQueue.Interfaces.IoC;
 using JungleBus.Messaging;
+using JungleQueue.Configuration;
+using JungleQueue.Messaging;
 
 namespace JungleBus.Configuration
 {
@@ -61,6 +63,6 @@ namespace JungleBus.Configuration
         /// <summary>
         /// Gets or sets the input queue configuration
         /// </summary>
-        public Queue.QueueConfiguration InputQueueConfiguration { get; set; }
+        public QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

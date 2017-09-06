@@ -28,10 +28,9 @@ using System.Threading.Tasks;
 using Common.Logging;
 using JungleBus.Configuration;
 using JungleBus.Interfaces;
-using JungleBus.Interfaces.IoC;
-using JungleBus.Interfaces.Serialization;
+using JungleQueue.Interfaces.IoC;
 using JungleBus.Messaging;
-using JungleBus.Queue;
+using JungleQueue.Interfaces;
 
 namespace JungleBus
 {
@@ -53,7 +52,7 @@ namespace JungleBus
         /// <summary>
         /// Local message queue
         /// </summary>
-        private readonly JungleQueue _localQueue;
+        private readonly IRunJungleQueue _localQueue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JungleBus" /> class.
@@ -69,9 +68,14 @@ namespace JungleBus
             if (configuration.InputQueueConfiguration != null)
             {
                 configuration.InputQueueConfiguration.MessageLogger = configuration.MessageLogger;
-                Action<IObjectBuilder> preHandler = x => x.RegisterInstance(CreateSendBus());
-                _localQueue = new JungleQueue(configuration.InputQueueConfiguration, configuration.ObjectBuilder, preHandler);
-                _localQueue.Subscribe(configuration.InputQueueConfiguration.Handlers.Keys.Select(x => configuration.SubscriptionFormatter(x)));
+                var existingPreHandler = configuration.InputQueueConfiguration.Prehandler;
+                configuration.InputQueueConfiguration.Prehandler = x => { x.RegisterInstance(CreateSendBus()); existingPreHandler?.Invoke(x); };
+                _localQueue = new JungleQueue.JungleQueue(configuration.InputQueueConfiguration);
+            }
+
+            if (_messagePublisher != null && _localQueue != null)
+            {
+                _messagePublisher.Subscribe(configuration.InputQueueConfiguration.QueueName, configuration.InputQueueConfiguration.Handlers.Keys);
             }
         }
 
@@ -86,7 +90,7 @@ namespace JungleBus
                 return null;
             }
 
-            TransactionalBus sendBus = new TransactionalBus(_messagePublisher, _localQueue.CreateQueue());
+            TransactionalBus sendBus = new TransactionalBus(_messagePublisher, _localQueue.CreateSendQueue());
             return sendBus;
         }
 

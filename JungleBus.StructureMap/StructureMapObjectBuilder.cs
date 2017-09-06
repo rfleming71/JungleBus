@@ -23,7 +23,7 @@
 // </copyright>
 using System;
 using System.Collections.Generic;
-using JungleBus.Interfaces.IoC;
+using JungleQueue.Interfaces.IoC;
 using StructureMap;
 
 namespace JungleBus.StructureMap
@@ -100,7 +100,7 @@ namespace JungleBus.StructureMap
         /// Creates a child builder
         /// </summary>
         /// <returns>Nested builder</returns>
-        public IObjectBuilder GetNestedBuilder()
+        public JungleQueue.Interfaces.IoC.IObjectBuilder GetNestedBuilder()
         {
             return new StructureMapObjectBuilder(_container.GetNestedContainer());
         }

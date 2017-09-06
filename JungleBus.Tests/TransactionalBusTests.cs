@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Transactions;
-using JungleBus.Interfaces;
-using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
-using JungleBus.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using JungleQueue.Interfaces;
 
 namespace JungleBus.Tests
 {

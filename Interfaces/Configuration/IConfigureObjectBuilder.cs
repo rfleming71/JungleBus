@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-using JungleBus.Interfaces.IoC;
+using JungleQueue.Interfaces.IoC;
 
 namespace JungleBus.Interfaces.Configuration
 {
@@ -31,7 +31,7 @@ namespace JungleBus.Interfaces.Configuration
     public interface IConfigureObjectBuilder
     {
         /// <summary>
-        /// Gets or sets the service locator for message handlers 
+        /// Gets or sets the service locater for message handlers 
         /// </summary>
         IObjectBuilder ObjectBuilder { get; set; }
     }
