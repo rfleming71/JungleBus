@@ -1,7 +1,7 @@
-﻿using JungleBus;
+﻿using System.Threading.Tasks;
 using Common.Logging;
-using Messages;
 using JungleBus.Interfaces;
+using Messages;
 
 namespace ConsoleTestApp.Handlers
 {
@@ -13,9 +13,10 @@ namespace ConsoleTestApp.Handlers
             _log = log;
         }
 
-        public void Handle(TestMessage2 message)
+        public Task Handle(TestMessage2 message)
         {
             _log.Info("Handling message Handler 3");
+            return Task.CompletedTask;
         }
     }
 }

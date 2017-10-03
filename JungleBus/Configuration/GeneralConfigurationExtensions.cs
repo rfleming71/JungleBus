@@ -25,8 +25,8 @@ using System;
 using JungleBus.Interfaces;
 using JungleBus.Interfaces.Configuration;
 using JungleBus.Interfaces.Exceptions;
-using JungleBus.Interfaces.IoC;
-using JungleBus.Messaging;
+using JungleQueue.Interfaces.IoC;
+using JungleQueue.Messaging;
 
 namespace JungleBus.Configuration
 {
@@ -36,7 +36,7 @@ namespace JungleBus.Configuration
     public static class GeneralConfigurationExtensions
     {
         /// <summary>
-        /// Configure the the bus to use structure map to build the handlers
+        /// Configure the bus to use structure map to build the handlers
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
         /// <param name="objectBuilder">Object Builder to use</param>
@@ -53,7 +53,7 @@ namespace JungleBus.Configuration
         }
 
         /// <summary>
-        /// Configure the the bus to use JSON serialization of the messages
+        /// Configure the bus to use JSON serialization of the messages
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
         /// <returns>Modified configuration</returns>
@@ -75,7 +75,7 @@ namespace JungleBus.Configuration
         }
 
         /// <summary>
-        /// Configure the the bus to use log inbound and outbound messages
+        /// Configure the bus to use log inbound and outbound messages
         /// </summary>
         /// <param name="configuration">Configuration to modify</param>
         /// <returns>Modified configuration</returns>
@@ -103,6 +103,9 @@ namespace JungleBus.Configuration
             {
                 throw new JungleBusConfigurationException("Receive", "Receive has not been configured for this bus");
             }
+
+            configuration.InputQueueConfiguration.MessageLogger = configuration.MessageLogger;
+            configuration.InputQueueConfiguration.ObjectBuilder = configuration.ObjectBuilder;
 
             JungleBus jungleBus = new JungleBus(configuration);
             return jungleBus;

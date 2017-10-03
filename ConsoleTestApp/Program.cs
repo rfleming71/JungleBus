@@ -2,8 +2,8 @@
 using Amazon;
 using JungleBus.Configuration;
 using JungleBus.Interfaces;
-using JungleBus.Interfaces.Statistics;
-using JungleBus.StructureMap;
+using JungleQueue.Interfaces.Statistics;
+using JungleQueue.StructureMap;
 using Messages;
 using StructureMap;
 
@@ -40,7 +40,7 @@ namespace ConsoleTestApp
             do
             {
                 Console.WriteLine("Press any key to send a message");
-                sendBus.Publish<TestMessage>(x =>
+                sendBus.PublishLocal<TestMessage>(x =>
                 {
                     x.ID = 123;
                     x.Modified = DateTime.Now;
@@ -55,7 +55,7 @@ namespace ConsoleTestApp
         static IRunJungleBus CreateReceiveOnlyBus()
         {
             return BusBuilder.Create("jb")
-                .WithStructureMapObjectBuilder(_container)
+                .WithObjectBuilder(GetObjectBuilder())
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
@@ -69,7 +69,7 @@ namespace ConsoleTestApp
         static IBus CreateSendOnlyBus()
         {
             return BusBuilder.Create("jb")
-                .WithStructureMapObjectBuilder(_container)
+                .WithObjectBuilder(GetObjectBuilder())
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
@@ -79,7 +79,7 @@ namespace ConsoleTestApp
         static IRunJungleBus CreateFullBus()
         {
             return BusBuilder.Create("jb")
-                .WithStructureMapObjectBuilder(_container)
+                .WithObjectBuilder(GetObjectBuilder())
                 .UsingJsonSerialization()
                 .EnableMessageLogging()
                 .PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
@@ -88,6 +88,11 @@ namespace ConsoleTestApp
                 .UsingEventHandlersFromEntryAssembly()
                 .SetNumberOfPollingInstances(1)
                 .CreateStartableBus();
+        }
+
+        static JungleQueue.Interfaces.IoC.IObjectBuilder GetObjectBuilder()
+        {
+            return new StructureMapObjectBuilder();
         }
     }
 }

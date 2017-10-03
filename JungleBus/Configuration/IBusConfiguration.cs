@@ -22,8 +22,9 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using JungleBus.Interfaces.IoC;
-using JungleBus.Messaging;
+using JungleQueue.Interfaces.IoC;
+using JungleQueue.Configuration;
+using JungleQueue.Messaging;
 
 namespace JungleBus.Configuration
 {
@@ -33,7 +34,7 @@ namespace JungleBus.Configuration
     public interface IBusConfiguration
     {
         /// <summary>
-        /// Gets the service locator for message handlers 
+        /// Gets the service locater for message handlers 
         /// </summary>
         IObjectBuilder ObjectBuilder { get; }
 
@@ -60,6 +61,6 @@ namespace JungleBus.Configuration
         /// <summary>
         /// Gets or sets the input queue configuration
         /// </summary>
-        Queue.QueueConfiguration InputQueueConfiguration { get; set; }
+        QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

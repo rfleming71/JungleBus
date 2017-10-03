@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Common.Logging;
 using JungleBus.Interfaces;
 using Messages;
@@ -15,11 +16,12 @@ namespace ConsoleTestApp.Handlers
             _log = log;
         }
 
-        public void Handle(TestMessage message)
+        public Task Handle(TestMessage message)
         {
             _log.Info("Starting message Handler 1");
             Thread.Sleep(5000);
             _log.Info("Finished message Handler 1");
+            return Task.CompletedTask;
         }
     }
 }

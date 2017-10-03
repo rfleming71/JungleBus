@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Common.Logging;
 using JungleBus.Interfaces;
 using JungleBus.Messaging;
-using JungleBus.Queue.Messaging;
+using JungleQueue.Messaging;
 
 namespace ConsoleTestApp.FaultHandlers
 {
@@ -16,9 +17,10 @@ namespace ConsoleTestApp.FaultHandlers
             _log = log;
         }
 
-        public void Handle(TransportMessage message, Exception ex)
+        public Task Handle(TransportMessage message, Exception ex)
         {
             _log.Info("Starting message fault Handler 3");
+            return Task.CompletedTask;
         }
     }
 }

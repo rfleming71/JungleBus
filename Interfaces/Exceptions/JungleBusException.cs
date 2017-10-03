@@ -22,13 +22,14 @@
 // SOFTWARE.
 // </copyright>
 using System;
+using JungleQueue.Interfaces.Exceptions;
 
 namespace JungleBus.Interfaces.Exceptions
 {
     /// <summary>
     /// General exception in the bus
     /// </summary>
-    public class JungleBusException : Exception
+    public class JungleBusException : JungleException
     {
         /// <summary>
         /// Initializes a new instance of the JungleBusException class.

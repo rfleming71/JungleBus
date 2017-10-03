@@ -44,5 +44,12 @@ namespace JungleBus.Aws.Sns
         /// </summary>
         /// <param name="messageTypes">Message types</param>
         void SetupMessagesForPublishing(IEnumerable<Type> messageTypes);
+
+        /// <summary>
+        /// Subscribes the given queue to the message type
+        /// </summary>
+        /// <param name="queueName">Queue name</param>
+        /// <param name="messageType">Message to subscribe to</param>
+        void Subscribe(string queueName, Type messageType);
     }
 }

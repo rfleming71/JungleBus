@@ -21,12 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+using JungleQueue.Interfaces.Exceptions;
+
 namespace JungleBus.Interfaces.Exceptions
 {
     /// <summary>
     /// An issue with the configuration as occurred
     /// </summary>
-    public class JungleBusConfigurationException : JungleBusException
+    public class JungleBusConfigurationException : JungleConfigurationException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="JungleBusConfigurationException" /> class.
@@ -34,7 +36,7 @@ namespace JungleBus.Interfaces.Exceptions
         /// <param name="configurationSetting">Setting that caused the exception</param>
         /// <param name="message">Error message</param>
         public JungleBusConfigurationException(string configurationSetting, string message)
-            : base(string.Format("Setting: {0} Message: {1}", configurationSetting, message))
+            : base(configurationSetting, message)
         {
         }
     }

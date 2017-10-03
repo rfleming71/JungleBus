@@ -26,12 +26,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using Amazon;
 using JungleBus.Aws.Sns;
 using JungleBus.Interfaces.Exceptions;
-using JungleBus.Interfaces.Serialization;
 using JungleBus.Messaging;
-using JungleBus.Serialization;
+using JungleQueue.Interfaces.Serialization;
+using JungleQueue.Messaging;
+using JungleQueue.Serialization;
 
 namespace JungleBus.Aws
 {
@@ -162,6 +162,19 @@ namespace JungleBus.Aws
             if (entryAssembly != null)
             {
                 _commonMessageMetadata["SenderVersion"] = entryAssembly.GetName().Version.ToString(4);
+            }
+        }
+
+        /// <summary>
+        /// Subscribes the given queue to the messages
+        /// </summary>
+        /// <param name="queueName">Queue name</param>
+        /// <param name="messageTypes">Message queues</param>
+        public void Subscribe(string queueName, IEnumerable<Type> messageTypes)
+        {
+            foreach (Type messageType in messageTypes)
+            {
+                _snsClient.Subscribe(queueName, messageType);
             }
         }
     }

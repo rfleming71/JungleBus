@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Common.Logging;
 using JungleBus.Interfaces;
 using Messages;
@@ -16,9 +17,10 @@ namespace ConsoleTestApp.FaultHandlers
             _log = log;
         }
 
-        public void Handle(TestMessage message, Exception ex)
+        public Task Handle(TestMessage message, Exception ex)
         {
             _log.Info("Starting message fault Handler 1");
+            return Task.CompletedTask;
         }
     }
 }
