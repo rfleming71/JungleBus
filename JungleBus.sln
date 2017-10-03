@@ -15,10 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\In
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuSpecs", "NuSpecs", "{C7F54577-1A7B-4977-AD59-D8D33392BB36}"
 	ProjectSection(SolutionItems) = preProject
-		JungleBus.Interfaces.nuspec = JungleBus.Interfaces.nuspec
-		JungleBus.nuspec = JungleBus.nuspec
-		JungleBus.StructureMap.nuspec = JungleBus.StructureMap.nuspec
-		JungleBus.Testing.nuspec = JungleBus.Testing.nuspec
+		JungleBus.Interfaces.nuspec = Interfaces\JungleBus.Interfaces.nuspec
+		JungleBus.nuspec = JungleBus\JungleBus.nuspec
+		JungleBus.StructureMap.nuspec = JungleBus.StructureMap\JungleBus.StructureMap.nuspec
+		JungleBus.Testing.nuspec = JungleBus.Testing\JungleBus.Testing.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus.Testing", "JungleBus.Testing\JungleBus.Testing.csproj", "{59394202-6E4E-44A9-8213-0B7970F14860}"
