@@ -1,11 +1,13 @@
 # JungleBus
-Transactional service bus built on top of Amazon Web Services.
+Transactional service bus built on top of Amazon Web Services.  
+[![Build status](https://ci.appveyor.com/api/projects/status/ccy923lmviskyfww/branch/master?svg=true)](https://ci.appveyor.com/project/rfleming71/junglebus/branch/development)  
+Since version 3.0, the bus is built upon the JungleQueue library.
 
 # Creating the Bus
 Creates a service bus that can send and recieve messages
 ```C#
-var bus = BusBuilder.Create()
-	.WithStructureMapObjectBuilder()
+var bus = BusBuilder.Create("Development")
+	.WithObjectBuilder(new JungleQueue.StructureMap.StructureMapObjectBuilder())
 	.UsingJsonSerialization()
 	.PublishingMessages(typeof(TestMessage).Assembly.ExportedTypes, RegionEndpoint.USEast1)
 	.SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
@@ -56,7 +58,7 @@ busBuilder().Publish(new TestMessage());
 Creates a service bus that can only receive messages. This bus can send messages to itself.
 ```C#
 var bus = BusBuilder.Create()
-	.WithStructureMapObjectBuilder()
+	.WithObjectBuilder(new JungleQueue.StructureMap.StructureMapObjectBuilder())
 	.UsingJsonSerialization()
 	.SetInputQueue("Test_Queue1", RegionEndpoint.USEast1)
 	.SetSqsPollWaitTime(14)
@@ -66,6 +68,3 @@ var bus = BusBuilder.Create()
 	.CreateStartableBus();
 bus.StartReceiving();
 ```
-
-#Installation
-Simply run ```Install-Package JungleBus``` from the Package Manager console.
