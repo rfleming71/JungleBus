@@ -1,4 +1,4 @@
-﻿// <copyright file="IBusConfiguration.cs">
+﻿// <copyright file="IHandleMessageFaults.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,45 +22,14 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using JungleQueue.Interfaces.IoC;
-using JungleQueue.Configuration;
-using JungleQueue.Messaging;
 
-namespace JungleBus.Configuration
+namespace JungleBus.Interfaces
 {
     /// <summary>
-    /// General bus configuration settings
+    /// Interface to mark a class as an event fault handler for event type T
     /// </summary>
-    public interface IBusConfiguration
+    /// <typeparam name="T">Event type to handle</typeparam>
+    public interface IHandleMessageFaults<T> : JungleQueue.Interfaces.IHandleMessageFaults<T>
     {
-        /// <summary>
-        /// Gets the service locater for message handlers 
-        /// </summary>
-        IObjectBuilder ObjectBuilder { get; }
-
-        /// <summary>
-        /// Gets or sets an ID for the entire bus
-        /// </summary>
-        string BusName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the outbound message settings
-        /// </summary>
-        SendConfiguration Send { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message logger
-        /// </summary>
-        IMessageLogger MessageLogger { get; set; }
-
-        /// <summary>
-        /// Gets or sets the function for formatting subscription names
-        /// </summary>
-        Func<Type, string> SubscriptionFormatter { get; set; }
-
-        /// <summary>
-        /// Gets or sets the input queue configuration
-        /// </summary>
-        QueueConfiguration InputQueueConfiguration { get; set; }
     }
 }

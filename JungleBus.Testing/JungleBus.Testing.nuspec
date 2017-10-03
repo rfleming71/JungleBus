@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>Ryan Fleming</authors>
+    <owners>Ryan Fleming</owners>
+    <projectUrl>https://github.com/rfleming71/JungleBus</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Test helpers for JungleBus</description>
+    <releaseNotes>Adding publish local support</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>EventBus Bus AWS Amazon-web-services SQS SNS</tags>
+    <dependencies>
+      <dependency id="JungleBus.Interfaces" version="[2.0,4.0)" />
+    </dependencies>
+  </metadata>
+  <files>
+	  <file src="bin\Release\$id$.dll" target="lib\net461" />
+  </files>
+</package>

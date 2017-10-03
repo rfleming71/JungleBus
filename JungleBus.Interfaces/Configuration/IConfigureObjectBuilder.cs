@@ -1,4 +1,4 @@
-﻿// <copyright file="IBusConfiguration.cs">
+﻿// <copyright file="IConfigureObjectBuilder.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -21,46 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-using System;
 using JungleQueue.Interfaces.IoC;
-using JungleQueue.Configuration;
-using JungleQueue.Messaging;
 
-namespace JungleBus.Configuration
+namespace JungleBus.Interfaces.Configuration
 {
     /// <summary>
-    /// General bus configuration settings
+    /// Interface for configuring the object builder
     /// </summary>
-    public interface IBusConfiguration
+    public interface IConfigureObjectBuilder
     {
         /// <summary>
-        /// Gets the service locater for message handlers 
+        /// Gets or sets the service locater for message handlers 
         /// </summary>
-        IObjectBuilder ObjectBuilder { get; }
-
-        /// <summary>
-        /// Gets or sets an ID for the entire bus
-        /// </summary>
-        string BusName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the outbound message settings
-        /// </summary>
-        SendConfiguration Send { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message logger
-        /// </summary>
-        IMessageLogger MessageLogger { get; set; }
-
-        /// <summary>
-        /// Gets or sets the function for formatting subscription names
-        /// </summary>
-        Func<Type, string> SubscriptionFormatter { get; set; }
-
-        /// <summary>
-        /// Gets or sets the input queue configuration
-        /// </summary>
-        QueueConfiguration InputQueueConfiguration { get; set; }
+        IObjectBuilder ObjectBuilder { get; set; }
     }
 }

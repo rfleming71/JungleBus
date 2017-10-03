@@ -1,4 +1,4 @@
-﻿// <copyright file="ISnsClient.cs">
+﻿// <copyright file="JungleBusConfigurationException.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -21,35 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-using System;
-using System.Collections.Generic;
+using JungleQueue.Interfaces.Exceptions;
 
-namespace JungleBus.Aws.Sns
+namespace JungleBus.Interfaces.Exceptions
 {
     /// <summary>
-    /// Client for talking to SNS
+    /// An issue with the configuration as occurred
     /// </summary>
-    public interface ISnsClient : IDisposable
+    public class JungleBusConfigurationException : JungleConfigurationException
     {
         /// <summary>
-        /// Publishes the serialized message
+        /// Initializes a new instance of the <see cref="JungleBusConfigurationException" /> class.
         /// </summary>
-        /// <param name="message">Serialized Message</param>
-        /// <param name="type">Payload type</param>
-        /// <param name="metadata">Message Metadata</param>
-        void Publish(string message, Type type, Dictionary<string, string> metadata);
-
-        /// <summary>
-        /// Setups the bus for publishing the given message types
-        /// </summary>
-        /// <param name="messageTypes">Message types</param>
-        void SetupMessagesForPublishing(IEnumerable<Type> messageTypes);
-
-        /// <summary>
-        /// Subscribes the given queue to the message type
-        /// </summary>
-        /// <param name="queueName">Queue name</param>
-        /// <param name="messageType">Message to subscribe to</param>
-        void Subscribe(string queueName, Type messageType);
+        /// <param name="configurationSetting">Setting that caused the exception</param>
+        /// <param name="message">Error message</param>
+        public JungleBusConfigurationException(string configurationSetting, string message)
+            : base(configurationSetting, message)
+        {
+        }
     }
 }

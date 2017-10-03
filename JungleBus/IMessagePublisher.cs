@@ -1,4 +1,4 @@
-﻿// <copyright file="ISnsClient.cs">
+﻿// <copyright file="IMessagePublisher.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -24,21 +24,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace JungleBus.Aws.Sns
+namespace JungleBus.Messaging
 {
     /// <summary>
-    /// Client for talking to SNS
+    /// Controls the actual bus
     /// </summary>
-    public interface ISnsClient : IDisposable
+    public interface IMessagePublisher
     {
-        /// <summary>
-        /// Publishes the serialized message
-        /// </summary>
-        /// <param name="message">Serialized Message</param>
-        /// <param name="type">Payload type</param>
-        /// <param name="metadata">Message Metadata</param>
-        void Publish(string message, Type type, Dictionary<string, string> metadata);
-
         /// <summary>
         /// Setups the bus for publishing the given message types
         /// </summary>
@@ -46,10 +38,17 @@ namespace JungleBus.Aws.Sns
         void SetupMessagesForPublishing(IEnumerable<Type> messageTypes);
 
         /// <summary>
-        /// Subscribes the given queue to the message type
+        /// Publishes the serialized message
+        /// </summary>
+        /// <param name="message">Serialized Message</param>
+        /// <param name="type">Payload type</param>
+        void Publish(string message, Type type);
+
+        /// <summary>
+        /// Subscribes the given queue to the messages
         /// </summary>
         /// <param name="queueName">Queue name</param>
-        /// <param name="messageType">Message to subscribe to</param>
-        void Subscribe(string queueName, Type messageType);
+        /// <param name="messageTypes">Message queues</param>
+        void Subscribe(string queueName, IEnumerable<Type> messageTypes);
     }
 }

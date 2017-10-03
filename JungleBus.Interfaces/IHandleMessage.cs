@@ -1,4 +1,4 @@
-﻿// <copyright file="ISnsClient.cs">
+﻿// <copyright file="IHandleMessage.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -21,35 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-using System;
-using System.Collections.Generic;
-
-namespace JungleBus.Aws.Sns
+namespace JungleBus.Interfaces
 {
     /// <summary>
-    /// Client for talking to SNS
+    /// Interface to mark a class as an event handler for event type T
     /// </summary>
-    public interface ISnsClient : IDisposable
+    /// <typeparam name="T">Event type to handle</typeparam>
+    public interface IHandleMessage<T> : JungleQueue.Interfaces.IHandleMessage<T>
     {
-        /// <summary>
-        /// Publishes the serialized message
-        /// </summary>
-        /// <param name="message">Serialized Message</param>
-        /// <param name="type">Payload type</param>
-        /// <param name="metadata">Message Metadata</param>
-        void Publish(string message, Type type, Dictionary<string, string> metadata);
-
-        /// <summary>
-        /// Setups the bus for publishing the given message types
-        /// </summary>
-        /// <param name="messageTypes">Message types</param>
-        void SetupMessagesForPublishing(IEnumerable<Type> messageTypes);
-
-        /// <summary>
-        /// Subscribes the given queue to the message type
-        /// </summary>
-        /// <param name="queueName">Queue name</param>
-        /// <param name="messageType">Message to subscribe to</param>
-        void Subscribe(string queueName, Type messageType);
     }
 }

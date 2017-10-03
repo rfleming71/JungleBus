@@ -1,4 +1,4 @@
-﻿// <copyright file="ISnsClient.cs">
+﻿// <copyright file="JungleBusException.cs">
 //     The MIT License (MIT)
 //
 // Copyright(c) 2016 Ryan Fleming
@@ -22,34 +22,43 @@
 // SOFTWARE.
 // </copyright>
 using System;
-using System.Collections.Generic;
+using JungleQueue.Interfaces.Exceptions;
 
-namespace JungleBus.Aws.Sns
+namespace JungleBus.Interfaces.Exceptions
 {
     /// <summary>
-    /// Client for talking to SNS
+    /// General exception in the bus
     /// </summary>
-    public interface ISnsClient : IDisposable
+    public class JungleBusException : JungleException
     {
         /// <summary>
-        /// Publishes the serialized message
+        /// Initializes a new instance of the JungleBusException class.
         /// </summary>
-        /// <param name="message">Serialized Message</param>
-        /// <param name="type">Payload type</param>
-        /// <param name="metadata">Message Metadata</param>
-        void Publish(string message, Type type, Dictionary<string, string> metadata);
+        public JungleBusException()
+        {
+        }
 
         /// <summary>
-        /// Setups the bus for publishing the given message types
+        /// Initializes a new instance of the JungleBusException class with a specified error message
         /// </summary>
-        /// <param name="messageTypes">Message types</param>
-        void SetupMessagesForPublishing(IEnumerable<Type> messageTypes);
+        /// <param name="message">The message that describes the error.</param>
+        public JungleBusException(string message)
+            : base(message)
+        {
+        }
 
         /// <summary>
-        /// Subscribes the given queue to the message type
+        /// Initializes a new instance of the JungleBusException class with a specified error
+        /// message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
-        /// <param name="queueName">Queue name</param>
-        /// <param name="messageType">Message to subscribe to</param>
-        void Subscribe(string queueName, Type messageType);
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="innerException">
+        /// The exception that is the cause of the current exception, or a null reference
+        /// if no inner exception is specified.
+        /// </param>
+        public JungleBusException(string message, Exception innerException)
+            : base(message)
+        {
+        }
     }
 }

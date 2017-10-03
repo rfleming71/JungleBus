@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JungleBus.Aws;
 using JungleBus.Aws.Sns;
 using JungleBus.Interfaces.Exceptions;
-using JungleBus.Messaging;
+using JungleQueue.Messaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
