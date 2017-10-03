@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "Messages\Messag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus.Tests", "JungleBus.Tests\JungleBus.Tests.csproj", "{C3C8081B-64EE-453D-8543-A69CE022D66A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{09CF3161-D0C9-4390-B66B-B6BF5AD17514}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus.Interfaces", "JungleBus.Interfaces\JungleBus.Interfaces.csproj", "{09CF3161-D0C9-4390-B66B-B6BF5AD17514}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JungleBus.Testing", "JungleBus.Testing\JungleBus.Testing.csproj", "{59394202-6E4E-44A9-8213-0B7970F14860}"
 EndProject

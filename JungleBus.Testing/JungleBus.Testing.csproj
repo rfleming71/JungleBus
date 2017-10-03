@@ -48,7 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
+    <ProjectReference Include="..\JungleBus.Interfaces\JungleBus.Interfaces.csproj">
       <Project>{09cf3161-d0c9-4390-b66b-b6bf5ad17514}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
