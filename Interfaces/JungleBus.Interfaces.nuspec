@@ -15,6 +15,6 @@
     </dependencies>
   </metadata>
   <files>
-	  <file src="JungleBus\bin\Release\JungleBus.Interfaces.dll" target="lib\net45" />
+	  <file src="bin\Release\JungleBus.Interfaces.dll" target="lib\net45" />
   </files>
 </package>

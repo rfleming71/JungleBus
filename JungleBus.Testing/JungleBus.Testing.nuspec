@@ -16,6 +16,6 @@
     </dependencies>
   </metadata>
   <files>
-	  <file src="JungleBus.Testing\bin\Release\JungleBus.Testing.dll" target="lib\net45" />
+	  <file src="bin\Release\JungleBus.Testing.dll" target="lib\net45" />
   </files>
 </package>
