@@ -1,5 +1,6 @@
 # JungleBus
-Transactional service bus built on top of Amazon Web Services.
+Transactional service bus built on top of Amazon Web Services.  
+[![Build status](https://ci.appveyor.com/api/projects/status/ccy923lmviskyfww/branch/master?svg=true)](https://ci.appveyor.com/project/rfleming71/junglebus/branch/development)
 
 # Creating the Bus
 Creates a service bus that can send and recieve messages
