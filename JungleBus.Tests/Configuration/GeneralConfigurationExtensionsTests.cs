@@ -22,5 +22,43 @@ namespace JungleBus.Tests.Configuration
             BusConfiguration configuration = new BusConfiguration();
             (configuration as IConfigureMessageSerializer).UsingJsonSerialization();
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(JungleBusConfigurationException))]
+        public void GeneralConfigurationExtensionsTests_WithObjectBuilder_NullConfiguration()
+        {
+            (null as IConfigureObjectBuilder).WithObjectBuilder(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(JungleBusConfigurationException))]
+        public void GeneralConfigurationExtensionsTests_WithObjectBuilder_NullObjectBuilder()
+        {
+            BusConfiguration configuration = new BusConfiguration();
+            (configuration as IConfigureObjectBuilder).WithObjectBuilder(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(JungleBusConfigurationException))]
+        public void GeneralConfigurationExtensionsTests_EnableMessageLogging_NullConfiguration()
+        {
+            (null as IBusConfiguration).EnableMessageLogging();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(JungleBusConfigurationException))]
+        public void GeneralConfigurationExtensionsTests_CreateStartableBus_NullConfiguration()
+        {
+            (null as IBusConfiguration).CreateStartableBus();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(JungleBusConfigurationException))]
+        public void GeneralConfigurationExtensionsTests_CreateStartableBus_NullObjectBuilder()
+        {
+            BusConfiguration configuration = new BusConfiguration();
+            configuration.ObjectBuilder = null;
+            configuration.CreateStartableBus();
+        }
     }
 }

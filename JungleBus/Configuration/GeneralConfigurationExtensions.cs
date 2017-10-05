@@ -48,6 +48,11 @@ namespace JungleBus.Configuration
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
 
+            if (objectBuilder == null)
+            {
+                throw new JungleBusConfigurationException("objectBuilder", "ObjectBuilder cannot be null");
+            }
+
             configuration.ObjectBuilder = objectBuilder;
             return configuration as IConfigureMessageSerializer;
         }
@@ -71,6 +76,7 @@ namespace JungleBus.Configuration
 
             // ToDo: Currently not being used, should reintroduce the message serializer in the next version
             // configuration.ObjectBuilder.RegisterInstance<IMessageSerializer>(new JsonNetSerializer());
+            
             return configuration as IBusConfiguration;
         }
 

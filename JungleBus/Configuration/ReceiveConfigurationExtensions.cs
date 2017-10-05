@@ -58,14 +58,17 @@ namespace JungleBus.Configuration
             {
                 throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
             }
-
-
+            
             if (!string.IsNullOrWhiteSpace(configuration.BusName))
             {
                 sqsName = string.Format("{0}_{1}", configuration.BusName, sqsName);
             }
 
-            configuration.InputQueueConfiguration = QueueBuilder.Create(sqsName, region).WithObjectBuilder(configuration.ObjectBuilder) as QueueConfiguration;
+            configuration.InputQueueConfiguration = QueueBuilder
+                .Create(sqsName, region)
+                .WithObjectBuilder(configuration.ObjectBuilder)
+                .UsingJsonSerialization()
+                as QueueConfiguration;
 
             return configuration as IConfigureEventReceiving;
         }
@@ -111,6 +114,16 @@ namespace JungleBus.Configuration
         /// <returns>Modified configuration</returns>
         public static IConfigureEventReceiving UsingEventHandlersFromEntryAssembly(this IConfigureEventReceiving configuration)
         {
+            if (configuration == null)
+            {
+                throw new JungleBusConfigurationException("configuration", "Configuration cannot be null");
+            }
+
+            if (configuration.InputQueueConfiguration == null)
+            {
+                throw new JungleBusConfigurationException("configuration", "Input Configuration cannot be null");
+            }
+
             IEnumerable<Type> types = Assembly.GetEntryAssembly().ExportedTypes;
             configuration.InputQueueConfiguration
                 .UsingEventHandlers(types)
